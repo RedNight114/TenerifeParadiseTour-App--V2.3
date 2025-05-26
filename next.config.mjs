@@ -7,15 +7,27 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['blob.vercel-storage.com', 'images.unsplash.com'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: 'blob.vercel-storage.com',
+        port: '',
+        pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',
+        port: '',
+        pathname: '/**',
+      }
     ],
     unoptimized: true,
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3000', '*.vercel.app']
+    }
+  }
 }
 
 export default nextConfig
