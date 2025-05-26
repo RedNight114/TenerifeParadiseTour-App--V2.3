@@ -26,6 +26,8 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
   const handleFileSelect = async (file: File) => {
     if (!file) return
 
+    console.log("File selected:", file.name, "Size:", file.size, "Type:", file.type)
+
     // Validar que sea una imagen
     if (!file.type.startsWith("image/")) {
       alert("Por favor selecciona un archivo de imagen válido")
@@ -41,20 +43,50 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
     setIsUploading(true)
 
     try {
+      console.log("Starting upload for:", file.name)
+
       const response = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
         method: "POST",
         body: file,
+        headers: {
+          "Content-Type": file.type,
+        },
       })
 
+      console.log("Upload response status:", response.status)
+      console.log("Upload response headers:", Object.fromEntries(response.headers.entries()))
+
       if (!response.ok) {
-        throw new Error("Error al subir la imagen")
+        const errorText = await response.text()
+        console.error("Upload failed with status:", response.status, errorText)
+
+        let errorMessage = "Error al subir la imagen"
+        try {
+          const errorData = JSON.parse(errorText)
+          errorMessage = errorData.error || errorMessage
+          if (errorData.details) {
+            errorMessage += ` - ${errorData.details}`
+          }
+        } catch (parseError) {
+          console.error("Failed to parse error response:", parseError)
+          errorMessage = `Error ${response.status}: ${errorText.substring(0, 200)}`
+        }
+
+        throw new Error(errorMessage)
       }
 
-      const { url } = await response.json()
-      onChange(url)
+      const data = await response.json()
+      console.log("Upload successful:", data)
+
+      if (!data.url) {
+        throw new Error("No se recibió la URL de la imagen")
+      }
+
+      onChange(data.url)
     } catch (error) {
       console.error("Error uploading image:", error)
-      alert("Error al subir la imagen. Por favor intenta de nuevo.")
+      const errorMessage = error instanceof Error ? error.message : "Error desconocido al subir la imagen"
+      alert(`${errorMessage}. Por favor intenta de nuevo.`)
     } finally {
       setIsUploading(false)
     }
@@ -176,8 +208,8 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
         </CardContent>
       </Card>
 
-      {/* Input manual como respaldo */}
-      {!value && (
+      {/* Input manual como respaldo - siempre visible */}
+      {true && (
         <div className="space-y-2">
           <Label className="text-xs text-gray-500">O introduce una URL manualmente:</Label>
           <Input
