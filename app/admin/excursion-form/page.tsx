@@ -24,6 +24,7 @@ import {
   FileText,
   Settings,
   Star,
+  Eye,
 } from "lucide-react"
 import { createExcursion, type ExcursionFormData } from "@/lib/excursion-actions"
 import { useRouter } from "next/navigation"
@@ -456,872 +457,1099 @@ const ExcursionFormPage = () => {
   )
 
   return (
-    <div className="container py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Crear Nueva Excursión</h1>
-        <p className="text-lg text-gray-600 max-w-2xl">
-          Completa todos los pasos para crear una nueva excursión. Todos los campos marcados con * son obligatorios.
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Enhanced Header - Same style as manage excursions */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fillRule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fillOpacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-      <div className="mb-12">
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Progreso del Formulario</h2>
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => {
-              const Icon = step.icon
-              const isActive = currentStep === step.number
-              const isCompleted = currentStep > step.number
-              const isValid = stepValidation[step.number]
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="flex flex-col gap-6 sm:gap-8">
+            <div className="space-y-4 sm:space-y-6">
+              <div className="space-y-3 sm:space-y-4">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
+                  Crear Nueva Excursión
+                </h1>
+                <p className="text-lg sm:text-xl lg:text-2xl text-blue-100 font-medium leading-relaxed">
+                  Completa todos los pasos para crear una nueva excursión
+                </p>
+              </div>
 
-              return (
-                <div key={step.number} className="flex items-center">
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                      isCompleted
-                        ? "bg-green-500 border-green-500 text-white"
-                        : isActive
-                          ? isValid
-                            ? "bg-blue-500 border-blue-500 text-white"
-                            : "bg-red-500 border-red-500 text-white"
-                          : "bg-gray-200 border-gray-300 text-gray-500"
-                    }`}
-                  >
-                    {isCompleted ? <CheckCircle className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
+                  <FileText className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-bold text-lg sm:text-xl">6</span>
+                    <span className="text-sm sm:text-base">pasos</span>
                   </div>
-                  <span
-                    className={`ml-2 text-sm font-medium ${
-                      isActive ? "text-blue-600" : isCompleted ? "text-green-600" : "text-gray-500"
-                    }`}
-                  >
-                    {step.title}
-                  </span>
-                  {index < steps.length - 1 && (
-                    <div className={`w-12 h-0.5 mx-4 ${isCompleted ? "bg-green-500" : "bg-gray-300"}`} />
-                  )}
                 </div>
-              )
-            })}
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
+                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-bold text-lg sm:text-xl">{currentStep}</span>
+                    <span className="text-sm sm:text-base">actual</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
+                  <Star className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <div className="flex items-baseline gap-1">
+                    <span className="font-bold text-lg sm:text-xl">
+                      {Object.values(stepValidation).filter(Boolean).length}
+                    </span>
+                    <span className="text-sm sm:text-base">completados</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <Button
+                  onClick={() => router.push("/admin")}
+                  variant="outline"
+                  size="lg"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold h-12 sm:h-14"
+                >
+                  Volver al Panel
+                </Button>
+                <Button
+                  onClick={() => router.push("/admin/manage-excursions")}
+                  variant="outline"
+                  size="lg"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold h-12 sm:h-14"
+                >
+                  <Eye className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                  Ver Excursiones
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <Card className="mb-12 shadow-lg border-0 bg-white">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b px-8 py-6">
-          <CardTitle className="flex items-center text-xl font-semibold text-gray-900">
-            {React.createElement(steps[currentStep - 1].icon, { className: "h-6 w-6 mr-3 text-blue-600" })}
-            Paso {currentStep}: {steps[currentStep - 1].title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-8 py-8 space-y-8">
-          {/* Paso 1: Nombres */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name_es" className="text-sm font-semibold text-gray-700 flex items-center">
-                    Nombre en Español <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Input
-                    id="name_es"
-                    value={formData.name_es}
-                    onChange={(e) => updateFormData("name_es", e.target.value)}
-                    placeholder="Ej: Tour en Buggy por Tenerife"
-                    className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  {fieldErrors.name_es && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_es}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name_en" className="text-sm font-semibold text-gray-700 flex items-center">
-                    Nombre en Inglés <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Input
-                    id="name_en"
-                    value={formData.name_en}
-                    onChange={(e) => updateFormData("name_en", e.target.value)}
-                    placeholder="Ex: Buggy Tour in Tenerife"
-                    className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  {fieldErrors.name_en && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_en}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="name_de" className="text-sm font-semibold text-gray-700 flex items-center">
-                    Nombre en Alemán <span className="text-red-500 ml-1">*</span>
-                  </Label>
-                  <Input
-                    id="name_de"
-                    value={formData.name_de}
-                    onChange={(e) => updateFormData("name_de", e.target.value)}
-                    placeholder="Z.B: Buggy-Tour auf Teneriffa"
-                    className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                  />
-                  {fieldErrors.name_de && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_de}</p>}
-                </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+        {/* Enhanced Progress Section */}
+        <div className="mb-8 lg:mb-12">
+          <div className="bg-white rounded-xl shadow-sm border p-4 sm:p-6 mb-6 sm:mb-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900">Progreso del Formulario</h2>
+              <div className="text-sm text-gray-500">
+                {currentStep} de {steps.length} pasos completados
               </div>
             </div>
-          )}
 
-          {/* Paso 2: Descripciones Cortas */}
-          {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="short_description_es" className="text-sm font-semibold text-gray-700">
-                    Descripción Corta en Español <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="short_description_es"
-                    value={formData.short_description_es}
-                    onChange={(e) => updateFormData("short_description_es", e.target.value)}
-                    placeholder="Descripción breve de la excursión (máximo 150 caracteres)"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{formData.short_description_es.length}/150 caracteres</p>
-                </div>
-                <div>
-                  <Label htmlFor="short_description_en" className="text-sm font-semibold text-gray-700">
-                    Descripción Corta en Inglés <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="short_description_en"
-                    value={formData.short_description_en}
-                    onChange={(e) => updateFormData("short_description_en", e.target.value)}
-                    placeholder="Brief description of the excursion (maximum 150 characters)"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{formData.short_description_en.length}/150 caracteres</p>
-                </div>
-                <div>
-                  <Label htmlFor="short_description_de" className="text-sm font-semibold text-gray-700">
-                    Descripción Corta en Alemán <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="short_description_de"
-                    value={formData.short_description_de}
-                    onChange={(e) => updateFormData("short_description_de", e.target.value)}
-                    placeholder="Kurze Beschreibung der Exkursion (maximal 150 Zeichen)"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{formData.short_description_de.length}/150 caracteres</p>
-                </div>
-              </div>
+            {/* Visual Progress Bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+              <div
+                className="bg-gradient-to-r from-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              ></div>
             </div>
-          )}
 
-          {/* Paso 3: Descripciones Completas */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="description_es" className="text-sm font-semibold text-gray-700">
-                    Descripción Completa en Español <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description_es"
-                    value={formData.description_es}
-                    onChange={(e) => updateFormData("description_es", e.target.value)}
-                    placeholder="Descripción detallada de la excursión, itinerario, qué incluye, etc."
-                    className="mt-2 text-base"
-                    rows={6}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description_en" className="text-sm font-semibold text-gray-700">
-                    Descripción Completa en Inglés <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description_en"
-                    value={formData.description_en}
-                    onChange={(e) => updateFormData("description_en", e.target.value)}
-                    placeholder="Detailed description of the excursion, itinerary, what's included, etc."
-                    className="mt-2 text-base"
-                    rows={6}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description_de" className="text-sm font-semibold text-gray-700">
-                    Descripción Completa en Alemán <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description_de"
-                    value={formData.description_de}
-                    onChange={(e) => updateFormData("description_de", e.target.value)}
-                    placeholder="Detaillierte Beschreibung der Exkursion, Reiseverlauf, was enthalten ist, etc."
-                    className="mt-2 text-base"
-                    rows={6}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+            {/* Interactive Step Navigation */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              {steps.map((step) => {
+                const Icon = step.icon
+                const isActive = currentStep === step.number
+                const isCompleted = currentStep > step.number
+                const isValid = stepValidation[step.number]
+                const canNavigate = step.number <= currentStep || isCompleted
 
-          {/* Paso 4: Información Básica */}
-          {currentStep === 4 && (
-            <div className="space-y-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="price" className="text-sm font-semibold text-gray-700">
-                    <Euro className="h-4 w-4 inline mr-1" />
-                    Precio por Persona <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="price"
-                    type="number"
-                    value={formData.price}
-                    onChange={(e) => updateFormData("price", e.target.value)}
-                    placeholder="120"
-                    className="mt-2 h-12 text-base"
-                  />
-                  {fieldErrors.price && <p className="text-red-500 text-sm mt-1">{fieldErrors.price}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="children_price" className="text-sm font-semibold text-gray-700">
-                    <Euro className="h-4 w-4 inline mr-1" />
-                    Precio Niños (Opcional)
-                  </Label>
-                  <Input
-                    id="children_price"
-                    type="number"
-                    value={formData.children_price}
-                    onChange={(e) => updateFormData("children_price", e.target.value)}
-                    placeholder="80"
-                    className="mt-2 h-12 text-base"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="duration" className="text-sm font-semibold text-gray-700">
-                    <Clock className="h-4 w-4 inline mr-1" />
-                    Duración <span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    id="duration"
-                    value={formData.duration}
-                    onChange={(e) => updateFormData("duration", e.target.value)}
-                    placeholder="4 horas"
-                    className="mt-2 h-12 text-base"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="max_people" className="text-sm font-semibold text-gray-700">
-                    <Users className="h-4 w-4 inline mr-1" />
-                    Máximo de Personas
-                  </Label>
-                  <Input
-                    id="max_people"
-                    type="number"
-                    value={formData.max_people}
-                    onChange={(e) => updateFormData("max_people", e.target.value)}
-                    placeholder="8"
-                    className="mt-2 h-12 text-base"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="category" className="text-sm font-semibold text-gray-700">
-                    Categoría <span className="text-red-500">*</span>
-                  </Label>
-                  <select
-                    id="category"
-                    value={formData.category}
-                    onChange={(e) => updateFormData("category", e.target.value)}
-                    className="mt-2 w-full h-12 px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                return (
+                  <button
+                    key={step.number}
+                    onClick={() => canNavigate && setCurrentStep(step.number)}
+                    disabled={!canNavigate}
+                    className={`p-3 rounded-lg border-2 transition-all duration-200 text-left ${
+                      isCompleted
+                        ? "bg-green-50 border-green-200 text-green-700 hover:bg-green-100 cursor-pointer"
+                        : isActive
+                          ? isValid
+                            ? "bg-blue-50 border-blue-200 text-blue-700 ring-2 ring-blue-100"
+                            : "bg-red-50 border-red-200 text-red-700 ring-2 ring-red-100"
+                          : canNavigate
+                            ? "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100 cursor-pointer"
+                            : "bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed"
+                    }`}
                   >
-                    <option value="">Seleccionar categoría</option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.name_es}>
-                        {category.name_es}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <Label htmlFor="difficulty_level" className="text-sm font-semibold text-gray-700">
-                    Nivel de Dificultad
-                  </Label>
-                  <select
-                    id="difficulty_level"
-                    value={formData.difficulty_level}
-                    onChange={(e) => updateFormData("difficulty_level", e.target.value)}
-                    className="mt-2 w-full h-12 px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Seleccionar dificultad</option>
-                    {DIFFICULTY_LEVELS.map((level) => (
-                      <option key={level.value} value={level.value}>
-                        {level.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Horarios Múltiples */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">
-                  <Clock className="h-5 w-5 inline mr-2" />
-                  Horarios Disponibles
-                </Label>
-                <div className="space-y-4">
-                  {timeSlots.map((slot) => (
-                    <div key={slot.id} className="flex items-center justify-between bg-white p-4 rounded-lg border">
-                      <div>
-                        <span className="font-medium">{slot.label}</span>
-                        <span className="text-gray-500 ml-2">
-                          ({slot.start_time} - {slot.end_time})
-                        </span>
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className={`flex-shrink-0 ${
+                          isCompleted ? "text-green-600" : isActive ? "text-blue-600" : "text-gray-400"
+                        }`}
+                      >
+                        {isCompleted ? <CheckCircle className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
                       </div>
-                      <Button onClick={() => removeTimeSlot(slot.id)} variant="ghost" size="sm">
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-
-                  <Card className="p-4 border-dashed">
-                    <h4 className="font-medium mb-4">Añadir Nuevo Horario</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <Label className="text-xs">Hora de Inicio</Label>
-                        <Input
-                          type="time"
-                          value={newTimeSlot.start_time}
-                          onChange={(e) => setNewTimeSlot((prev) => ({ ...prev, start_time: e.target.value }))}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Hora de Fin</Label>
-                        <Input
-                          type="time"
-                          value={newTimeSlot.end_time}
-                          onChange={(e) => setNewTimeSlot((prev) => ({ ...prev, end_time: e.target.value }))}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-xs">Etiqueta (Opcional)</Label>
-                        <Input
-                          value={newTimeSlot.label}
-                          onChange={(e) => setNewTimeSlot((prev) => ({ ...prev, label: e.target.value }))}
-                          placeholder="Ej: Mañana, Tarde"
-                          className="mt-1"
-                        />
+                      <div className="min-w-0">
+                        <div className="text-xs font-medium truncate">{step.title}</div>
+                        <div className="text-xs opacity-75">
+                          {isCompleted ? "Completado" : isActive ? "Actual" : `Paso ${step.number}`}
+                        </div>
                       </div>
                     </div>
-                    <Button onClick={addTimeSlot} size="sm" className="w-full mt-4">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Añadir Horario
-                    </Button>
-                  </Card>
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Step Description */}
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-start space-x-3">
+                <Info className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <h3 className="font-medium text-blue-900 mb-1">{steps[currentStep - 1].title}</h3>
+                  <p className="text-sm text-blue-700">
+                    {currentStep === 1 &&
+                      "Ingresa los nombres de la excursión en los tres idiomas. Estos aparecerán en el sitio web."}
+                    {currentStep === 2 &&
+                      "Escribe descripciones cortas y atractivas que capturen la esencia de la excursión."}
+                    {currentStep === 3 &&
+                      "Proporciona descripciones detalladas con toda la información que los clientes necesitan saber."}
+                    {currentStep === 4 &&
+                      "Configura el precio, duración, categoría e imagen principal de la excursión."}
+                    {currentStep === 5 &&
+                      "Añade detalles adicionales como servicios incluidos, horarios y requisitos especiales."}
+                    {currentStep === 6 && "Revisa toda la información antes de crear la excursión."}
+                  </p>
                 </div>
               </div>
-
-              <div>
-                <ImageUpload
-                  value={formData.image_url}
-                  onChange={(url) => updateFormData("image_url", url)}
-                  label="Imagen Principal de la Excursión"
-                  placeholder="URL de la imagen principal"
-                  required
-                />
-              </div>
-
-              <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <Switch
-                  id="featured"
-                  checked={formData.featured}
-                  onCheckedChange={(checked) => updateFormData("featured", checked)}
-                />
-                <Label htmlFor="featured" className="flex items-center text-base font-medium">
-                  <Star className="h-5 w-5 mr-2 text-yellow-600" />
-                  Marcar como Excursión Destacada
-                </Label>
-              </div>
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Paso 5: Detalles Adicionales */}
-          {currentStep === 5 && (
-            <div className="space-y-8">
-              {/* Punto de encuentro */}
-              <div>
-                <Label htmlFor="meeting_point" className="text-sm font-semibold text-gray-700">
-                  <MapPin className="h-4 w-4 inline mr-1" />
-                  Punto de Encuentro
-                </Label>
-                <Textarea
-                  id="meeting_point"
-                  value={formData.meeting_point}
-                  onChange={(e) => updateFormData("meeting_point", e.target.value)}
-                  placeholder="Dirección exacta del punto de encuentro"
-                  className="mt-2 text-base"
-                  rows={2}
-                />
+        {/* Form Card */}
+        <Card className="mb-8 lg:mb-12 shadow-lg border-0 bg-white">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b px-4 sm:px-8 py-4 sm:py-6">
+            <CardTitle className="flex items-center text-lg sm:text-xl font-semibold text-gray-900">
+              {React.createElement(steps[currentStep - 1].icon, {
+                className: "h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 text-blue-600",
+              })}
+              Paso {currentStep}: {steps[currentStep - 1].title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8">
+            {/* Resto del contenido del formulario permanece igual */}
+            {/* Paso 1: Nombres */}
+            {currentStep === 1 && (
+              <div className="space-y-6">
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-6">
+                  <div className="flex items-center space-x-2 text-blue-800">
+                    <Info className="h-5 w-5" />
+                    <span className="font-medium">Consejo:</span>
+                  </div>
+                  <p className="text-blue-700 text-sm mt-2">
+                    Usa nombres descriptivos y atractivos. Incluye palabras clave que los turistas buscarían.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="name_es" className="text-sm font-semibold text-gray-700 flex items-center">
+                      <span className="flex items-center">
+                        🇪🇸 Nombre en Español
+                        <span className="text-red-500 ml-1">*</span>
+                      </span>
+                    </Label>
+                    <Input
+                      id="name_es"
+                      value={formData.name_es}
+                      onChange={(e) => updateFormData("name_es", e.target.value)}
+                      placeholder="Ej: Tour en Buggy por el Teide"
+                      className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{formData.name_es.length}/100 caracteres</span>
+                      {formData.name_es && <span className="text-green-600">✓ Válido</span>}
+                    </div>
+                    {fieldErrors.name_es && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_es}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name_en" className="text-sm font-semibold text-gray-700 flex items-center">
+                      <span className="flex items-center">
+                        🇬🇧 Nombre en Inglés
+                        <span className="text-red-500 ml-1">*</span>
+                      </span>
+                    </Label>
+                    <Input
+                      id="name_en"
+                      value={formData.name_en}
+                      onChange={(e) => updateFormData("name_en", e.target.value)}
+                      placeholder="Ex: Teide Buggy Adventure Tour"
+                      className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{formData.name_en.length}/100 caracteres</span>
+                      {formData.name_en && <span className="text-green-600">✓ Válido</span>}
+                    </div>
+                    {fieldErrors.name_en && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_en}</p>}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="name_de" className="text-sm font-semibold text-gray-700 flex items-center">
+                      <span className="flex items-center">
+                        🇩🇪 Nombre en Alemán
+                        <span className="text-red-500 ml-1">*</span>
+                      </span>
+                    </Label>
+                    <Input
+                      id="name_de"
+                      value={formData.name_de}
+                      onChange={(e) => updateFormData("name_de", e.target.value)}
+                      placeholder="Z.B: Teide Buggy Abenteuer Tour"
+                      className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{formData.name_de.length}/100 caracteres</span>
+                      {formData.name_de && <span className="text-green-600">✓ Válido</span>}
+                    </div>
+                    {fieldErrors.name_de && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_de}</p>}
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="flex flex-wrap gap-2 mt-6">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (formData.name_es) {
+                        updateFormData("name_en", formData.name_es) // Placeholder for translation
+                        updateFormData("name_de", formData.name_es) // Placeholder for translation
+                      }
+                    }}
+                    className="text-xs"
+                  >
+                    📝 Copiar desde Español
+                  </Button>
+                </div>
               </div>
+            )}
 
-              {/* Servicios Incluidos */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios Incluidos</Label>
+            {/* Paso 2: Descripciones Cortas */}
+            {currentStep === 2 && (
+              <div className="space-y-6">
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {includedServices.map((service) => (
-                      <div
-                        key={service.id}
-                        className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          id={`included-${service.id}`}
-                          checked={formData.included_services.includes(service.name_es)}
-                          onChange={() => toggleIncludedService(service.name_es)}
-                          className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                        />
-                        <Label
-                          htmlFor={`included-${service.id}`}
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          {service.name_es}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={customIncludedService}
-                      onChange={(e) => setCustomIncludedService(e.target.value)}
-                      placeholder="Añadir servicio personalizado"
-                      className="flex-1"
+                  <div>
+                    <Label htmlFor="short_description_es" className="text-sm font-semibold text-gray-700">
+                      Descripción Corta en Español <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="short_description_es"
+                      value={formData.short_description_es}
+                      onChange={(e) => updateFormData("short_description_es", e.target.value)}
+                      placeholder="Descripción breve de la excursión (máximo 150 caracteres)"
+                      className="mt-2 text-base"
+                      rows={3}
                     />
-                    <Button onClick={addCustomIncludedService} size="sm">
-                      <Plus className="h-4 w-4" />
-                    </Button>
+                    <p className="text-xs text-gray-500 mt-1">{formData.short_description_es.length}/150 caracteres</p>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.included_services.map((service, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                        {service}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeIncludedService(index)} />
-                      </Badge>
-                    ))}
+                  <div>
+                    <Label htmlFor="short_description_en" className="text-sm font-semibold text-gray-700">
+                      Descripción Corta en Inglés <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="short_description_en"
+                      value={formData.short_description_en}
+                      onChange={(e) => updateFormData("short_description_en", e.target.value)}
+                      placeholder="Brief description of the excursion (maximum 150 characters)"
+                      className="mt-2 text-base"
+                      rows={3}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">{formData.short_description_en.length}/150 caracteres</p>
+                  </div>
+                  <div>
+                    <Label htmlFor="short_description_de" className="text-sm font-semibold text-gray-700">
+                      Descripción Corta en Alemán <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="short_description_de"
+                      value={formData.short_description_de}
+                      onChange={(e) => updateFormData("short_description_de", e.target.value)}
+                      placeholder="Kurze Beschreibung der Exkursion (maximal 150 Zeichen)"
+                      className="mt-2 text-base"
+                      rows={3}
+                    />
+                    <p className="text-xs text-gray-500 mt-1">{formData.short_description_de.length}/150 caracteres</p>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Servicios No Incluidos */}
-              <div className="bg-red-50 rounded-lg p-6">
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios No Incluidos</Label>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {notIncludedServices.map((service) => (
-                      <div
-                        key={service.id}
-                        className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-red-50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          id={`not-included-${service.id}`}
-                          checked={formData.not_included_services.includes(service.name_es)}
-                          onChange={() => toggleNotIncludedService(service.name_es)}
-                          className="h-4 w-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
-                        />
-                        <Label
-                          htmlFor={`not-included-${service.id}`}
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          {service.name_es}
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={customNotIncludedService}
-                      onChange={(e) => setCustomNotIncludedService(e.target.value)}
-                      placeholder="Añadir servicio no incluido personalizado"
-                      className="flex-1"
+            {/* Paso 3: Descripciones Completas */}
+            {currentStep === 3 && (
+              <div className="space-y-6">
+                <div className="space-y-6">
+                  <div>
+                    <Label htmlFor="description_es" className="text-sm font-semibold text-gray-700">
+                      Descripción Completa en Español <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="description_es"
+                      value={formData.description_es}
+                      onChange={(e) => updateFormData("description_es", e.target.value)}
+                      placeholder="Descripción detallada de la excursión, itinerario, qué incluye, etc."
+                      className="mt-2 text-base"
+                      rows={6}
                     />
-                    <Button onClick={addCustomNotIncludedService} size="sm">
-                      <Plus className="h-4 w-4" />
-                    </Button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.not_included_services.map((service, index) => (
-                      <Badge key={index} variant="outline" className="flex items-center gap-1">
-                        {service}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeNotIncludedService(index)} />
-                      </Badge>
-                    ))}
+                  <div>
+                    <Label htmlFor="description_en" className="text-sm font-semibold text-gray-700">
+                      Descripción Completa en Inglés <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="description_en"
+                      value={formData.description_en}
+                      onChange={(e) => updateFormData("description_en", e.target.value)}
+                      placeholder="Detailed description of the excursion, itinerary, what's included, etc."
+                      className="mt-2 text-base"
+                      rows={6}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="description_de" className="text-sm font-semibold text-gray-700">
+                      Descripción Completa en Alemán <span className="text-red-500">*</span>
+                    </Label>
+                    <Textarea
+                      id="description_de"
+                      value={formData.description_de}
+                      onChange={(e) => updateFormData("description_de", e.target.value)}
+                      placeholder="Detaillierte Beschreibung der Exkursion, Reiseverlauf, was enthalten ist, etc."
+                      className="mt-2 text-base"
+                      rows={6}
+                    />
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* Meses Disponibles */}
-              <div>
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">
-                  <Calendar className="h-5 w-5 inline mr-2" />
-                  Meses Disponibles
-                </Label>
-                <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-                  {MONTHS.map((month) => (
-                    <div
-                      key={month.value}
-                      className="flex items-center space-x-2 p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors"
+            {/* Paso 4: Información Básica */}
+            {currentStep === 4 && (
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="price" className="text-sm font-semibold text-gray-700">
+                      <Euro className="h-4 w-4 inline mr-1" />
+                      Precio por Persona <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="price"
+                      type="number"
+                      value={formData.price}
+                      onChange={(e) => updateFormData("price", e.target.value)}
+                      placeholder="120"
+                      className="mt-2 h-12 text-base"
+                    />
+                    {fieldErrors.price && <p className="text-red-500 text-sm mt-1">{fieldErrors.price}</p>}
+                  </div>
+                  <div>
+                    <Label htmlFor="children_price" className="text-sm font-semibold text-gray-700">
+                      <Euro className="h-4 w-4 inline mr-1" />
+                      Precio Niños (Opcional)
+                    </Label>
+                    <Input
+                      id="children_price"
+                      type="number"
+                      value={formData.children_price}
+                      onChange={(e) => updateFormData("children_price", e.target.value)}
+                      placeholder="80"
+                      className="mt-2 h-12 text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="duration" className="text-sm font-semibold text-gray-700">
+                      <Clock className="h-4 w-4 inline mr-1" />
+                      Duración <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="duration"
+                      value={formData.duration}
+                      onChange={(e) => updateFormData("duration", e.target.value)}
+                      placeholder="4 horas"
+                      className="mt-2 h-12 text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="max_people" className="text-sm font-semibold text-gray-700">
+                      <Users className="h-4 w-4 inline mr-1" />
+                      Máximo de Personas
+                    </Label>
+                    <Input
+                      id="max_people"
+                      type="number"
+                      value={formData.max_people}
+                      onChange={(e) => updateFormData("max_people", e.target.value)}
+                      placeholder="8"
+                      className="mt-2 h-12 text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="category" className="text-sm font-semibold text-gray-700">
+                      Categoría <span className="text-red-500">*</span>
+                    </Label>
+                    <select
+                      id="category"
+                      value={formData.category}
+                      onChange={(e) => updateFormData("category", e.target.value)}
+                      className="mt-2 w-full h-12 px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                      <input
-                        type="checkbox"
-                        id={`month-${month.value}`}
-                        checked={formData.available_months.includes(month.value)}
-                        onChange={() => toggleMonth(month.value)}
-                        className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                      />
-                      <Label htmlFor={`month-${month.value}`} className="text-sm font-medium cursor-pointer">
-                        {month.label}
-                      </Label>
-                    </div>
-                  ))}
+                      <option value="">Seleccionar categoría</option>
+                      {categories.map((category) => (
+                        <option key={category.id} value={category.name_es}>
+                          {category.name_es}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="difficulty_level" className="text-sm font-semibold text-gray-700">
+                      Nivel de Dificultad
+                    </Label>
+                    <select
+                      id="difficulty_level"
+                      value={formData.difficulty_level}
+                      onChange={(e) => updateFormData("difficulty_level", e.target.value)}
+                      className="mt-2 w-full h-12 px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="">Seleccionar dificultad</option>
+                      {DIFFICULTY_LEVELS.map((level) => (
+                        <option key={level.value} value={level.value}>
+                          {level.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-              </div>
 
-              {/* Campos adicionales */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label htmlFor="what_to_bring" className="text-sm font-semibold text-gray-700">
-                    Qué Traer
+                {/* Horarios Múltiples */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block">
+                    <Clock className="h-5 w-5 inline mr-2" />
+                    Horarios Disponibles
                   </Label>
-                  <Textarea
-                    id="what_to_bring"
-                    value={formData.what_to_bring}
-                    onChange={(e) => updateFormData("what_to_bring", e.target.value)}
-                    placeholder="Lista de elementos que deben traer los participantes"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="requirements" className="text-sm font-semibold text-gray-700">
-                    Requisitos
-                  </Label>
-                  <Textarea
-                    id="requirements"
-                    value={formData.requirements}
-                    onChange={(e) => updateFormData("requirements", e.target.value)}
-                    placeholder="Requisitos físicos, edad mínima, etc."
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="age_restrictions" className="text-sm font-semibold text-gray-700">
-                    Restricciones de Edad
-                  </Label>
-                  <Input
-                    id="age_restrictions"
-                    value={formData.age_restrictions}
-                    onChange={(e) => updateFormData("age_restrictions", e.target.value)}
-                    placeholder="Ej: Mínimo 18 años"
-                    className="mt-2 h-12 text-base"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="children_age_range" className="text-sm font-semibold text-gray-700">
-                    Rango de Edad para Niños
-                  </Label>
-                  <Input
-                    id="children_age_range"
-                    value={formData.children_age_range}
-                    onChange={(e) => updateFormData("children_age_range", e.target.value)}
-                    placeholder="Ej: 6-12 años"
-                    className="mt-2 h-12 text-base"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="cancellation_policy" className="text-sm font-semibold text-gray-700">
-                  Política de Cancelación
-                </Label>
-                <Textarea
-                  id="cancellation_policy"
-                  value={formData.cancellation_policy}
-                  onChange={(e) => updateFormData("cancellation_policy", e.target.value)}
-                  placeholder="Términos y condiciones de cancelación"
-                  className="mt-2 text-base"
-                  rows={3}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="special_notes" className="text-sm font-semibold text-gray-700">
-                  Notas Especiales
-                </Label>
-                <Textarea
-                  id="special_notes"
-                  value={formData.special_notes}
-                  onChange={(e) => updateFormData("special_notes", e.target.value)}
-                  placeholder="Información adicional importante"
-                  className="mt-2 text-base"
-                  rows={3}
-                />
-              </div>
-
-              {/* FAQs */}
-              <div>
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">Preguntas Frecuentes</Label>
-                <div className="space-y-4">
-                  {formData.faqs.map((faq, index) => (
-                    <Card key={index} className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium">FAQ {index + 1}</h4>
-                        <Button onClick={() => removeFAQ(index)} variant="ghost" size="sm">
+                  <div className="space-y-4">
+                    {timeSlots.map((slot) => (
+                      <div key={slot.id} className="flex items-center justify-between bg-white p-4 rounded-lg border">
+                        <div>
+                          <span className="font-medium">{slot.label}</span>
+                          <span className="text-gray-500 ml-2">
+                            ({slot.start_time} - {slot.end_time})
+                          </span>
+                        </div>
+                        <Button onClick={() => removeTimeSlot(slot.id)} variant="ghost" size="sm">
                           <X className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <strong>ES:</strong> {faq.question_es}
-                          <br />
-                          <span className="text-gray-600">{faq.answer_es}</span>
-                        </div>
-                        <div>
-                          <strong>EN:</strong> {faq.question_en}
-                          <br />
-                          <span className="text-gray-600">{faq.answer_en}</span>
-                        </div>
-                        <div>
-                          <strong>DE:</strong> {faq.question_de}
-                          <br />
-                          <span className="text-gray-600">{faq.answer_de}</span>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
+                    ))}
 
-                  <Card className="p-4 border-dashed">
-                    <h4 className="font-medium mb-4">Añadir Nueva FAQ</h4>
-                    <div className="space-y-4">
+                    <Card className="p-4 border-dashed">
+                      <h4 className="font-medium mb-4">Añadir Nuevo Horario</h4>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                          <Label className="text-xs">Pregunta (Español)</Label>
+                          <Label className="text-xs">Hora de Inicio</Label>
                           <Input
-                            value={newFAQ.question_es}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_es: e.target.value }))}
-                            placeholder="¿Pregunta en español?"
+                            type="time"
+                            value={newTimeSlot.start_time}
+                            onChange={(e) => setNewTimeSlot((prev) => ({ ...prev, start_time: e.target.value }))}
                             className="mt-1"
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Pregunta (Inglés)</Label>
+                          <Label className="text-xs">Hora de Fin</Label>
                           <Input
-                            value={newFAQ.question_en}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_en: e.target.value }))}
-                            placeholder="Question in English?"
+                            type="time"
+                            value={newTimeSlot.end_time}
+                            onChange={(e) => setNewTimeSlot((prev) => ({ ...prev, end_time: e.target.value }))}
                             className="mt-1"
                           />
                         </div>
                         <div>
-                          <Label className="text-xs">Pregunta (Alemán)</Label>
+                          <Label className="text-xs">Etiqueta (Opcional)</Label>
                           <Input
-                            value={newFAQ.question_de}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_de: e.target.value }))}
-                            placeholder="Frage auf Deutsch?"
+                            value={newTimeSlot.label}
+                            onChange={(e) => setNewTimeSlot((prev) => ({ ...prev, label: e.target.value }))}
+                            placeholder="Ej: Mañana, Tarde"
                             className="mt-1"
                           />
                         </div>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <Label className="text-xs">Respuesta (Español)</Label>
-                          <Textarea
-                            value={newFAQ.answer_es}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_es: e.target.value }))}
-                            placeholder="Respuesta en español"
-                            className="mt-1"
-                            rows={2}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Respuesta (Inglés)</Label>
-                          <Textarea
-                            value={newFAQ.answer_en}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_en: e.target.value }))}
-                            placeholder="Answer in English"
-                            className="mt-1"
-                            rows={2}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Respuesta (Alemán)</Label>
-                          <Textarea
-                            value={newFAQ.answer_de}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_de: e.target.value }))}
-                            placeholder="Antwort auf Deutsch"
-                            className="mt-1"
-                            rows={2}
-                          />
-                        </div>
-                      </div>
-                      <Button onClick={addFAQ} size="sm" className="w-full">
+                      <Button onClick={addTimeSlot} size="sm" className="w-full mt-4">
                         <Plus className="h-4 w-4 mr-2" />
-                        Añadir FAQ
+                        Añadir Horario
                       </Button>
-                    </div>
-                  </Card>
+                    </Card>
+                  </div>
+                </div>
+
+                <div>
+                  <ImageUpload
+                    value={formData.image_url}
+                    onChange={(url) => updateFormData("image_url", url)}
+                    label="Imagen Principal de la Excursión"
+                    placeholder="URL de la imagen principal"
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <Switch
+                    id="featured"
+                    checked={formData.featured}
+                    onCheckedChange={(checked) => updateFormData("featured", checked)}
+                  />
+                  <Label htmlFor="featured" className="flex items-center text-base font-medium">
+                    <Star className="h-5 w-5 mr-2 text-yellow-600" />
+                    Marcar como Excursión Destacada
+                  </Label>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Paso 6: Resumen */}
-          {currentStep === 6 && (
-            <div className="space-y-6">
-              {!submitSuccess ? (
-                <>
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 rounded-xl p-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-6 flex items-center">
-                      <CheckCircle className="h-6 w-6 mr-3" />
-                      Resumen de la Excursión
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {/* Información básica */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Información Básica</h4>
-                        <div className="space-y-2 text-sm">
+            {/* Paso 5: Detalles Adicionales */}
+            {currentStep === 5 && (
+              <div className="space-y-8">
+                {/* Punto de encuentro */}
+                <div>
+                  <Label htmlFor="meeting_point" className="text-sm font-semibold text-gray-700">
+                    <MapPin className="h-4 w-4 inline mr-1" />
+                    Punto de Encuentro
+                  </Label>
+                  <Textarea
+                    id="meeting_point"
+                    value={formData.meeting_point}
+                    onChange={(e) => updateFormData("meeting_point", e.target.value)}
+                    placeholder="Dirección exacta del punto de encuentro"
+                    className="mt-2 text-base"
+                    rows={2}
+                  />
+                </div>
+
+                {/* Servicios Incluidos */}
+                <div className="bg-gray-50 rounded-lg p-6">
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios Incluidos</Label>
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {includedServices.map((service) => (
+                        <div
+                          key={service.id}
+                          className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`included-${service.id}`}
+                            checked={formData.included_services.includes(service.name_es)}
+                            onChange={() => toggleIncludedService(service.name_es)}
+                            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                          />
+                          <Label
+                            htmlFor={`included-${service.id}`}
+                            className="text-sm font-medium text-gray-700 cursor-pointer"
+                          >
+                            {service.name_es}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        value={customIncludedService}
+                        onChange={(e) => setCustomIncludedService(e.target.value)}
+                        placeholder="Añadir servicio personalizado"
+                        className="flex-1"
+                      />
+                      <Button onClick={addCustomIncludedService} size="sm">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {formData.included_services.map((service, index) => (
+                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
+                          {service}
+                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeIncludedService(index)} />
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Servicios No Incluidos */}
+                <div className="bg-red-50 rounded-lg p-6">
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios No Incluidos</Label>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {notIncludedServices.map((service) => (
+                        <div
+                          key={service.id}
+                          className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-red-50 transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            id={`not-included-${service.id}`}
+                            checked={formData.not_included_services.includes(service.name_es)}
+                            onChange={() => toggleNotIncludedService(service.name_es)}
+                            className="h-4 w-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
+                          />
+                          <Label
+                            htmlFor={`not-included-${service.id}`}
+                            className="text-sm font-medium text-gray-700 cursor-pointer"
+                          >
+                            {service.name_es}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex gap-2">
+                      <Input
+                        value={customNotIncludedService}
+                        onChange={(e) => setCustomNotIncludedService(e.target.value)}
+                        placeholder="Añadir servicio no incluido personalizado"
+                        className="flex-1"
+                      />
+                      <Button onClick={addCustomNotIncludedService} size="sm">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {formData.not_included_services.map((service, index) => (
+                        <Badge key={index} variant="outline" className="flex items-center gap-1">
+                          {service}
+                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeNotIncludedService(index)} />
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Meses Disponibles */}
+                <div>
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block">
+                    <Calendar className="h-5 w-5 inline mr-2" />
+                    Meses Disponibles
+                  </Label>
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
+                    {MONTHS.map((month) => (
+                      <div
+                        key={month.value}
+                        className="flex items-center space-x-2 p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors"
+                      >
+                        <input
+                          type="checkbox"
+                          id={`month-${month.value}`}
+                          checked={formData.available_months.includes(month.value)}
+                          onChange={() => toggleMonth(month.value)}
+                          className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                        />
+                        <Label htmlFor={`month-${month.value}`} className="text-sm font-medium cursor-pointer">
+                          {month.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Campos adicionales */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label htmlFor="what_to_bring" className="text-sm font-semibold text-gray-700">
+                      Qué Traer
+                    </Label>
+                    <Textarea
+                      id="what_to_bring"
+                      value={formData.what_to_bring}
+                      onChange={(e) => updateFormData("what_to_bring", e.target.value)}
+                      placeholder="Lista de elementos que deben traer los participantes"
+                      className="mt-2 text-base"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="requirements" className="text-sm font-semibold text-gray-700">
+                      Requisitos
+                    </Label>
+                    <Textarea
+                      id="requirements"
+                      value={formData.requirements}
+                      onChange={(e) => updateFormData("requirements", e.target.value)}
+                      placeholder="Requisitos físicos, edad mínima, etc."
+                      className="mt-2 text-base"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="age_restrictions" className="text-sm font-semibold text-gray-700">
+                      Restricciones de Edad
+                    </Label>
+                    <Input
+                      id="age_restrictions"
+                      value={formData.age_restrictions}
+                      onChange={(e) => updateFormData("age_restrictions", e.target.value)}
+                      placeholder="Ej: Mínimo 18 años"
+                      className="mt-2 h-12 text-base"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="children_age_range" className="text-sm font-semibold text-gray-700">
+                      Rango de Edad para Niños
+                    </Label>
+                    <Input
+                      id="children_age_range"
+                      value={formData.children_age_range}
+                      onChange={(e) => updateFormData("children_age_range", e.target.value)}
+                      placeholder="Ej: 6-12 años"
+                      className="mt-2 h-12 text-base"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="cancellation_policy" className="text-sm font-semibold text-gray-700">
+                    Política de Cancelación
+                  </Label>
+                  <Textarea
+                    id="cancellation_policy"
+                    value={formData.cancellation_policy}
+                    onChange={(e) => updateFormData("cancellation_policy", e.target.value)}
+                    placeholder="Términos y condiciones de cancelación"
+                    className="mt-2 text-base"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="special_notes" className="text-sm font-semibold text-gray-700">
+                    Notas Especiales
+                  </Label>
+                  <Textarea
+                    id="special_notes"
+                    value={formData.special_notes}
+                    onChange={(e) => updateFormData("special_notes", e.target.value)}
+                    placeholder="Información adicional importante"
+                    className="mt-2 text-base"
+                    rows={3}
+                  />
+                </div>
+
+                {/* FAQs */}
+                <div>
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block">Preguntas Frecuentes</Label>
+                  <div className="space-y-4">
+                    {formData.faqs.map((faq, index) => (
+                      <Card key={index} className="p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="font-medium">FAQ {index + 1}</h4>
+                          <Button onClick={() => removeFAQ(index)} variant="ghost" size="sm">
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
                           <div>
-                            <strong>Nombre (ES):</strong> {formData.name_es}
+                            <strong>ES:</strong> {faq.question_es}
+                            <br />
+                            <span className="text-gray-600">{faq.answer_es}</span>
                           </div>
                           <div>
-                            <strong>Precio:</strong> €{formData.price}
+                            <strong>EN:</strong> {faq.question_en}
+                            <br />
+                            <span className="text-gray-600">{faq.answer_en}</span>
                           </div>
                           <div>
-                            <strong>Duración:</strong> {formData.duration}
-                          </div>
-                          <div>
-                            <strong>Categoría:</strong> {formData.category}
+                            <strong>DE:</strong> {faq.question_de}
+                            <br />
+                            <span className="text-gray-600">{faq.answer_de}</span>
                           </div>
                         </div>
-                      </div>
-                      {/* Horarios */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Horarios</h4>
-                        <div className="space-y-2 text-sm">
-                          {timeSlots.length > 0 ? (
-                            timeSlots.map((slot, index) => (
-                              <div key={slot.id}>
-                                <strong>Horario {index + 1}:</strong> {slot.label}
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-gray-500">No se han definido horarios específicos</div>
-                          )}
+                      </Card>
+                    ))}
+
+                    <Card className="p-4 border-dashed">
+                      <h4 className="font-medium mb-4">Añadir Nueva FAQ</h4>
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div>
+                            <Label className="text-xs">Pregunta (Español)</Label>
+                            <Input
+                              value={newFAQ.question_es}
+                              onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_es: e.target.value }))}
+                              placeholder="¿Pregunta en español?"
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Pregunta (Inglés)</Label>
+                            <Input
+                              value={newFAQ.question_en}
+                              onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_en: e.target.value }))}
+                              placeholder="Question in English?"
+                              className="mt-1"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Pregunta (Alemán)</Label>
+                            <Input
+                              value={newFAQ.question_de}
+                              onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_de: e.target.value }))}
+                              placeholder="Frage auf Deutsch?"
+                              className="mt-1"
+                            />
+                          </div>
                         </div>
-                      </div>
-                      {/* Más secciones organizadas */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Detalles Adicionales</h4>
-                        <div className="space-y-2 text-sm">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <div>
-                            <strong>Máx. personas:</strong> {formData.max_people || "No especificado"}
+                            <Label className="text-xs">Respuesta (Español)</Label>
+                            <Textarea
+                              value={newFAQ.answer_es}
+                              onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_es: e.target.value }))}
+                              placeholder="Respuesta en español"
+                              className="mt-1"
+                              rows={2}
+                            />
                           </div>
                           <div>
-                            <strong>Dificultad:</strong> {formData.difficulty_level || "No especificado"}
+                            <Label className="text-xs">Respuesta (Inglés)</Label>
+                            <Textarea
+                              value={newFAQ.answer_en}
+                              onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_en: e.target.value }))}
+                              placeholder="Answer in English"
+                              className="mt-1"
+                              rows={2}
+                            />
                           </div>
                           <div>
-                            <strong>Destacada:</strong> {formData.featured ? "Sí" : "No"}
-                          </div>
-                          <div>
-                            <strong>Precio Niños:</strong>{" "}
-                            {formData.children_price ? `€${formData.children_price}` : "No especificado"}
+                            <Label className="text-xs">Respuesta (Alemán)</Label>
+                            <Textarea
+                              value={newFAQ.answer_de}
+                              onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_de: e.target.value }))}
+                              placeholder="Antwort auf Deutsch"
+                              className="mt-1"
+                              rows={2}
+                            />
                           </div>
                         </div>
+                        <Button onClick={addFAQ} size="sm" className="w-full">
+                          <Plus className="h-4 w-4 mr-2" />
+                          Añadir FAQ
+                        </Button>
                       </div>
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Servicios</h4>
-                        <div className="space-y-2 text-sm">
-                          <div>
-                            <strong>Servicios incluidos:</strong> {formData.included_services.length}
+                    </Card>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Paso 6: Resumen */}
+            {currentStep === 6 && (
+              <div className="space-y-6">
+                {!submitSuccess ? (
+                  <>
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 rounded-xl p-8">
+                      <h3 className="text-xl font-bold text-blue-900 mb-6 flex items-center">
+                        <CheckCircle className="h-6 w-6 mr-3" />
+                        Resumen de la Excursión
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {/* Información básica */}
+                        <div className="bg-white rounded-lg p-4 shadow-sm">
+                          <h4 className="font-semibold text-gray-900 mb-3">Información Básica</h4>
+                          <div className="space-y-2 text-sm">
+                            <div>
+                              <strong>Nombre (ES):</strong> {formData.name_es}
+                            </div>
+                            <div>
+                              <strong>Precio:</strong> €{formData.price}
+                            </div>
+                            <div>
+                              <strong>Duración:</strong> {formData.duration}
+                            </div>
+                            <div>
+                              <strong>Categoría:</strong> {formData.category}
+                            </div>
                           </div>
-                          <div>
-                            <strong>Servicios no incluidos:</strong> {formData.not_included_services.length}
+                        </div>
+                        {/* Horarios */}
+                        <div className="bg-white rounded-lg p-4 shadow-sm">
+                          <h4 className="font-semibold text-gray-900 mb-3">Horarios</h4>
+                          <div className="space-y-2 text-sm">
+                            {timeSlots.length > 0 ? (
+                              timeSlots.map((slot, index) => (
+                                <div key={slot.id}>
+                                  <strong>Horario {index + 1}:</strong> {slot.label}
+                                </div>
+                              ))
+                            ) : (
+                              <div className="text-gray-500">No se han definido horarios específicos</div>
+                            )}
                           </div>
-                          <div>
-                            <strong>FAQs:</strong> {formData.faqs.length}
+                        </div>
+                        {/* Más secciones organizadas */}
+                        <div className="bg-white rounded-lg p-4 shadow-sm">
+                          <h4 className="font-semibold text-gray-900 mb-3">Detalles Adicionales</h4>
+                          <div className="space-y-2 text-sm">
+                            <div>
+                              <strong>Máx. personas:</strong> {formData.max_people || "No especificado"}
+                            </div>
+                            <div>
+                              <strong>Dificultad:</strong> {formData.difficulty_level || "No especificado"}
+                            </div>
+                            <div>
+                              <strong>Destacada:</strong> {formData.featured ? "Sí" : "No"}
+                            </div>
+                            <div>
+                              <strong>Precio Niños:</strong>{" "}
+                              {formData.children_price ? `€${formData.children_price}` : "No especificado"}
+                            </div>
                           </div>
-                          <div>
-                            <strong>Meses disponibles:</strong> {formData.available_months.length}
+                        </div>
+                        <div className="bg-white rounded-lg p-4 shadow-sm">
+                          <h4 className="font-semibold text-gray-900 mb-3">Servicios</h4>
+                          <div className="space-y-2 text-sm">
+                            <div>
+                              <strong>Servicios incluidos:</strong> {formData.included_services.length}
+                            </div>
+                            <div>
+                              <strong>Servicios no incluidos:</strong> {formData.not_included_services.length}
+                            </div>
+                            <div>
+                              <strong>FAQs:</strong> {formData.faqs.length}
+                            </div>
+                            <div>
+                              <strong>Meses disponibles:</strong> {formData.available_months.length}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <Button
-                    onClick={handleSubmitExcursion}
-                    disabled={isSubmitting}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    size="lg"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Creando Excursión...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="h-5 w-5 mr-2" />
-                        Crear Excursión
-                      </>
-                    )}
-                  </Button>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-green-900 mb-2">¡Excursión Creada Exitosamente!</h3>
-                  <p className="text-gray-600 mb-6">
-                    La excursión se ha guardado en la base de datos y ya está disponible.
-                  </p>
-                  <div className="flex gap-4 justify-center">
-                    <Button onClick={() => router.push("/excursions")} className="bg-blue-600 hover:bg-blue-700">
-                      Ver Todas las Excursiones
+                    <Button
+                      onClick={handleSubmitExcursion}
+                      disabled={isSubmitting}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white"
+                      size="lg"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Creando Excursión...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-5 w-5 mr-2" />
+                          Crear Excursión
+                        </>
+                      )}
                     </Button>
-                    <Button onClick={resetForm} variant="outline">
-                      Crear Nueva Excursión
-                    </Button>
+                  </>
+                ) : (
+                  <div className="text-center py-8">
+                    <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold text-green-900 mb-2">¡Excursión Creada Exitosamente!</h3>
+                    <p className="text-gray-600 mb-6">
+                      La excursión se ha guardado en la base de datos y ya está disponible.
+                    </p>
+                    <div className="flex gap-4 justify-center">
+                      <Button onClick={() => router.push("/excursions")} className="bg-blue-600 hover:bg-blue-700">
+                        Ver Todas las Excursiones
+                      </Button>
+                      <Button onClick={resetForm} variant="outline">
+                        Crear Nueva Excursión
+                      </Button>
+                    </div>
                   </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Enhanced Navigation Buttons */}
+        {!submitSuccess && (
+          <div className="flex justify-between items-center pt-6 sm:pt-8 border-t bg-gradient-to-r from-gray-50 to-gray-100 px-4 sm:px-8 py-4 sm:py-6 -mx-4 sm:-mx-8 -mb-8 sm:-mb-8 rounded-b-xl">
+            <Button
+              onClick={prevStep}
+              disabled={currentStep === 1}
+              variant="outline"
+              size="lg"
+              className="flex items-center px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium disabled:opacity-50"
+            >
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              Anterior
+            </Button>
+
+            <div className="flex items-center space-x-4">
+              {/* Step indicator */}
+              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
+                <span>
+                  Paso {currentStep} de {steps.length}
+                </span>
+                <div className="w-16 bg-gray-200 rounded-full h-1">
+                  <div
+                    className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+                    style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                  ></div>
                 </div>
+              </div>
+
+              {currentStep < 6 ? (
+                <Button
+                  onClick={nextStep}
+                  disabled={!stepValidation[currentStep]}
+                  size="lg"
+                  className={`flex items-center px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all duration-200 ${
+                    stepValidation[currentStep]
+                      ? "bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  {stepValidation[currentStep] ? "Continuar" : "Completa los campos"}
+                  <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmitExcursion}
+                  disabled={isSubmitting}
+                  size="lg"
+                  className="flex items-center px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium bg-green-600 hover:bg-green-700 shadow-lg hover:shadow-xl"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Creando...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                      Crear Excursión
+                    </>
+                  )}
+                </Button>
               )}
             </div>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+        )}
 
-      {/* Navigation Buttons */}
-      {!submitSuccess && (
-        <div className="flex justify-between items-center pt-8 border-t bg-gray-50 px-8 py-6 -mx-8 -mb-8 rounded-b-xl">
-          <Button
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            variant="outline"
-            size="lg"
-            className="flex items-center px-6 py-3 text-base font-medium"
-          >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Anterior
-          </Button>
-
-          {currentStep < 6 ? (
+        {/* Floating Quick Actions */}
+        {!submitSuccess && (
+          <div className="fixed bottom-6 right-6 z-50 flex flex-col space-y-2">
             <Button
-              onClick={nextStep}
-              disabled={!stepValidation[currentStep]}
-              size="lg"
-              className="flex items-center px-6 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700"
+              onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+              disabled={currentStep === 1}
+              size="sm"
+              variant="outline"
+              className="rounded-full w-12 h-12 shadow-lg bg-white hover:bg-gray-50"
             >
-              Siguiente
-              <ArrowRight className="h-5 w-5 ml-2" />
+              <ArrowLeft className="h-4 w-4" />
             </Button>
-          ) : null}
-        </div>
-      )}
+            <Button
+              onClick={() => stepValidation[currentStep] && setCurrentStep(Math.min(6, currentStep + 1))}
+              disabled={!stepValidation[currentStep] || currentStep === 6}
+              size="sm"
+              className="rounded-full w-12 h-12 shadow-lg bg-blue-600 hover:bg-blue-700"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }

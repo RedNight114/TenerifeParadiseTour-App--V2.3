@@ -134,24 +134,27 @@ export default function ExcursionsPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              {t("excursions.title")}
-              <span className="block text-yellow-300">{t("excursions.title2")}</span>
+              Descubre Tenerife
+              <span className="block text-yellow-300">Como Nunca Antes</span>
             </h1>
-            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">{t("excursions.subtitle")}</p>
+            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+              Vive experiencias únicas en la isla más espectacular de Canarias. Desde aventuras en la naturaleza hasta
+              tours gastronómicos, tenemos la excursión perfecta para ti.
+            </p>
 
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-xl mx-auto">
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-300">{excursions.length}+</div>
-                <div className="text-sm text-blue-200">{t("hero.stats.excursions")}</div>
+                <div className="text-sm text-blue-200">Experiencias Únicas</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-300">4.9</div>
-                <div className="text-sm text-blue-200">{t("hero.stats.rating")}</div>
+                <div className="text-3xl font-bold text-yellow-300">4.9★</div>
+                <div className="text-sm text-blue-200">Valoración Media</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-yellow-300">100%</div>
-                <div className="text-sm text-blue-200">{t("hero.stats.satisfaction")}</div>
+                <div className="text-sm text-blue-200">Satisfacción Garantizada</div>
               </div>
             </div>
           </div>
