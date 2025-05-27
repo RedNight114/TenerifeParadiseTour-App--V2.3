@@ -131,9 +131,15 @@ export function Footer() {
                   href="https://quickagence.com"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="ml-1 font-semibold text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                  className="ml-2 hover:opacity-80 transition-opacity duration-200"
                 >
-                  QuickAgence
+                  <Image
+                    src="/quickagence-logo.png"
+                    alt="QuickAgence"
+                    width={120}
+                    height={30}
+                    className="h-7 w-auto object-contain"
+                  />
                 </a>
               </div>
             </div>

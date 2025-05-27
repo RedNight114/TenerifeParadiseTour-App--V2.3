@@ -1,19 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import {
-  Clock,
-  Users,
-  MessageCircle,
-  Star,
-  MapPin,
-  Heart,
-  Sparkles,
-  Calendar,
-  AlertTriangle,
-  CheckCircle,
-  XCircle,
-} from "lucide-react"
+import Link from "next/link"
+import { Clock, Users, MessageCircle, Star, MapPin, CheckCircle, XCircle, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -83,11 +72,11 @@ export function ExcursionCard({ excursion, className }: ExcursionCardProps) {
   const getFreeCancellationLabel = () => {
     switch (language) {
       case "en":
-        return "✓ Free cancellation"
+        return "Free cancellation"
       case "de":
-        return "✓ Kostenlose Stornierung"
+        return "Kostenlose Stornierung"
       default:
-        return "✓ Cancelación gratuita"
+        return "Cancelación gratuita"
     }
   }
 
@@ -105,199 +94,180 @@ export function ExcursionCard({ excursion, className }: ExcursionCardProps) {
   const getBookButtonLabel = () => {
     switch (language) {
       case "en":
-        return "Book via WhatsApp"
+        return "Book Now"
       case "de":
-        return "Über WhatsApp buchen"
+        return "Jetzt Buchen"
       default:
-        return "Reservar por WhatsApp"
+        return "Reservar"
     }
   }
 
-  const getDifficultyLabel = () => {
-    if (!excursion.difficulty_level) return null
-
+  const getDetailsButtonLabel = () => {
     switch (language) {
       case "en":
-        return "Difficulty"
+        return "View Details"
       case "de":
-        return "Schwierigkeit"
+        return "Details ansehen"
       default:
-        return "Dificultad"
+        return "Ver Detalles"
     }
   }
 
-  const getDifficultyColor = () => {
-    if (!excursion.difficulty_level) return "bg-gray-100"
-
-    const level = excursion.difficulty_level.toLowerCase()
-    if (level.includes("fácil") || level.includes("easy") || level.includes("leicht")) {
-      return "bg-green-100 text-green-800"
-    }
-    if (level.includes("moderado") || level.includes("moderate") || level.includes("mäßig")) {
-      return "bg-yellow-100 text-yellow-800"
-    }
-    if (level.includes("difícil") || level.includes("difficult") || level.includes("schwer")) {
-      return "bg-red-100 text-red-800"
-    }
-    return "bg-gray-100 text-gray-800"
-  }
-
-  const getTimeLabel = () => {
-    if (!excursion.start_time) return null
-
+  const getHourLabel = () => {
     switch (language) {
       case "en":
-        return "Start time"
+        return "hour"
       case "de":
-        return "Startzeit"
+        return "Stunde"
       default:
-        return "Hora inicio"
+        return "hora"
     }
+  }
+
+  const getHoursLabel = () => {
+    switch (language) {
+      case "en":
+        return "hours"
+      case "de":
+        return "Stunden"
+      default:
+        return "horas"
+    }
+  }
+
+  const formatDuration = (duration: string) => {
+    const match = duration.match(/(\d+)/)
+    if (match) {
+      const hours = Number.parseInt(match[1])
+      const hourText = hours === 1 ? getHourLabel() : getHoursLabel()
+      return `${hours} ${hourText}`
+    }
+    return duration
   }
 
   const hasIncludedServices = excursion.included_services && excursion.included_services.length > 0
-  const hasRequirements = excursion.requirements && excursion.requirements.trim() !== ""
+  const hasNotIncludedServices = excursion.not_included_services && excursion.not_included_services.length > 0
 
   return (
     <Card
-      className={`group overflow-hidden hover:shadow-xl transition-all duration-500 border-0 bg-white rounded-3xl hover:scale-105 ${className}`}
+      className={`overflow-hidden hover:shadow-lg transition-shadow duration-300 bg-white rounded-lg border border-gray-200 ${className}`}
     >
-      <div className="relative h-64 w-full overflow-hidden">
+      <div className="relative h-56 w-full overflow-hidden">
         <Image
           src={excursion.image_url || "/placeholder.svg"}
           alt={excursion[`name_${language}` as keyof Excursion] as string}
           fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
+          className="object-cover"
         />
 
         {/* Overlay simple */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-text/20 to-brand-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-black/20" />
 
-        {/* Badge destacado */}
+        {/* Badge Premium */}
         {excursion.featured && (
-          <Badge className="absolute top-6 left-6 bg-gradient-to-r from-brand-primary to-brand-primary-hover text-brand-button-text border-0 shadow-lg px-4 py-2 font-semibold">
-            <Sparkles className="h-3 w-3 mr-1" />
+          <Badge className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1 text-sm font-semibold">
             {getPremiumLabel()}
           </Badge>
         )}
 
-        {/* Indicadores especiales */}
-        <div className="absolute top-6 right-6 flex flex-col gap-2">
-          {/* Botón favorito */}
-          <button className="w-12 h-12 bg-white/20 backdrop-blur-xl rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-300 hover:scale-110">
-            <Heart className="h-5 w-5 text-white hover:text-brand-accent transition-colors duration-300" />
-          </button>
-
-          {/* Indicador de requisitos especiales */}
-          {hasRequirements && (
-            <div
-              className="w-12 h-12 bg-orange-500/80 backdrop-blur-xl rounded-full flex items-center justify-center cursor-help"
-              title={excursion.requirements}
-            >
-              <AlertTriangle className="h-5 w-5 text-white" />
-            </div>
-          )}
-        </div>
-
         {/* Precio */}
-        <div className="absolute bottom-6 right-6 bg-white/95 backdrop-blur-xl rounded-2xl px-6 py-3 shadow-xl">
-          <div className="text-2xl font-bold text-brand-primary">€{excursion.price}</div>
-          <div className="text-xs text-brand-text text-center font-medium">{getPerPersonLabel()}</div>
-          {excursion.children_price && (
-            <div className="text-sm text-brand-text text-center mt-1">
-              Niños: €{excursion.children_price}
-              {excursion.children_age_range && (
-                <div className="text-xs opacity-75">({excursion.children_age_range})</div>
-              )}
-            </div>
-          )}
+        <div className="absolute top-3 right-3 bg-white rounded-lg px-3 py-2 shadow-sm">
+          <div className="text-xl font-bold text-gray-900">€{excursion.price}</div>
+          <div className="text-xs text-gray-600">{getPerPersonLabel()}</div>
         </div>
 
-        {/* Categoría y dificultad */}
-        <div className="absolute bottom-6 left-6 flex flex-col gap-2">
-          <Badge className="bg-brand-text/80 backdrop-blur-xl text-white border-0 px-4 py-2">
+        {/* Categoría */}
+        <div className="absolute bottom-3 left-3">
+          <Badge className="bg-gray-900 text-white px-3 py-1 text-sm">
             <MapPin className="h-3 w-3 mr-1" />
             {excursion.category}
           </Badge>
-
-          {excursion.difficulty_level && (
-            <Badge className={`backdrop-blur-xl border-0 px-4 py-2 ${getDifficultyColor()}`}>
-              {getDifficultyLabel()}: {excursion.difficulty_level.split(" - ")[0]}
-            </Badge>
-          )}
         </div>
       </div>
 
-      <CardContent className="p-8">
-        <h3 className="text-2xl font-bold text-brand-heading mb-4 group-hover:text-brand-primary transition-all duration-500 line-clamp-2">
+      <CardContent className="p-5">
+        {/* Título */}
+        <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
           {excursion[`name_${language}` as keyof Excursion] as string}
         </h3>
 
-        <p className="text-brand-text text-sm mb-6 line-clamp-2 leading-relaxed">
+        {/* Descripción */}
+        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
           {excursion[`short_description_${language}` as keyof Excursion] as string}
         </p>
 
-        <div className="flex items-center justify-between text-sm text-brand-text mb-6">
-          <div className="flex items-center bg-gradient-to-r from-green-50 to-green-100 rounded-full px-4 py-2">
-            <Clock className="h-4 w-4 mr-2 text-brand-accent" />
-            <span className="font-semibold text-brand-text">{excursion.duration}</span>
+        {/* Información principal */}
+        <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center text-sm text-gray-700">
+            <Clock className="h-4 w-4 mr-2 text-gray-500" />
+            <span className="font-medium">{formatDuration(excursion.duration)}</span>
           </div>
-          <div className="flex items-center bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-full px-4 py-2">
-            <Users className="h-4 w-4 mr-2 text-brand-primary" />
-            <span className="font-semibold text-brand-text">{getSmallGroupLabel()}</span>
+          <div className="flex items-center text-sm text-gray-700">
+            <Users className="h-4 w-4 mr-2 text-gray-500" />
+            <span className="font-medium">{getSmallGroupLabel()}</span>
           </div>
         </div>
 
-        {/* Información adicional */}
-        <div className="space-y-3 mb-6">
-          {excursion.start_time && (
-            <div className="flex items-center text-sm text-brand-text">
-              <Calendar className="h-4 w-4 mr-2 text-brand-primary" />
-              <span>
-                {getTimeLabel()}: {excursion.start_time}
-              </span>
-            </div>
-          )}
+        {/* Servicios */}
+        {(hasIncludedServices || hasNotIncludedServices) && (
+          <div className="space-y-2 mb-4">
+            {hasIncludedServices && (
+              <div className="flex items-center text-sm text-green-700">
+                <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                <span>{excursion.included_services!.length} servicios incluidos</span>
+              </div>
+            )}
 
-          {hasIncludedServices && (
-            <div className="flex items-center text-sm text-brand-text">
-              <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
-              <span>{excursion.included_services!.length} servicios incluidos</span>
-            </div>
-          )}
+            {hasNotIncludedServices && (
+              <div className="flex items-center text-sm text-red-700">
+                <XCircle className="h-4 w-4 mr-2 text-red-500" />
+                <span>{excursion.not_included_services!.length} servicios no incluidos</span>
+              </div>
+            )}
+          </div>
+        )}
 
-          {excursion.not_included_services && excursion.not_included_services.length > 0 && (
-            <div className="flex items-center text-sm text-brand-text">
-              <XCircle className="h-4 w-4 mr-2 text-red-500" />
-              <span>{excursion.not_included_services.length} servicios no incluidos</span>
-            </div>
-          )}
-        </div>
-
-        <div className="flex items-center justify-between mb-6">
+        {/* Rating */}
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <div className="flex text-yellow-400">
+            <div className="flex text-yellow-400 mr-2">
               {[...Array(5)].map((_, i) => (
                 <Star key={i} className="h-4 w-4 fill-current" />
               ))}
             </div>
-            <span className="text-sm text-brand-text ml-3 font-semibold">4.9 (127 {getReviewsLabel()})</span>
+            <span className="text-sm text-gray-600 font-medium">4.9 (127)</span>
           </div>
-          <div className="text-xs text-brand-accent bg-green-50 px-3 py-1 rounded-full font-semibold">
-            {getFreeCancellationLabel()}
-          </div>
+        </div>
+
+        {/* Cancelación gratuita */}
+        <div className="text-sm text-green-700 bg-green-50 px-3 py-2 rounded-md text-center">
+          ✓ {getFreeCancellationLabel()}
         </div>
       </CardContent>
 
-      <CardFooter className="p-8 pt-0">
-        <Button
-          onClick={handleWhatsAppBooking}
-          className="w-full bg-brand-primary hover:bg-brand-primary-hover text-brand-button-text font-semibold shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-105 border-0 py-4 text-base rounded-2xl"
-        >
-          <MessageCircle className="mr-3 h-5 w-5" />
-          {getBookButtonLabel()}
-        </Button>
+      <CardFooter className="p-5 pt-0">
+        {/* Botones en grid */}
+        <div className="grid grid-cols-2 gap-3 w-full">
+          {/* Botón Ver Detalles */}
+          <Link href={`/excursions/${excursion.id}`}>
+            <Button
+              variant="outline"
+              className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900 font-medium py-3 rounded-lg transition-colors duration-200"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              {getDetailsButtonLabel()}
+            </Button>
+          </Link>
+
+          {/* Botón Reservar */}
+          <Button
+            onClick={handleWhatsAppBooking}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
+          >
+            <MessageCircle className="mr-2 h-4 w-4" />
+            {getBookButtonLabel()}
+          </Button>
+        </div>
       </CardFooter>
     </Card>
   )

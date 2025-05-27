@@ -17,62 +17,62 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
   const sections = [
     {
       icon: FileText,
-      title: "1. Aceptación de los Términos",
+      title: t("terms.section1.title"),
       content: [
-        "• Al utilizar nuestros servicios, aceptas estos términos y condiciones",
-        "• Estos términos se aplican a todas las reservas y servicios de TenerifeParadiseTours",
-        "• Nos reservamos el derecho de modificar estos términos en cualquier momento",
-        "• Es tu responsabilidad revisar periódicamente estos términos",
+        t("terms.section1.content1"),
+        t("terms.section1.content2"),
+        t("terms.section1.content3"),
+        t("terms.section1.content4"),
       ],
     },
     {
       icon: Calendar,
-      title: "2. Reservas y Confirmaciones",
+      title: t("terms.section2.title"),
       content: [
-        "• Las reservas se confirman mediante WhatsApp o email",
-        "• Se requiere información personal válida para procesar la reserva",
-        "• Los precios pueden variar según temporada y disponibilidad",
-        "• La confirmación final depende de la disponibilidad en la fecha solicitada",
+        t("terms.section2.content1"),
+        t("terms.section2.content2"),
+        t("terms.section2.content3"),
+        t("terms.section2.content4"),
       ],
     },
     {
       icon: CreditCard,
-      title: "3. Precios y Pagos",
+      title: t("terms.section3.title"),
       content: [
-        "• Los precios incluyen transporte, guía y actividades especificadas",
-        "• El pago se realiza el día de la excursión o por transferencia previa",
-        "• Los precios están sujetos a cambios sin previo aviso",
-        "• No se incluyen comidas ni gastos personales salvo indicación contraria",
+        t("terms.section3.content1"),
+        t("terms.section3.content2"),
+        t("terms.section3.content3"),
+        t("terms.section3.content4"),
       ],
     },
     {
       icon: AlertTriangle,
-      title: "4. Cancelaciones y Modificaciones",
+      title: t("terms.section4.title"),
       content: [
-        "• Cancelación gratuita hasta 24 horas antes de la excursión",
-        "• Cancelaciones tardías pueden estar sujetas a penalizaciones",
-        "• Modificaciones de fecha sujetas a disponibilidad",
-        "• No se realizan reembolsos por no presentarse (no-show)",
+        t("terms.section4.content1"),
+        t("terms.section4.content2"),
+        t("terms.section4.content3"),
+        t("terms.section4.content4"),
       ],
     },
     {
       icon: Shield,
-      title: "5. Responsabilidades y Seguros",
+      title: t("terms.section5.title"),
       content: [
-        "• Todas las excursiones incluyen seguro de responsabilidad civil",
-        "• Los participantes deben informar sobre condiciones médicas relevantes",
-        "• TenerifeParadiseTours no se responsabiliza por objetos personales perdidos",
-        "• Se requiere seguir las instrucciones del guía en todo momento",
+        t("terms.section5.content1"),
+        t("terms.section5.content2"),
+        t("terms.section5.content3"),
+        t("terms.section5.content4"),
       ],
     },
     {
       icon: Users,
-      title: "6. Comportamiento y Normas",
+      title: t("terms.section6.title"),
       content: [
-        "• Se espera un comportamiento respetuoso hacia guías y otros participantes",
-        "• Prohibido el consumo de alcohol durante las excursiones",
-        "• Nos reservamos el derecho de excluir a participantes disruptivos",
-        "• Es obligatorio seguir las normas de seguridad establecidas",
+        t("terms.section6.content1"),
+        t("terms.section6.content2"),
+        t("terms.section6.content3"),
+        t("terms.section6.content4"),
       ],
     },
   ]
@@ -92,8 +92,8 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
                 <FileText className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">Términos y Condiciones</h2>
-                <p className="text-green-100">TenerifeParadiseTours - Vigentes desde Enero 2024</p>
+                <h2 className="text-2xl font-bold">{t("terms.title")}</h2>
+                <p className="text-green-100">{t("terms.subtitle")}</p>
               </div>
             </div>
             <Button
@@ -111,12 +111,8 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
         <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
           {/* Introduction */}
           <div className="mb-8 p-6 bg-green-50 rounded-xl border border-green-200">
-            <h3 className="text-lg font-semibold text-green-900 mb-3">Condiciones Generales de Contratación</h3>
-            <p className="text-green-800 leading-relaxed">
-              Estos términos y condiciones regulan la prestación de servicios turísticos por parte de
-              TenerifeParadiseTours S.L. Al realizar una reserva, aceptas cumplir con estas condiciones. Te recomendamos
-              leer detenidamente este documento antes de confirmar tu reserva.
-            </p>
+            <h3 className="text-lg font-semibold text-green-900 mb-3">{t("terms.intro.title")}</h3>
+            <p className="text-green-800 leading-relaxed">{t("terms.intro.content")}</p>
           </div>
 
           {/* Sections */}
@@ -149,19 +145,15 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
             <div className="flex items-start space-x-3">
               <AlertTriangle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-yellow-900 mb-2">Aviso Importante</h4>
-                <p className="text-yellow-800 text-sm leading-relaxed">
-                  Las condiciones meteorológicas adversas pueden resultar en la cancelación o modificación de
-                  excursiones por razones de seguridad. En estos casos, se ofrecerá una fecha alternativa o reembolso
-                  completo.
-                </p>
+                <h4 className="font-semibold text-yellow-900 mb-2">{t("terms.important_notice.title")}</h4>
+                <p className="text-yellow-800 text-sm leading-relaxed">{t("terms.important_notice.content")}</p>
               </div>
             </div>
           </div>
 
           {/* Legal info */}
           <div className="mt-8 p-6 bg-gray-50 rounded-xl">
-            <h4 className="font-semibold text-gray-900 mb-3">Información Legal</h4>
+            <h4 className="font-semibold text-gray-900 mb-3">{t("terms.legal_info.title")}</h4>
             <div className="space-y-2 text-sm text-gray-600">
               <p>
                 <strong>Razón Social:</strong> TenerifeParadiseTours S.L.
@@ -184,10 +176,10 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
             <Button onClick={onClose} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
-              Acepto los Términos
+              {t("terms.buttons.accept")}
             </Button>
             <Button variant="outline" onClick={() => window.print()} className="flex-1">
-              Imprimir Términos
+              {t("terms.buttons.print")}
             </Button>
           </div>
         </div>

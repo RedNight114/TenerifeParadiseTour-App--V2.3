@@ -7,12 +7,15 @@ import { Menu, X, ChevronDown, Phone, Globe } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLanguage } from "@/lib/language-context"
+import { supabase } from "@/lib/supabase"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [mounted, setMounted] = useState(false)
   const { language, setLanguage, t } = useLanguage()
+  const [excursions, setExcursions] = useState([])
+  const [loadingExcursions, setLoadingExcursions] = useState(true)
 
   useEffect(() => {
     setMounted(true)
@@ -29,11 +32,36 @@ export function Navbar() {
     { code: "de", name: "Deutsch", flag: "🇩🇪" },
   ]
 
+  // Función para truncar nombres largos
+  const truncateName = (name, maxLength = 25) => {
+    if (!name) return ""
+    return name.length > maxLength ? name.substring(0, maxLength) + "..." : name
+  }
+
   const featuredExcursions = [
     { name: t("featured.teide_stars"), href: "/excursions?featured=teide" },
     { name: t("featured.whale_watching"), href: "/excursions?featured=whales" },
     { name: t("featured.anaga_hiking"), href: "/excursions?featured=anaga" },
   ]
+
+  const fetchExcursions = async () => {
+    try {
+      const { data, error } = await supabase.from("excursions").select("id, name_es, name_en, name_de").limit(6)
+
+      if (error) throw error
+      setExcursions(data || [])
+    } catch (error) {
+      console.error("Error fetching excursions:", error)
+    } finally {
+      setLoadingExcursions(false)
+    }
+  }
+
+  useEffect(() => {
+    if (mounted) {
+      fetchExcursions()
+    }
+  }, [mounted])
 
   if (!mounted) {
     return (
@@ -112,23 +140,41 @@ export function Navbar() {
                 <ChevronDown className="ml-1 h-4 w-4 group-hover:rotate-180 transition-transform duration-300" />
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-primary group-hover:w-full transition-all duration-300"></span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-white/95 backdrop-blur-lg border-gray-200 animate-fade-in">
-                {featuredExcursions.map((excursion, index) => (
-                  <DropdownMenuItem
-                    key={excursion.href}
-                    className="hover:bg-blue-50 transition-colors duration-300 animate-slide-in text-brand-text hover:text-brand-heading"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <Link href={excursion.href} className="w-full">
-                      {excursion.name}
-                    </Link>
+              <DropdownMenuContent className="w-64 bg-white/95 backdrop-blur-lg border-gray-200 animate-fade-in max-h-80 overflow-y-auto">
+                {loadingExcursions ? (
+                  <DropdownMenuItem className="justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                   </DropdownMenuItem>
-                ))}
-                <DropdownMenuItem className="border-t border-gray-200 hover:bg-blue-50 transition-colors duration-300">
-                  <Link href="/excursions" className="w-full font-medium text-brand-text hover:text-brand-heading">
-                    {t("featured.view_all_short")}
-                  </Link>
-                </DropdownMenuItem>
+                ) : excursions.length > 0 ? (
+                  <>
+                    {excursions.map((excursion, index) => (
+                      <DropdownMenuItem
+                        key={excursion.id}
+                        className="hover:bg-blue-50 transition-colors duration-300 animate-slide-in text-brand-text hover:text-brand-heading"
+                        style={{ animationDelay: `${index * 0.1}s` }}
+                      >
+                        <Link href={`/excursions/${excursion.id}`} className="w-full">
+                          {truncateName(
+                            language === "es"
+                              ? excursion.name_es
+                              : language === "en"
+                                ? excursion.name_en
+                                : language === "de"
+                                  ? excursion.name_de
+                                  : excursion.name_es,
+                          )}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                    <DropdownMenuItem className="border-t border-gray-200 hover:bg-blue-50 transition-colors duration-300">
+                      <Link href="/excursions" className="w-full font-medium text-brand-text hover:text-brand-heading">
+                        {t("featured.view_all_short")}
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <DropdownMenuItem className="text-gray-500">No hay excursiones disponibles</DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 

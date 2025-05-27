@@ -1,7 +1,6 @@
 "use client"
 
-import React from "react"
-
+import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,19 +23,21 @@ import {
   FileText,
   Settings,
   Star,
+  Save,
+  Loader2,
 } from "lucide-react"
-import { createExcursion, type ExcursionFormData } from "@/lib/excursion-actions"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { ImageUpload } from "@/components/image-upload"
+import { updateExcursion, type ExcursionFormData } from "@/lib/excursion-actions"
 import {
+  getExcursionById,
   getCategories,
   getIncludedServices,
   getNotIncludedServices,
   type Category,
   type PredefinedService,
 } from "@/lib/supabase"
+import { useRouter, useParams } from "next/navigation"
+import { toast } from "sonner"
+import { ImageUpload } from "@/components/image-upload"
 
 const DIFFICULTY_LEVELS = [
   { value: "facil", label: "Fácil" },
@@ -67,10 +68,13 @@ interface TimeSlot {
   label: string
 }
 
-const ExcursionFormPage = () => {
+const EditExcursionPage = () => {
   const router = useRouter()
+  const params = useParams()
+  const excursionId = Number.parseInt(params.id as string)
+
+  const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitSuccess, setSubmitSuccess] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [categories, setCategories] = useState<Category[]>([])
   const [includedServices, setIncludedServices] = useState<PredefinedService[]>([])
@@ -134,25 +138,87 @@ const ExcursionFormPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [categoriesData, includedData, notIncludedData] = await Promise.all([
+        setLoading(true)
+        const [excursionData, categoriesData, includedData, notIncludedData] = await Promise.all([
+          getExcursionById(excursionId),
           getCategories(),
           getIncludedServices(),
           getNotIncludedServices(),
         ])
+
+        if (!excursionData) {
+          toast.error("Excursión no encontrada")
+          router.push("/admin/manage-excursions")
+          return
+        }
+
+        // Populate form with existing data
+        setFormData({
+          name_es: excursionData.name_es || "",
+          name_en: excursionData.name_en || "",
+          name_de: excursionData.name_de || "",
+          short_description_es: excursionData.short_description_es || "",
+          short_description_en: excursionData.short_description_en || "",
+          short_description_de: excursionData.short_description_de || "",
+          description_es: excursionData.description_es || "",
+          description_en: excursionData.description_en || "",
+          description_de: excursionData.description_de || "",
+          price: excursionData.price?.toString() || "",
+          duration: excursionData.duration || "",
+          category: excursionData.category || "",
+          image_url: excursionData.image_url || "",
+          featured: excursionData.featured || false,
+          included_services: excursionData.included_services || [],
+          not_included_services: excursionData.not_included_services || [],
+          difficulty_level: excursionData.difficulty_level || "",
+          meeting_point: excursionData.meeting_point || "",
+          what_to_bring: excursionData.what_to_bring || "",
+          cancellation_policy: excursionData.cancellation_policy || "",
+          age_restrictions: excursionData.age_restrictions || "",
+          available_months: excursionData.available_months || [],
+          special_notes: excursionData.special_notes || "",
+          requirements: excursionData.requirements || "",
+          faqs: excursionData.faqs || [],
+          max_people: excursionData.max_people?.toString() || "",
+          children_price: excursionData.children_price?.toString() || "",
+          children_age_range: excursionData.children_age_range || "",
+        })
+
+        // Extract time slots from special_notes if they exist
+        if (excursionData.special_notes) {
+          const timeSlotMatches = excursionData.special_notes.match(/Horarios disponibles:\n((?:• .+\n?)+)/)
+          if (timeSlotMatches) {
+            const slots = timeSlotMatches[1]
+              .split("\n")
+              .filter((line) => line.startsWith("• "))
+              .map((line, index) => ({
+                id: `slot-${index}`,
+                start_time: excursionData.start_time || "",
+                end_time: excursionData.end_time || "",
+                label: line.replace("• ", ""),
+              }))
+            setTimeSlots(slots)
+          }
+        }
+
         setCategories(categoriesData)
         setIncludedServices(includedData)
         setNotIncludedServices(notIncludedData)
       } catch (error) {
         console.error("Error loading data:", error)
-        toast.error("Error cargando datos del formulario")
+        toast.error("Error cargando datos")
+      } finally {
+        setLoading(false)
       }
     }
-    loadData()
-  }, [])
+
+    if (excursionId) {
+      loadData()
+    }
+  }, [excursionId, router])
 
   const updateFormData = useCallback((field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
-    // Clear error when the field is updated
     setFieldErrors((prev) => ({ ...prev, [field]: "" }))
   }, [])
 
@@ -271,26 +337,14 @@ const ExcursionFormPage = () => {
     }
   }, [])
 
-  // Memoize step validation to prevent re-renders
   const stepValidation = useMemo(() => {
     const validation: Record<number, boolean> = {}
-
-    // Step 1
     validation[1] = !!(formData.name_es && formData.name_en && formData.name_de)
-
-    // Step 2
     validation[2] = !!(formData.short_description_es && formData.short_description_en && formData.short_description_de)
-
-    // Step 3
     validation[3] = !!(formData.description_es && formData.description_en && formData.description_de)
-
-    // Step 4
     validation[4] = !!(formData.price && formData.duration && formData.category && formData.image_url)
-
-    // Step 5 is optional
     validation[5] = true
     validation[6] = true
-
     return validation
   }, [formData])
 
@@ -341,11 +395,10 @@ const ExcursionFormPage = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1))
   }, [])
 
-  const handleSubmitExcursion = useCallback(async () => {
+  const handleUpdateExcursion = useCallback(async () => {
     setIsSubmitting(true)
 
     try {
-      // Validar campos obligatorios
       const requiredFields = [
         "name_es",
         "name_en",
@@ -370,78 +423,34 @@ const ExcursionFormPage = () => {
         return
       }
 
-      // Preparar datos para envío - limpiar campos de tiempo vacíos
-      const excursionData: ExcursionFormData = {
+      const excursionData: Partial<ExcursionFormData> = {
         ...formData,
         price: Number(formData.price),
         max_people: formData.max_people ? Number(formData.max_people) : undefined,
         children_price: formData.children_price ? Number(formData.children_price) : undefined,
-        // Convertir timeSlots a formato que espera el backend
         start_time: timeSlots.length > 0 ? timeSlots[0].start_time : undefined,
         end_time: timeSlots.length > 0 ? timeSlots[0].end_time : undefined,
-        // Agregar información de horarios múltiples en special_notes si hay más de uno
         special_notes:
           timeSlots.length > 1
             ? `${formData.special_notes}\n\nHorarios disponibles:\n${timeSlots.map((slot) => `• ${slot.label}`).join("\n")}`
             : formData.special_notes,
       }
 
-      const result = await createExcursion(excursionData)
+      const result = await updateExcursion(excursionId, excursionData)
 
       if (result.success) {
-        setSubmitSuccess(true)
-        toast.success("¡Excursión creada exitosamente!")
-
-        setTimeout(() => {
-          router.push("/excursions")
-        }, 2000)
+        toast.success("¡Excursión actualizada exitosamente!")
+        router.push("/admin/manage-excursions")
       } else {
         toast.error(`Error: ${result.error}`)
       }
     } catch (error) {
-      console.error("Error submitting excursion:", error)
+      console.error("Error updating excursion:", error)
       toast.error("Error interno del servidor")
     } finally {
       setIsSubmitting(false)
     }
-  }, [formData, timeSlots, router])
-
-  const resetForm = useCallback(() => {
-    setCurrentStep(1)
-    setFormData({
-      name_es: "",
-      name_en: "",
-      name_de: "",
-      short_description_es: "",
-      short_description_en: "",
-      short_description_de: "",
-      description_es: "",
-      description_en: "",
-      description_de: "",
-      price: "",
-      duration: "",
-      category: "",
-      image_url: "",
-      featured: false,
-      included_services: [],
-      not_included_services: [],
-      difficulty_level: "",
-      meeting_point: "",
-      what_to_bring: "",
-      cancellation_policy: "",
-      age_restrictions: "",
-      available_months: [],
-      special_notes: "",
-      requirements: "",
-      faqs: [],
-      max_people: "",
-      children_price: "",
-      children_age_range: "",
-    })
-    setTimeSlots([])
-    setSubmitSuccess(false)
-    setFieldErrors({})
-  }, [])
+  }, [formData, timeSlots, excursionId, router])
 
   const steps = useMemo(
     () => [
@@ -450,23 +459,46 @@ const ExcursionFormPage = () => {
       { number: 3, title: "Descripciones Completas", icon: FileText },
       { number: 4, title: "Información Básica", icon: Settings },
       { number: 5, title: "Detalles Adicionales", icon: Plus },
-      { number: 6, title: "Resumen", icon: CheckCircle },
+      { number: 6, title: "Guardar Cambios", icon: Save },
     ],
     [],
   )
 
+  if (loading) {
+    return (
+      <div className="container py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
+            <p className="text-gray-600">Cargando datos de la excursión...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Crear Nueva Excursión</h1>
+        <div className="flex items-center gap-4 mb-4">
+          <Button
+            variant="outline"
+            onClick={() => router.push("/admin/manage-excursions")}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Volver
+          </Button>
+        </div>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Editar Excursión</h1>
         <p className="text-lg text-gray-600 max-w-2xl">
-          Completa todos los pasos para crear una nueva excursión. Todos los campos marcados con * son obligatorios.
+          Modifica los datos de la excursión. Todos los campos marcados con * son obligatorios.
         </p>
       </div>
 
       <div className="mb-12">
         <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Progreso del Formulario</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">Progreso de Edición</h2>
           <div className="flex items-center justify-between">
             {steps.map((step, index) => {
               const Icon = step.icon
@@ -1171,159 +1203,117 @@ const ExcursionFormPage = () => {
             </div>
           )}
 
-          {/* Paso 6: Resumen */}
+          {/* Paso 6: Guardar Cambios */}
           {currentStep === 6 && (
             <div className="space-y-6">
-              {!submitSuccess ? (
-                <>
-                  <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 rounded-xl p-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-6 flex items-center">
-                      <CheckCircle className="h-6 w-6 mr-3" />
-                      Resumen de la Excursión
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {/* Información básica */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Información Básica</h4>
-                        <div className="space-y-2 text-sm">
-                          <div>
-                            <strong>Nombre (ES):</strong> {formData.name_es}
-                          </div>
-                          <div>
-                            <strong>Precio:</strong> €{formData.price}
-                          </div>
-                          <div>
-                            <strong>Duración:</strong> {formData.duration}
-                          </div>
-                          <div>
-                            <strong>Categoría:</strong> {formData.category}
-                          </div>
-                        </div>
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-100 border border-blue-200 rounded-xl p-8">
+                <h3 className="text-xl font-bold text-blue-900 mb-6 flex items-center">
+                  <Save className="h-6 w-6 mr-3" />
+                  Confirmar Cambios
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="bg-white rounded-lg p-4 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-3">Información Básica</h4>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <strong>Nombre (ES):</strong> {formData.name_es}
                       </div>
-                      {/* Horarios */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Horarios</h4>
-                        <div className="space-y-2 text-sm">
-                          {timeSlots.length > 0 ? (
-                            timeSlots.map((slot, index) => (
-                              <div key={slot.id}>
-                                <strong>Horario {index + 1}:</strong> {slot.label}
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-gray-500">No se han definido horarios específicos</div>
-                          )}
-                        </div>
+                      <div>
+                        <strong>Precio:</strong> €{formData.price}
                       </div>
-                      {/* Más secciones organizadas */}
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Detalles Adicionales</h4>
-                        <div className="space-y-2 text-sm">
-                          <div>
-                            <strong>Máx. personas:</strong> {formData.max_people || "No especificado"}
-                          </div>
-                          <div>
-                            <strong>Dificultad:</strong> {formData.difficulty_level || "No especificado"}
-                          </div>
-                          <div>
-                            <strong>Destacada:</strong> {formData.featured ? "Sí" : "No"}
-                          </div>
-                          <div>
-                            <strong>Precio Niños:</strong>{" "}
-                            {formData.children_price ? `€${formData.children_price}` : "No especificado"}
-                          </div>
-                        </div>
+                      <div>
+                        <strong>Duración:</strong> {formData.duration}
                       </div>
-                      <div className="bg-white rounded-lg p-4 shadow-sm">
-                        <h4 className="font-semibold text-gray-900 mb-3">Servicios</h4>
-                        <div className="space-y-2 text-sm">
-                          <div>
-                            <strong>Servicios incluidos:</strong> {formData.included_services.length}
-                          </div>
-                          <div>
-                            <strong>Servicios no incluidos:</strong> {formData.not_included_services.length}
-                          </div>
-                          <div>
-                            <strong>FAQs:</strong> {formData.faqs.length}
-                          </div>
-                          <div>
-                            <strong>Meses disponibles:</strong> {formData.available_months.length}
-                          </div>
-                        </div>
+                      <div>
+                        <strong>Categoría:</strong> {formData.category}
                       </div>
                     </div>
                   </div>
-
-                  <Button
-                    onClick={handleSubmitExcursion}
-                    disabled={isSubmitting}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                    size="lg"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Creando Excursión...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="h-5 w-5 mr-2" />
-                        Crear Excursión
-                      </>
-                    )}
-                  </Button>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-green-900 mb-2">¡Excursión Creada Exitosamente!</h3>
-                  <p className="text-gray-600 mb-6">
-                    La excursión se ha guardado en la base de datos y ya está disponible.
-                  </p>
-                  <div className="flex gap-4 justify-center">
-                    <Button onClick={() => router.push("/excursions")} className="bg-blue-600 hover:bg-blue-700">
-                      Ver Todas las Excursiones
-                    </Button>
-                    <Button onClick={resetForm} variant="outline">
-                      Crear Nueva Excursión
-                    </Button>
+                  <div className="bg-white rounded-lg p-4 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-3">Horarios</h4>
+                    <div className="space-y-2 text-sm">
+                      {timeSlots.length > 0 ? (
+                        timeSlots.map((slot, index) => (
+                          <div key={slot.id}>
+                            <strong>Horario {index + 1}:</strong> {slot.label}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-gray-500">No se han definido horarios específicos</div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-lg p-4 shadow-sm">
+                    <h4 className="font-semibold text-gray-900 mb-3">Detalles Adicionales</h4>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <strong>Máx. personas:</strong> {formData.max_people || "No especificado"}
+                      </div>
+                      <div>
+                        <strong>Dificultad:</strong> {formData.difficulty_level || "No especificado"}
+                      </div>
+                      <div>
+                        <strong>Destacada:</strong> {formData.featured ? "Sí" : "No"}
+                      </div>
+                      <div>
+                        <strong>Precio Niños:</strong>{" "}
+                        {formData.children_price ? `€${formData.children_price}` : "No especificado"}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
+
+              <Button
+                onClick={handleUpdateExcursion}
+                disabled={isSubmitting}
+                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                size="lg"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Guardando Cambios...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-5 w-5 mr-2" />
+                    Guardar Cambios
+                  </>
+                )}
+              </Button>
             </div>
           )}
         </CardContent>
       </Card>
 
       {/* Navigation Buttons */}
-      {!submitSuccess && (
-        <div className="flex justify-between items-center pt-8 border-t bg-gray-50 px-8 py-6 -mx-8 -mb-8 rounded-b-xl">
-          <Button
-            onClick={prevStep}
-            disabled={currentStep === 1}
-            variant="outline"
-            size="lg"
-            className="flex items-center px-6 py-3 text-base font-medium"
-          >
-            <ArrowLeft className="h-5 w-5 mr-2" />
-            Anterior
-          </Button>
+      <div className="flex justify-between items-center pt-8 border-t bg-gray-50 px-8 py-6 -mx-8 -mb-8 rounded-b-xl">
+        <Button
+          onClick={prevStep}
+          disabled={currentStep === 1}
+          variant="outline"
+          size="lg"
+          className="flex items-center px-6 py-3 text-base font-medium"
+        >
+          <ArrowLeft className="h-5 w-5 mr-2" />
+          Anterior
+        </Button>
 
-          {currentStep < 6 ? (
-            <Button
-              onClick={nextStep}
-              disabled={!stepValidation[currentStep]}
-              size="lg"
-              className="flex items-center px-6 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700"
-            >
-              Siguiente
-              <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          ) : null}
-        </div>
-      )}
+        {currentStep < 6 ? (
+          <Button
+            onClick={nextStep}
+            disabled={!stepValidation[currentStep]}
+            size="lg"
+            className="flex items-center px-6 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700"
+          >
+            Siguiente
+            <ArrowRight className="h-5 w-5 ml-2" />
+          </Button>
+        ) : null}
+      </div>
     </div>
   )
 }
 
-export default ExcursionFormPage
+export default EditExcursionPage

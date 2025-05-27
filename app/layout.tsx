@@ -1,5 +1,5 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { LanguageProvider } from "@/lib/language-context"
@@ -7,6 +7,14 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 
 const inter = Inter({ subsets: ["latin"] })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+  themeColor: "#3B82F6",
+}
 
 export const metadata: Metadata = {
   title: "TenerifeParadiseTours - Excursiones Únicas en Tenerife",
@@ -18,7 +26,7 @@ export const metadata: Metadata = {
     description: "Descubre la magia de Tenerife con nuestras excursiones únicas",
     images: ["/placeholder.svg?height=630&width=1200&text=Tenerife+Paradise+Tours"],
   },
-    generator: 'v0.dev'
+  generator: "Next.js",
 }
 
 export default function RootLayout({

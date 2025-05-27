@@ -17,62 +17,62 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
   const sections = [
     {
       icon: FileText,
-      title: "1. Información que Recopilamos",
+      title: t("privacy.section1.title"),
       content: [
-        "• Datos personales: nombre, email, teléfono cuando realizas una reserva",
-        "• Información de contacto para comunicarnos contigo sobre tu excursión",
-        "• Preferencias de idioma y solicitudes especiales",
-        "• Datos de navegación para mejorar nuestro sitio web",
+        t("privacy.section1.content1"),
+        t("privacy.section1.content2"),
+        t("privacy.section1.content3"),
+        t("privacy.section1.content4"),
       ],
     },
     {
       icon: Eye,
-      title: "2. Cómo Utilizamos tu Información",
+      title: t("privacy.section2.title"),
       content: [
-        "• Procesar y confirmar tus reservas de excursiones",
-        "• Enviarte información relevante sobre tu experiencia",
-        "• Mejorar nuestros servicios y experiencia del usuario",
-        "• Cumplir con obligaciones legales y de seguridad",
+        t("privacy.section2.content1"),
+        t("privacy.section2.content2"),
+        t("privacy.section2.content3"),
+        t("privacy.section2.content4"),
       ],
     },
     {
       icon: Shield,
-      title: "3. Protección de Datos",
+      title: t("privacy.section3.title"),
       content: [
-        "• Utilizamos encriptación SSL para proteger tus datos",
-        "• No compartimos tu información con terceros sin tu consentimiento",
-        "• Almacenamos tus datos de forma segura en servidores protegidos",
-        "• Solo el personal autorizado tiene acceso a tu información",
+        t("privacy.section3.content1"),
+        t("privacy.section3.content2"),
+        t("privacy.section3.content3"),
+        t("privacy.section3.content4"),
       ],
     },
     {
       icon: UserCheck,
-      title: "4. Tus Derechos",
+      title: t("privacy.section4.title"),
       content: [
-        "• Derecho a acceder a tus datos personales",
-        "• Derecho a rectificar información incorrecta",
-        "• Derecho a eliminar tus datos (derecho al olvido)",
-        "• Derecho a la portabilidad de datos",
+        t("privacy.section4.content1"),
+        t("privacy.section4.content2"),
+        t("privacy.section4.content3"),
+        t("privacy.section4.content4"),
       ],
     },
     {
       icon: Lock,
-      title: "5. Cookies y Tecnologías Similares",
+      title: t("privacy.section5.title"),
       content: [
-        "• Utilizamos cookies esenciales para el funcionamiento del sitio",
-        "• Cookies de análisis para entender cómo usas nuestro sitio",
-        "• Puedes gestionar las cookies desde tu navegador",
-        "• No utilizamos cookies de terceros para publicidad",
+        t("privacy.section5.content1"),
+        t("privacy.section5.content2"),
+        t("privacy.section5.content3"),
+        t("privacy.section5.content4"),
       ],
     },
     {
       icon: Mail,
-      title: "6. Contacto y Consultas",
+      title: t("privacy.section6.title"),
       content: [
-        "• Para ejercer tus derechos, contacta: info@tenerifeparadisetours.com",
-        "• Responderemos a tu solicitud en un plazo máximo de 30 días",
-        "• Puedes presentar una queja ante la Agencia Española de Protección de Datos",
-        "• Nuestro delegado de protección de datos está disponible para consultas",
+        t("privacy.section6.content1"),
+        t("privacy.section6.content2"),
+        t("privacy.section6.content3"),
+        t("privacy.section6.content4"),
       ],
     },
   ]
@@ -92,8 +92,8 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
                 <Shield className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">Política de Privacidad</h2>
-                <p className="text-blue-100">TenerifeParadiseTours - Actualizada: Enero 2024</p>
+                <h2 className="text-2xl font-bold">{t("privacy.title")}</h2>
+                <p className="text-blue-100">{t("privacy.subtitle")}</p>
               </div>
             </div>
             <Button
@@ -111,12 +111,8 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
         <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
           {/* Introduction */}
           <div className="mb-8 p-6 bg-blue-50 rounded-xl border border-blue-200">
-            <h3 className="text-lg font-semibold text-blue-900 mb-3">Compromiso con tu Privacidad</h3>
-            <p className="text-blue-800 leading-relaxed">
-              En TenerifeParadiseTours, respetamos y protegemos tu privacidad. Esta política explica cómo recopilamos,
-              utilizamos y protegemos tu información personal cuando utilizas nuestros servicios. Cumplimos con el
-              Reglamento General de Protección de Datos (RGPD) y la legislación española de protección de datos.
-            </p>
+            <h3 className="text-lg font-semibold text-blue-900 mb-3">{t("privacy.intro.title")}</h3>
+            <p className="text-blue-800 leading-relaxed">{t("privacy.intro.content")}</p>
           </div>
 
           {/* Sections */}
@@ -146,22 +142,22 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
 
           {/* Footer info */}
           <div className="mt-8 p-6 bg-gray-50 rounded-xl">
-            <h4 className="font-semibold text-gray-900 mb-3">Información de Contacto</h4>
+            <h4 className="font-semibold text-gray-900 mb-3">{t("privacy.contact_info.title")}</h4>
             <div className="space-y-2 text-sm text-gray-600">
               <p>
-                <strong>Empresa:</strong> TenerifeParadiseTours S.L.
+                <strong>{t("privacy.contact_info.company")}:</strong> {t("privacy.contact_info.company_name")}
               </p>
               <p>
-                <strong>CIF:</strong> B-12345678
+                <strong>{t("privacy.contact_info.cif")}:</strong> {t("privacy.contact_info.cif_number")}
               </p>
               <p>
-                <strong>Dirección:</strong> Santa Cruz de Tenerife, España
+                <strong>{t("privacy.contact_info.address")}:</strong> {t("privacy.contact_info.address_text")}
               </p>
               <p>
-                <strong>Email:</strong> Tenerifeparadisetoursandexcursions@hotmail.com
+                <strong>{t("privacy.contact_info.email")}:</strong> {t("privacy.contact_info.email_address")}
               </p>
               <p>
-                <strong>Teléfono:</strong> +34 617 30 39 29
+                <strong>{t("privacy.contact_info.phone")}:</strong> {t("privacy.contact_info.phone_number")}
               </p>
             </div>
           </div>
@@ -169,10 +165,10 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
             <Button onClick={onClose} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
-              Entendido
+              {t("privacy.buttons.understood")}
             </Button>
             <Button variant="outline" onClick={() => window.print()} className="flex-1">
-              Imprimir Política
+              {t("privacy.buttons.print")}
             </Button>
           </div>
         </div>
