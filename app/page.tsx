@@ -66,9 +66,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center">
+      <section className="relative min-h-screen flex items-center justify-center overflow-x-hidden">
         {/* Background */}
         <div className="absolute inset-0">
           <Image
@@ -83,7 +83,7 @@ export default function HomePage() {
         </div>
 
         {/* Contenido principal */}
-        <div className="relative z-10 text-center text-white px-4 max-w-7xl mx-auto mt-12">
+        <div className="relative z-10 text-center text-white px-4 max-w-7xl mx-auto mt-12 w-full">
           {/* Título principal */}
           <div className="mb-8 animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black mb-6 leading-tight">
@@ -117,7 +117,7 @@ export default function HomePage() {
       </section>
 
       {/* Excursiones Destacadas */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-gray-50 overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-100 to-blue-100 text-brand-text rounded-full text-sm font-semibold mb-8">
@@ -128,7 +128,7 @@ export default function HomePage() {
             <p className="text-xl text-brand-text max-w-3xl mx-auto">{t("featured.subtitle")}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-full">
             {featuredExcursions.map((excursion, index) => (
               <div key={excursion.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                 <ExcursionCard excursion={excursion} />
@@ -152,10 +152,10 @@ export default function HomePage() {
       </section>
 
       {/* CTA final */}
-      <section className="py-24 bg-gradient-to-br from-brand-heading via-gray-800 to-gray-900 relative">
+      <section className="py-24 bg-gradient-to-br from-brand-heading via-gray-800 to-gray-900 relative overflow-x-hidden">
         <div className="absolute inset-0 bg-[url('/hero-tenerife.jpg')] opacity-10 bg-cover bg-center"></div>
 
-        <div className="relative max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 w-full">
           <div className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 mb-8">
             <Sparkles className="h-5 w-5 mr-2 text-brand-accent" />
             <span className="text-sm font-semibold text-white">{t("cta.ready_title")}</span>
@@ -171,7 +171,7 @@ export default function HomePage() {
             <span className="block mt-2 text-lg text-gray-300">{t("cta.adventure_text2")}</span>
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-full">
             <Button
               asChild
               size="lg"
