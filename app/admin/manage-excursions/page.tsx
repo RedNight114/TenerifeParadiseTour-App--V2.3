@@ -148,77 +148,61 @@ const ManageExcursionsPage = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800"></div>
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fillRule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fillOpacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
-              <div className="flex flex-col gap-6 sm:gap-8">
-                <div className="space-y-4 sm:space-y-6">
-                  <div className="space-y-3 sm:space-y-4">
-                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                      Gestión de Excursiones
-                    </h1>
-                    <p className="text-lg sm:text-xl lg:text-2xl text-blue-100 font-medium leading-relaxed">
-                      Administra, edita y elimina las excursiones existentes
-                    </p>
-                  </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8">
+            <div className="space-y-6">
+              <div className="space-y-4">
+                <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">Gestión de Excursiones</h1>
+                <p className="text-xl lg:text-2xl text-blue-100 font-medium">
+                  Administra, edita y elimina las excursiones existentes
+                </p>
+              </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
-                      <Hash className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-lg sm:text-xl">{excursions.length}</span>
-                        <span className="text-sm sm:text-base">excursiones</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
-                      <Star className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-lg sm:text-xl">
-                          {excursions.filter((e) => e.featured).length}
-                        </span>
-                        <span className="text-sm sm:text-base">destacadas</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
-                      <Filter className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-bold text-lg sm:text-xl">{getUniqueCategories().length}</span>
-                        <span className="text-sm sm:text-base">categorías</span>
-                      </div>
-                    </div>
-                  </div>
+              <div className="flex flex-wrap items-center gap-6 text-blue-100">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <Hash className="h-5 w-5" />
+                  <span className="font-semibold">{excursions.length}</span>
+                  <span className="text-sm">excursiones</span>
                 </div>
-
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <Button
-                      onClick={() => router.push("/admin")}
-                      variant="outline"
-                      size="lg"
-                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold h-12 sm:h-14"
-                    >
-                      Volver al Panel
-                    </Button>
-                    <Button
-                      onClick={() => router.push("/admin/categories")}
-                      variant="outline"
-                      size="lg"
-                      className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold h-12 sm:h-14"
-                    >
-                      <Filter className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                      Ver Categorías
-                    </Button>
-                  </div>
-                  <Button
-                    onClick={() => router.push("/admin/excursion-form")}
-                    size="lg"
-                    className="bg-white text-blue-600 hover:bg-blue-50 font-bold shadow-lg hover:shadow-xl transition-all duration-200 h-12 sm:h-14 w-full"
-                  >
-                    <Plus className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-                    Nueva Excursión
-                  </Button>
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <Star className="h-5 w-5" />
+                  <span className="font-semibold">{excursions.filter((e) => e.featured).length}</span>
+                  <span className="text-sm">destacadas</span>
+                </div>
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
+                  <Filter className="h-5 w-5" />
+                  <span className="font-semibold">{getUniqueCategories().length}</span>
+                  <span className="text-sm">categorías</span>
                 </div>
               </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button
+                onClick={() => router.push("/admin")}
+                variant="outline"
+                size="lg"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold"
+              >
+                Volver al Panel
+              </Button>
+              <Button
+                onClick={() => router.push("/admin/categories")}
+                variant="outline"
+                size="lg"
+                className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold"
+              >
+                <Filter className="h-5 w-5 mr-2" />
+                Ver Categorías
+              </Button>
+              <Button
+                onClick={() => router.push("/admin/excursion-form")}
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-50 font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Nueva Excursión
+              </Button>
             </div>
           </div>
         </div>
@@ -228,27 +212,27 @@ const ManageExcursionsPage = () => {
         {/* Rest of the content remains the same */}
         {/* Filters Section */}
         <Card className="mb-8 shadow-sm border-gray-200">
-          <CardContent className="p-4 sm:p-6">
-            <div className="space-y-4 sm:space-y-6">
+          <CardContent className="p-6">
+            <div className="space-y-4">
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
                   placeholder="Buscar por nombre, categoría..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 sm:pl-12 h-11 sm:h-12 text-sm sm:text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                  className="pl-12 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                 />
               </div>
 
               {/* Filter Controls */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <label className="text-xs sm:text-sm font-medium text-gray-700">Categoría</label>
+                  <label className="text-sm font-medium text-gray-700">Categoría</label>
                   <select
                     value={filterCategory}
                     onChange={(e) => setFilterCategory(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
                   >
                     <option value="all">Todas las categorías</option>
                     {getUniqueCategories().map((category) => (
@@ -260,11 +244,11 @@ const ManageExcursionsPage = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs sm:text-sm font-medium text-gray-700">Estado</label>
+                  <label className="text-sm font-medium text-gray-700">Estado</label>
                   <select
                     value={filterFeatured}
                     onChange={(e) => setFilterFeatured(e.target.value)}
-                    className="w-full px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-base"
                   >
                     <option value="all">Todas</option>
                     <option value="featured">Destacadas</option>
@@ -273,13 +257,11 @@ const ManageExcursionsPage = () => {
                 </div>
 
                 <div className="sm:col-span-2 lg:col-span-2 flex items-end">
-                  <div className="flex items-center justify-between gap-3 text-xs sm:text-sm text-gray-600 bg-gray-50 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg w-full">
-                    <div className="flex items-center gap-2">
-                      <Filter className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                      <span className="font-medium">
-                        {filteredExcursions.length} de {excursions.length} excursiones
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-3 text-sm text-gray-600 bg-gray-50 px-4 py-3 rounded-lg w-full">
+                    <Filter className="h-5 w-5 text-gray-400" />
+                    <span className="font-medium">
+                      {filteredExcursions.length} de {excursions.length} excursiones
+                    </span>
                     {(searchTerm || filterCategory !== "all" || filterFeatured !== "all") && (
                       <Button
                         variant="ghost"
@@ -289,9 +271,9 @@ const ManageExcursionsPage = () => {
                           setFilterCategory("all")
                           setFilterFeatured("all")
                         }}
-                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 h-auto text-xs sm:text-sm"
+                        className="ml-auto text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                       >
-                        Limpiar
+                        Limpiar filtros
                       </Button>
                     )}
                   </div>
@@ -327,7 +309,7 @@ const ManageExcursionsPage = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredExcursions.map((excursion) => (
               <Card
                 key={excursion.id}
@@ -388,58 +370,58 @@ const ManageExcursionsPage = () => {
                   </div>
                 </div>
 
-                <CardContent className="p-4 sm:p-6">
-                  <div className="mb-4 sm:mb-5">
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
+                <CardContent className="p-6">
+                  <div className="mb-5">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
                       {excursion.name_es}
                     </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed line-clamp-2">
+                    <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
                       {excursion.short_description_es}
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-5">
-                    <div className="flex items-center text-xs sm:text-sm text-gray-600">
-                      <Clock className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 text-blue-500 flex-shrink-0" />
+                  <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Clock className="h-4 w-4 mr-2 text-blue-500 flex-shrink-0" />
                       <span className="truncate">{excursion.duration}</span>
                     </div>
 
                     {excursion.max_people && (
-                      <div className="flex items-center text-xs sm:text-sm text-gray-600">
-                        <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 text-blue-500 flex-shrink-0" />
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Users className="h-4 w-4 mr-2 text-blue-500 flex-shrink-0" />
                         <span className="truncate">Máx. {excursion.max_people}</span>
                       </div>
                     )}
 
-                    <div className="flex items-center text-xs sm:text-sm text-gray-600 col-span-2">
-                      <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1.5 sm:mr-2 text-blue-500 flex-shrink-0" />
+                    <div className="flex items-center text-sm text-gray-600 col-span-2">
+                      <Calendar className="h-4 w-4 mr-2 text-blue-500 flex-shrink-0" />
                       <span>Creada: {formatDate(excursion.created_at)}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
                     <Badge variant="outline" className="text-xs font-medium">
                       {excursion.category}
                     </Badge>
 
-                    <div className="flex gap-1.5 sm:gap-2">
+                    <div className="flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => router.push(`/admin/edit-excursion/${excursion.id}`)}
-                        className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300 px-2 sm:px-3 h-8 sm:h-9"
+                        className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:border-blue-300"
                       >
                         <Edit className="h-3 w-3 mr-1" />
-                        <span className="hidden sm:inline">Editar</span>
+                        Editar
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => router.push(`/excursions/${excursion.id}`)}
-                        className="text-gray-600 hover:bg-gray-50 px-2 sm:px-3 h-8 sm:h-9"
+                        className="text-gray-600 hover:bg-gray-50"
                       >
                         <Eye className="h-3 w-3 mr-1" />
-                        <span className="hidden sm:inline">Ver</span>
+                        Ver
                       </Button>
                     </div>
                   </div>

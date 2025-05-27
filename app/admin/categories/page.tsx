@@ -421,19 +421,17 @@ export default function CategoriesPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800"></div>
           <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fillRule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fillOpacity%3D%220.05%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
             <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-8">
               <div className="space-y-6">
                 <div className="space-y-4">
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight">
-                    Gestión de Categorías
-                  </h1>
-                  <p className="text-lg sm:text-xl lg:text-2xl text-blue-100 font-medium">
+                  <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">Gestión de Categorías</h1>
+                  <p className="text-xl lg:text-2xl text-blue-100 font-medium">
                     Administra las categorías de excursiones
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 text-blue-100">
+                <div className="flex flex-wrap items-center gap-6 text-blue-100">
                   <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2">
                     <Hash className="h-5 w-5" />
                     <span className="font-semibold">{stats.total}</span>
@@ -452,20 +450,20 @@ export default function CategoriesPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   onClick={exportCategories}
                   variant="outline"
-                  size="default"
-                  className="h-12 sm:h-14 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold"
+                  size="lg"
+                  className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm font-semibold"
                 >
                   <Download className="h-5 w-5 mr-2" />
                   Exportar Datos
                 </Button>
                 <Button
                   onClick={openCreateDialog}
-                  size="default"
-                  className="h-12 sm:h-14 bg-white text-blue-600 hover:bg-blue-50 font-bold shadow-lg hover:shadow-xl transition-all duration-200"
+                  size="lg"
+                  className="bg-white text-blue-600 hover:bg-blue-50 font-bold shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Nueva Categoría
@@ -477,9 +475,9 @@ export default function CategoriesPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
           {/* Enhanced Stats Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 lg:gap-6 mb-8 lg:mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 mb-8 lg:mb-12">
             <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardContent className="p-4 sm:p-6">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Total</p>
@@ -493,7 +491,7 @@ export default function CategoriesPage() {
             </Card>
 
             <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardContent className="p-4 sm:p-6">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Activas</p>
@@ -507,7 +505,7 @@ export default function CategoriesPage() {
             </Card>
 
             <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardContent className="p-4 sm:p-6">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Inactivas</p>
@@ -521,7 +519,7 @@ export default function CategoriesPage() {
             </Card>
 
             <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardContent className="p-4 sm:p-6">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Excursiones</p>
@@ -535,7 +533,7 @@ export default function CategoriesPage() {
             </Card>
 
             <Card className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-              <CardContent className="p-4 sm:p-6">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="space-y-2">
                     <p className="text-sm font-medium text-gray-600 uppercase tracking-wide">Promedio</p>
@@ -551,23 +549,23 @@ export default function CategoriesPage() {
 
           {/* Enhanced Filters and Controls */}
           <Card className="mb-8 border-0 shadow-lg">
-            <CardContent className="p-4 sm:p-6 lg:p-8">
+            <CardContent className="p-6 lg:p-8">
               <div className="space-y-6">
                 {/* Search and Primary Filters */}
-                <div className="flex flex-col lg:flex-row gap-3 sm:gap-4 lg:gap-6">
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
                   <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                     <Input
                       placeholder="Buscar categorías por nombre o descripción..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-12 h-10 sm:h-12 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                      className="pl-12 h-12 text-base border-gray-200 focus:border-blue-500 focus:ring-blue-500"
                     />
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Select value={statusFilter} onValueChange={(value: any) => setStatusFilter(value)}>
-                      <SelectTrigger className="w-full sm:w-48 h-10 sm:h-12 border-gray-200">
+                      <SelectTrigger className="w-full sm:w-48 h-12 border-gray-200">
                         <Filter className="h-4 w-4 mr-2" />
                         <SelectValue placeholder="Filtrar por estado" />
                       </SelectTrigger>
@@ -586,7 +584,7 @@ export default function CategoriesPage() {
                         setSortOrder(order as SortOrder)
                       }}
                     >
-                      <SelectTrigger className="w-full sm:w-56 h-10 sm:h-12 border-gray-200">
+                      <SelectTrigger className="w-full sm:w-56 h-12 border-gray-200">
                         <SortAsc className="h-4 w-4 mr-2" />
                         <SelectValue placeholder="Ordenar por" />
                       </SelectTrigger>
@@ -668,7 +666,7 @@ export default function CategoriesPage() {
 
           {/* Enhanced Categories Display */}
           {viewMode === "grid" ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {filteredCategories.map((category) => (
                 <Card
                   key={category.id}
@@ -676,7 +674,7 @@ export default function CategoriesPage() {
                     category.active ? "bg-white hover:scale-[1.02]" : "bg-gray-50 opacity-75 hover:opacity-90"
                   }`}
                 >
-                  <CardContent className="p-4 sm:p-6">
+                  <CardContent className="p-6">
                     {/* Selection Checkbox */}
                     <div className="absolute top-4 left-4 z-10">
                       <Checkbox
@@ -817,11 +815,11 @@ export default function CategoriesPage() {
                   {filteredCategories.map((category, index) => (
                     <div
                       key={category.id}
-                      className={`flex items-center justify-between p-4 sm:p-6 lg:p-8 border-b last:border-b-0 hover:bg-gray-50/50 transition-all duration-200 ${
+                      className={`flex items-center justify-between p-6 lg:p-8 border-b last:border-b-0 hover:bg-gray-50/50 transition-all duration-200 ${
                         category.active ? "bg-white" : "bg-gray-50/30"
                       }`}
                     >
-                      <div className="flex items-center space-x-3 sm:space-x-4 lg:space-x-6 flex-1 min-w-0">
+                      <div className="flex items-center space-x-4 lg:space-x-6 flex-1 min-w-0">
                         <Checkbox
                           checked={selectedCategories.includes(category.id)}
                           onCheckedChange={(checked) => {
@@ -999,7 +997,7 @@ export default function CategoriesPage() {
 
         {/* Enhanced Create/Edit Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="max-w-[95vw] sm:max-w-5xl max-h-[95vh] overflow-y-auto">
+          <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto">
             <DialogHeader className="space-y-4 pb-6">
               <DialogTitle className="text-2xl font-bold">
                 {editingCategory ? "Editar Categoría" : "Nueva Categoría"}
@@ -1011,7 +1009,7 @@ export default function CategoriesPage() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-6 sm:space-y-8">
+            <div className="space-y-8">
               {/* Nombres */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
@@ -1020,7 +1018,7 @@ export default function CategoriesPage() {
                     Obligatorio
                   </Badge>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name_es" className="text-sm font-medium">
                       Español *

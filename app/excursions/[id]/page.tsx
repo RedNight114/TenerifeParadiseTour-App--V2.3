@@ -9,8 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { useLanguage } from "@/lib/language-context"
-import Link from "next/link"
 import {
   Clock,
   Users,
@@ -22,10 +20,9 @@ import {
   Star,
   Euro,
   Calendar,
-  ArrowLeft,
 } from "lucide-react"
 
-// Helper function to extract schedules from special_notes
+// Helper function to extract schedules from special_notes - ACTUALIZADA para usar datos reales
 const extractSchedules = (
   specialNotes: string | undefined,
   startTime: string | undefined,
@@ -147,7 +144,6 @@ interface ExcursionDetailPageProps {
 }
 
 export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps) {
-  const { language, t } = useLanguage()
   const [excursion, setExcursion] = useState<Excursion | null>(null)
   const [loading, setLoading] = useState(true)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
@@ -168,20 +164,12 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
     loadExcursion()
   }, [params.id])
 
-  // Helper function to get localized field
-  const getLocalizedField = (fieldName: string) => {
-    if (!excursion) return ""
-
-    const localizedField = `${fieldName}_${language}`
-    return excursion[localizedField] || excursion[fieldName] || ""
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t("common.loading")}</p>
+          <p className="text-gray-600">Cargando excursión...</p>
         </div>
       </div>
     )
@@ -211,7 +199,7 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
     return "bg-gray-100 text-gray-800"
   }
 
-  // Preparar todos los horarios disponibles
+  // Preparar todos los horarios disponibles - ACTUALIZADO para usar datos reales
   const additionalSchedules = extractSchedules(excursion.special_notes, excursion.start_time, excursion.end_time)
   console.log("Extracted additional schedules:", additionalSchedules)
 
@@ -244,16 +232,7 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <Link
-            href="/excursions"
-            className="inline-flex items-center text-white hover:text-blue-200 transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t("nav.excursions")}
-          </Link>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="max-w-4xl">
             <div className="flex flex-wrap items-center gap-4 mb-8">
               <Badge className="bg-white/20 text-white border-0 px-3 py-1">
@@ -270,17 +249,15 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
                 <Badge className={getDifficultyColor()}>{excursion.difficulty_level}</Badge>
               )}
             </div>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">{getLocalizedField("name")}</h1>
-            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">
-              {getLocalizedField("short_description")}
-            </p>
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">{excursion.name_es}</h1>
+            <p className="text-xl md:text-2xl text-blue-100 mb-8 leading-relaxed">{excursion.short_description_es}</p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-lg mt-12">
               <div className="flex items-center bg-white/10 rounded-xl p-6">
                 <Euro className="h-6 w-6 mr-3 text-yellow-300" />
                 <div>
                   <div className="font-bold text-2xl">€{excursion.price}</div>
-                  <div className="text-blue-200 text-sm">{t("common.price")} por persona</div>
+                  <div className="text-blue-200 text-sm">por persona</div>
                   {excursion.children_price && (
                     <div className="text-blue-200 text-sm">
                       €{excursion.children_price} niños{" "}
@@ -294,7 +271,7 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
                 <Clock className="h-6 w-6 mr-3 text-green-300" />
                 <div>
                   <div className="font-semibold">{excursion.duration}</div>
-                  <div className="text-blue-200 text-sm">{t("common.duration")}</div>
+                  <div className="text-blue-200 text-sm">duración</div>
                 </div>
               </div>
 
@@ -320,10 +297,10 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
             <ExcursionGallery
               mainImage={excursion.image_url}
               galleryImages={excursion.gallery_images}
-              altText={getLocalizedField("name")}
+              altText={excursion.name_es}
             />
 
-            {/* Horarios disponibles */}
+            {/* Horarios disponibles - Sección principal */}
             {allSchedules.length > 0 && (
               <Card className="shadow-lg border-0">
                 <CardHeader className="pb-6">
@@ -377,7 +354,7 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
 
                           {excursion.duration && (
                             <div className="flex items-center justify-between">
-                              <span className="text-sm text-gray-600">{t("common.duration")}:</span>
+                              <span className="text-sm text-gray-600">Duración:</span>
                               <span className="text-sm font-medium text-gray-700">{excursion.duration}</span>
                             </div>
                           )}
@@ -415,15 +392,32 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
               </Card>
             )}
 
+            {/* Si no hay horarios, mostrar mensaje */}
+            {allSchedules.length === 0 && (
+              <Card className="shadow-lg border-0">
+                <CardHeader className="pb-6">
+                  <CardTitle className="flex items-center text-2xl">
+                    <Calendar className="h-6 w-6 mr-3 text-gray-400" />
+                    Horarios
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="text-center py-8">
+                    <Clock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">No hay horarios específicos configurados para esta excursión.</p>
+                    <p className="text-sm text-gray-400 mt-2">Contacta con nosotros para consultar disponibilidad.</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Descripción */}
             <Card className="shadow-lg border-0">
               <CardHeader className="pb-6">
                 <CardTitle className="text-2xl">Descripción de la Excursión</CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-line text-lg">
-                  {getLocalizedField("description")}
-                </p>
+                <p className="text-gray-700 leading-relaxed whitespace-pre-line text-lg">{excursion.description_es}</p>
               </CardContent>
             </Card>
 
@@ -480,8 +474,8 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
                 <CardContent className="space-y-6">
                   {excursion.faqs.map((faq, index) => (
                     <div key={index}>
-                      <h4 className="font-semibold text-gray-900 mb-2">{getLocalizedField("question")}</h4>
-                      <p className="text-gray-700 text-sm leading-relaxed">{getLocalizedField("answer")}</p>
+                      <h4 className="font-semibold text-gray-900 mb-2">{faq.question_es}</h4>
+                      <p className="text-gray-700 text-sm leading-relaxed">{faq.answer_es}</p>
                       {index < excursion.faqs!.length - 1 && <Separator className="mt-4" />}
                     </div>
                   ))}
@@ -517,11 +511,11 @@ export default function ExcursionDetailPage({ params }: ExcursionDetailPageProps
                   size="lg"
                 >
                   <MessageCircle className="h-5 w-5 mr-2" />
-                  {t("cta.book_now")}
+                  Reservar Ahora
                 </Button>
 
                 <div className="text-xs text-gray-500 text-center">
-                  ✓ {t("common.free_cancellation")} hasta 24h antes
+                  ✓ Cancelación gratuita hasta 24h antes
                   <br />✓ Confirmación inmediata por WhatsApp
                 </div>
               </CardContent>
