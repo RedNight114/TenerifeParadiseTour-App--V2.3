@@ -149,9 +149,24 @@ export default function AboutPage() {
               <Badge className="bg-blue-100 text-blue-800 mb-6 px-4 py-2">{t("about.story_badge")}</Badge>
               <h2 className="text-4xl font-bold text-gray-900 mb-8">{t("about.story_title")}</h2>
               <div className="space-y-6 text-gray-600 text-lg leading-relaxed">
-                <p>{t("about.story_p1")}</p>
-                <p>{t("about.story_p2")}</p>
-                <p>{t("about.story_p3")}</p>
+                <p>
+                  Fundada en 2025 por un equipo de apasionados exploradores locales, Tenerife Paradise Tours nace con la
+                  misión de revolucionar la forma en que los visitantes experimentan nuestra hermosa isla. Como empresa
+                  joven e innovadora, combinamos la frescura de las nuevas ideas con el profundo conocimiento ancestral
+                  de Tenerife.
+                </p>
+                <p>
+                  Nuestros fundadores, nativos de la isla con décadas de experiencia en turismo y aventura,
+                  identificaron la necesidad de crear experiencias más auténticas y personalizadas. Desde nuestros
+                  primeros días, nos hemos comprometido a utilizar la tecnología más avanzada para ofrecer reservas
+                  seamless y experiencias inmersivas que conecten a nuestros huéspedes con la verdadera esencia de
+                  Tenerife.
+                </p>
+                <p>
+                  Aunque somos nuevos en el mercado, nuestro equipo aporta una rica experiencia colectiva y una visión
+                  fresca del turismo sostenible. Cada excursión que diseñamos refleja nuestro compromiso con la
+                  innovación, la sostenibilidad y la creación de recuerdos inolvidables que perdurarán toda la vida.
+                </p>
               </div>
             </div>
             <div className="order-1 lg:order-2 relative">
@@ -159,7 +174,7 @@ export default function AboutPage() {
                 <Image src="/team-tenerife.webp" alt="Nuestro equipo en Tenerife" fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute bottom-6 left-6 text-white">
-                  <p className="text-lg font-semibold">{t("about.team_caption")}</p>
+                  <p className="text-lg font-semibold">Nuestra Isla</p>
                   <p className="text-sm opacity-90">{t("about.team_subtitle")}</p>
                 </div>
               </div>
