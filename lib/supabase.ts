@@ -22,6 +22,23 @@ export const supabaseAdmin = (() => {
   })
 })()
 
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutos
+const cache = new Map<string, { data: any; timestamp: number }>()
+
+// Función helper para cache:
+function getCachedData<T>(key: string): T | null {
+  const cached = cache.get(key)
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data
+  }
+  cache.delete(key)
+  return null
+}
+
+function setCachedData<T>(key: string, data: T): void {
+  cache.set(key, { data, timestamp: Date.now() })
+}
+
 export interface Excursion {
   id: number
   name_es: string
@@ -219,20 +236,37 @@ export async function reorderCategories(categories: { id: number; sort_order: nu
 
 // Funciones para excursiones
 export async function getExcursions(): Promise<Excursion[]> {
-  const { data, error } = await supabase.from("excursions").select("*").order("created_at", { ascending: false })
+  const cacheKey = "excursions_all"
+  const cached = getCachedData<Excursion[]>(cacheKey)
+  if (cached) return cached
+
+  const { data, error } = await supabase
+    .from("excursions")
+    .select(
+      "id, name_es, name_en, name_de, short_description_es, short_description_en, short_description_de, price, duration, category, image_url, featured, max_people",
+    )
+    .order("created_at", { ascending: false })
 
   if (error) {
     console.error("Error fetching excursions:", error)
     return []
   }
 
-  return data || []
+  const result = data || []
+  setCachedData(cacheKey, result)
+  return result
 }
 
 export async function getFeaturedExcursions(): Promise<Excursion[]> {
+  const cacheKey = "excursions_featured"
+  const cached = getCachedData<Excursion[]>(cacheKey)
+  if (cached) return cached
+
   const { data, error } = await supabase
     .from("excursions")
-    .select("*")
+    .select(
+      "id, name_es, name_en, name_de, short_description_es, short_description_en, short_description_de, price, duration, category, image_url, featured, included_services, not_included_services, max_people",
+    )
     .eq("featured", true)
     .order("created_at", { ascending: false })
 
@@ -241,7 +275,9 @@ export async function getFeaturedExcursions(): Promise<Excursion[]> {
     return []
   }
 
-  return data || []
+  const result = data || []
+  setCachedData(cacheKey, result)
+  return result
 }
 
 export async function getExcursionById(id: number): Promise<Excursion | null> {

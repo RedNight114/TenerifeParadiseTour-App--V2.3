@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { ExcursionCard } from "@/components/excursion-card"
 import { supabase, type Excursion } from "@/lib/supabase"
 import { useLanguage } from "@/lib/language-context"
+import { BookingModal } from "@/components/booking-modal"
 
 export default function ExcursionsPage() {
   const [excursions, setExcursions] = useState<Excursion[]>([])
@@ -20,6 +21,18 @@ export default function ExcursionsPage() {
   const [sortBy, setSortBy] = useState("featured")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const { language, t } = useLanguage()
+
+  const [selectedExcursion, setSelectedExcursion] = useState<Excursion | null>(null)
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+
+  const handleBookExcursion = (excursion: Excursion) => {
+    setSelectedExcursion(excursion)
+    setIsBookingModalOpen(true)
+  }
+
+  const handleViewExcursionDetails = (excursion: Excursion) => {
+    window.location.href = `/excursions/${excursion.id}`
+  }
 
   const categories = [
     { value: "all", label: t("excursions.all_categories"), count: 0, icon: "🌟" },
@@ -319,7 +332,11 @@ export default function ExcursionsPage() {
           <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
             {filteredExcursions.map((excursion, index) => (
               <div key={excursion.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                <ExcursionCard excursion={excursion} />
+                <ExcursionCard
+                  excursion={excursion}
+                  onBook={() => handleBookExcursion(excursion)}
+                  onViewDetails={() => handleViewExcursionDetails(excursion)}
+                />
               </div>
             ))}
           </div>
@@ -352,6 +369,18 @@ export default function ExcursionsPage() {
               <a href="/contact">{t("excursions.contact_custom")}</a>
             </Button>
           </div>
+        )}
+
+        {/* Booking Modal */}
+        {selectedExcursion && (
+          <BookingModal
+            isOpen={isBookingModalOpen}
+            onClose={() => {
+              setIsBookingModalOpen(false)
+              setSelectedExcursion(null)
+            }}
+            excursion={selectedExcursion}
+          />
         )}
       </div>
     </div>

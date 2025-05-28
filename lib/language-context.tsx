@@ -1,8 +1,1923 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, type ReactNode } from "react"
 
-type Language = "es" | "en" | "de"
+type Language = "es" | "en" | "fr" | "de"
+
+interface Translations {
+  [key: string]: {
+    es: string
+    en: string
+    fr: string
+    de: string
+  }
+}
+
+const translations: Translations = {
+  // Navigation
+  "nav.home": {
+    es: "Inicio",
+    en: "Home",
+    fr: "Accueil",
+    de: "Startseite",
+  },
+  "nav.excursions": {
+    es: "Excursiones",
+    en: "Excursions",
+    fr: "Excursions",
+    de: "Ausflüge",
+  },
+  "nav.about": {
+    es: "Nosotros",
+    en: "About",
+    fr: "À propos",
+    de: "Über uns",
+  },
+  "nav.contact": {
+    es: "Contacto",
+    en: "Contact",
+    fr: "Contact",
+    de: "Kontakt",
+  },
+  "nav.booking": {
+    es: "Reservar",
+    en: "Book",
+    fr: "Réserver",
+    de: "Buchen",
+  },
+
+  // Featured Dropdown
+  "featured.view_all_short": {
+    es: "Ver todas las excursiones",
+    en: "View all excursions",
+    fr: "Voir toutes les excursions",
+    de: "Alle Ausflüge ansehen",
+  },
+
+  // Contact Page - Complete
+  "contact.hero_badge": {
+    es: "Contacto Directo",
+    en: "Direct Contact",
+    fr: "Contact Direct",
+    de: "Direkter Kontakt",
+  },
+  "contact.title": {
+    es: "Conecta con Nosotros",
+    en: "Connect with Us",
+    fr: "Connectez-vous avec Nous",
+    de: "Verbinden Sie sich mit uns",
+  },
+  "contact.hero_subtitle": {
+    es: "Estamos aquí para hacer realidad tu aventura perfecta",
+    en: "We're here to make your perfect adventure come true",
+    fr: "Nous sommes là pour réaliser votre aventure parfaite",
+    de: "Wir sind hier, um Ihr perfektes Abenteuer wahr werden zu lassen",
+  },
+  "contact.subtitle": {
+    es: "Nuestro equipo de expertos está disponible para ayudarte a planificar la experiencia perfecta en Tenerife",
+    en: "Our team of experts is available to help you plan the perfect experience in Tenerife",
+    fr: "Notre équipe d'experts est disponible pour vous aider à planifier l'expérience parfaite à Tenerife",
+    de: "Unser Expertenteam steht zur Verfügung, um Ihnen bei der Planung des perfekten Erlebnisses auf Teneriffa zu helfen",
+  },
+  "contact.subtitle_extended": {
+    es: "Contáctanos por WhatsApp, teléfono o email y te responderemos en menos de 2 horas",
+    en: "Contact us via WhatsApp, phone or email and we'll respond within 2 hours",
+    fr: "Contactez-nous via WhatsApp, téléphone ou email et nous vous répondrons dans les 2 heures",
+    de: "Kontaktieren Sie uns über WhatsApp, Telefon oder E-Mail und wir antworten innerhalb von 2 Stunden",
+  },
+  "contact_info.phone": {
+    es: "Teléfono",
+    en: "Phone",
+    fr: "Téléphone",
+    de: "Telefon",
+  },
+  "contact_info.whatsapp": {
+    es: "WhatsApp",
+    en: "WhatsApp",
+    fr: "WhatsApp",
+    de: "WhatsApp",
+  },
+  "contact_info.email": {
+    es: "Email",
+    en: "Email",
+    fr: "Email",
+    de: "E-Mail",
+  },
+  "contact_info.location": {
+    es: "Ubicación",
+    en: "Location",
+    fr: "Localisation",
+    de: "Standort",
+  },
+  "contact_info.available": {
+    es: "Disponible 24/7",
+    en: "Available 24/7",
+    fr: "Disponible 24/7",
+    de: "24/7 verfügbar",
+  },
+  "contact_info.immediate_response": {
+    es: "Respuesta inmediata",
+    en: "Immediate response",
+    fr: "Réponse immédiate",
+    de: "Sofortige Antwort",
+  },
+  "contact_info.canary_islands": {
+    es: "Islas Canarias, España",
+    en: "Canary Islands, Spain",
+    fr: "Îles Canaries, Espagne",
+    de: "Kanarische Inseln, Spanien",
+  },
+
+  // Booking Page - Complete
+  "booking.hero_badge": {
+    es: "Reserva Fácil",
+    en: "Easy Booking",
+    fr: "Réservation Facile",
+    de: "Einfache Buchung",
+  },
+  "booking.title": {
+    es: "Reserva tu Aventura",
+    en: "Book your Adventure",
+    fr: "Réservez votre Aventure",
+    de: "Buchen Sie Ihr Abenteuer",
+  },
+  "booking.subtitle": {
+    es: "Proceso de reserva simple y seguro para tu experiencia perfecta en Tenerife",
+    en: "Simple and secure booking process for your perfect experience in Tenerife",
+    fr: "Processus de réservation simple et sécurisé pour votre expérience parfaite à Tenerife",
+    de: "Einfacher und sicherer Buchungsprozess für Ihr perfektes Erlebnis auf Teneriffa",
+  },
+  "booking.subtitle2": {
+    es: "Confirmación inmediata por WhatsApp",
+    en: "Instant confirmation via WhatsApp",
+    fr: "Confirmation instantanée via WhatsApp",
+    de: "Sofortige Bestätigung über WhatsApp",
+  },
+  "booking.trust_confirmation": {
+    es: "Confirmación inmediata",
+    en: "Instant confirmation",
+    fr: "Confirmation instantanée",
+    de: "Sofortige Bestätigung",
+  },
+  "booking.trust_cancellation": {
+    es: "Cancelación gratuita",
+    en: "Free cancellation",
+    fr: "Annulation gratuite",
+    de: "Kostenlose Stornierung",
+  },
+  "booking.trust_support": {
+    es: "Soporte 24/7",
+    en: "24/7 support",
+    fr: "Support 24/7",
+    de: "24/7 Support",
+  },
+  "booking.form_title": {
+    es: "Formulario de Reserva",
+    en: "Booking Form",
+    fr: "Formulaire de Réservation",
+    de: "Buchungsformular",
+  },
+  "booking.summary": {
+    es: "Resumen de Reserva",
+    en: "Booking Summary",
+    fr: "Résumé de Réservation",
+    de: "Buchungszusammenfassung",
+  },
+  "booking.personal_info": {
+    es: "Información Personal",
+    en: "Personal Information",
+    fr: "Informations Personnelles",
+    de: "Persönliche Informationen",
+  },
+  "booking.name_placeholder": {
+    es: "Tu nombre completo",
+    en: "Your full name",
+    fr: "Votre nom complet",
+    de: "Ihr vollständiger Name",
+  },
+  "booking.email_placeholder": {
+    es: "tu@email.com",
+    en: "your@email.com",
+    fr: "votre@email.com",
+    de: "ihre@email.com",
+  },
+  "booking.excursion_details": {
+    es: "Detalles de la Excursión",
+    en: "Excursion Details",
+    fr: "Détails de l'Excursion",
+    de: "Ausflug Details",
+  },
+  "booking.select_excursion": {
+    es: "Seleccionar Excursión",
+    en: "Select Excursion",
+    fr: "Sélectionner l'Excursion",
+    de: "Ausflug auswählen",
+  },
+  "booking.excursion_placeholder": {
+    es: "Elige tu aventura perfecta",
+    en: "Choose your perfect adventure",
+    fr: "Choisissez votre aventure parfaite",
+    de: "Wählen Sie Ihr perfektes Abenteuer",
+  },
+  "booking.date": {
+    es: "Fecha Preferida",
+    en: "Preferred Date",
+    fr: "Date Préférée",
+    de: "Bevorzugtes Datum",
+  },
+  "booking.people": {
+    es: "Número de Personas",
+    en: "Number of People",
+    fr: "Nombre de Personnes",
+    de: "Anzahl der Personen",
+  },
+  "booking.people_count": {
+    es: "persona",
+    en: "person",
+    fr: "personne",
+    de: "Person",
+  },
+  "booking.requests": {
+    es: "Solicitudes Especiales",
+    en: "Special Requests",
+    fr: "Demandes Spéciales",
+    de: "Besondere Wünsche",
+  },
+  "booking.requests_placeholder": {
+    es: "¿Alguna solicitud especial o información adicional?",
+    en: "Any special requests or additional information?",
+    fr: "Des demandes spéciales ou des informations supplémentaires?",
+    de: "Besondere Wünsche oder zusätzliche Informationen?",
+  },
+  "booking.submit": {
+    es: "Confirmar Reserva por WhatsApp",
+    en: "Confirm Booking via WhatsApp",
+    fr: "Confirmer la Réservation via WhatsApp",
+    de: "Buchung über WhatsApp bestätigen",
+  },
+  "booking.processing": {
+    es: "Procesando...",
+    en: "Processing...",
+    fr: "Traitement...",
+    de: "Verarbeitung...",
+  },
+  "booking.select_excursion_message": {
+    es: "Selecciona una excursión para ver el resumen",
+    en: "Select an excursion to see the summary",
+    fr: "Sélectionnez une excursion pour voir le résumé",
+    de: "Wählen Sie einen Ausflug, um die Zusammenfassung zu sehen",
+  },
+  "booking.select_excursion_subtitle": {
+    es: "Elige tu aventura perfecta del formulario",
+    en: "Choose your perfect adventure from the form",
+    fr: "Choisissez votre aventure parfaite dans le formulaire",
+    de: "Wählen Sie Ihr perfektes Abenteuer aus dem Formular",
+  },
+  "booking.premium_label": {
+    es: "Premium",
+    en: "Premium",
+    fr: "Premium",
+    de: "Premium",
+  },
+  "booking.duration_label": {
+    es: "Duración",
+    en: "Duration",
+    fr: "Durée",
+    de: "Dauer",
+  },
+  "booking.category_label": {
+    es: "Categoría",
+    en: "Category",
+    fr: "Catégorie",
+    de: "Kategorie",
+  },
+  "booking.rating_label": {
+    es: "Valoración",
+    en: "Rating",
+    fr: "Évaluation",
+    de: "Bewertung",
+  },
+  "booking.reviews_label": {
+    es: "reseñas",
+    en: "reviews",
+    fr: "avis",
+    de: "Bewertungen",
+  },
+  "booking.price_per_person": {
+    es: "Precio por persona",
+    en: "Price per person",
+    fr: "Prix par personne",
+    de: "Preis pro Person",
+  },
+  "booking.people_summary": {
+    es: "Personas",
+    en: "People",
+    fr: "Personnes",
+    de: "Personen",
+  },
+  "booking.total_estimated": {
+    es: "Total Estimado",
+    en: "Estimated Total",
+    fr: "Total Estimé",
+    de: "Geschätzter Gesamtbetrag",
+  },
+  "booking.included_price": {
+    es: "Incluido en el precio",
+    en: "Included in price",
+    fr: "Inclus dans le prix",
+    de: "Im Preis inbegriffen",
+  },
+  "booking.transport": {
+    es: "Transporte",
+    en: "Transport",
+    fr: "Transport",
+    de: "Transport",
+  },
+  "booking.guide": {
+    es: "Guía experto",
+    en: "Expert guide",
+    fr: "Guide expert",
+    de: "Expertenführer",
+  },
+  "booking.insurance": {
+    es: "Seguro",
+    en: "Insurance",
+    fr: "Assurance",
+    de: "Versicherung",
+  },
+  "booking.photos": {
+    es: "Fotos",
+    en: "Photos",
+    fr: "Photos",
+    de: "Fotos",
+  },
+  "booking.why_choose_us": {
+    es: "¿Por qué elegirnos?",
+    en: "Why choose us?",
+    fr: "Pourquoi nous choisir?",
+    de: "Warum uns wählen?",
+  },
+  "booking.trust_guides": {
+    es: "Guías locales expertos",
+    en: "Expert local guides",
+    fr: "Guides locaux experts",
+    de: "Erfahrene lokale Führer",
+  },
+  "booking.trust_groups": {
+    es: "Grupos pequeños",
+    en: "Small groups",
+    fr: "Petits groupes",
+    de: "Kleine Gruppen",
+  },
+  "booking.feature_confirmation": {
+    es: "Confirmación Inmediata",
+    en: "Instant Confirmation",
+    fr: "Confirmation Instantanée",
+    de: "Sofortige Bestätigung",
+  },
+  "booking.feature_confirmation_desc": {
+    es: "Recibe confirmación al instante por WhatsApp",
+    en: "Get instant confirmation via WhatsApp",
+    fr: "Recevez une confirmation instantanée via WhatsApp",
+    de: "Erhalten Sie sofortige Bestätigung über WhatsApp",
+  },
+  "booking.feature_payment": {
+    es: "Pago Flexible",
+    en: "Flexible Payment",
+    fr: "Paiement Flexible",
+    de: "Flexible Zahlung",
+  },
+  "booking.feature_payment_desc": {
+    es: "Paga en el momento de la excursión",
+    en: "Pay at the time of the excursion",
+    fr: "Payez au moment de l'excursion",
+    de: "Zahlen Sie zum Zeitpunkt des Ausflugs",
+  },
+  "booking.feature_experience": {
+    es: "Experiencia Única",
+    en: "Unique Experience",
+    fr: "Expérience Unique",
+    de: "Einzigartiges Erlebnis",
+  },
+  "booking.feature_experience_desc": {
+    es: "Aventuras auténticas con guías locales",
+    en: "Authentic adventures with local guides",
+    fr: "Aventures authentiques avec des guides locaux",
+    de: "Authentische Abenteuer mit lokalen Führern",
+  },
+
+  // Privacy Policy - Complete
+  "privacy.title": {
+    es: "Política de Privacidad",
+    en: "Privacy Policy",
+    fr: "Politique de Confidentialité",
+    de: "Datenschutzrichtlinie",
+  },
+  "privacy.subtitle": {
+    es: "Protegemos tu información personal",
+    en: "We protect your personal information",
+    fr: "Nous protégeons vos informations personnelles",
+    de: "Wir schützen Ihre persönlichen Daten",
+  },
+  "privacy.intro.title": {
+    es: "Introducción",
+    en: "Introduction",
+    fr: "Introduction",
+    de: "Einführung",
+  },
+  "privacy.intro.content": {
+    es: "En TenerifeParadise Tours & Excursions, nos comprometemos a proteger y respetar tu privacidad. Esta política explica cómo recopilamos, usamos y protegemos tu información personal.",
+    en: "At TenerifeParadise Tours & Excursions, we are committed to protecting and respecting your privacy. This policy explains how we collect, use and protect your personal information.",
+    fr: "Chez TenerifeParadise Tours & Excursions, nous nous engageons à protéger et respecter votre vie privée. Cette politique explique comment nous collectons, utilisons et protégeons vos informations personnelles.",
+    de: "Bei TenerifeParadise Tours & Excursions verpflichten wir uns, Ihre Privatsphäre zu schützen und zu respektieren. Diese Richtlinie erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen.",
+  },
+  "privacy.section1.title": {
+    es: "Información que Recopilamos",
+    en: "Information We Collect",
+    fr: "Informations que Nous Collectons",
+    de: "Informationen, die wir sammeln",
+  },
+  "privacy.section1.content1": {
+    es: "Recopilamos información que nos proporcionas directamente, como nombre, email, teléfono y preferencias de excursiones.",
+    en: "We collect information you provide directly to us, such as name, email, phone and excursion preferences.",
+    fr: "Nous collectons les informations que vous nous fournissez directement, telles que nom, email, téléphone et préférences d'excursions.",
+    de: "Wir sammeln Informationen, die Sie uns direkt zur Verfügung stellen, wie Name, E-Mail, Telefon und Ausflugspräferenzen.",
+  },
+  "privacy.section1.content2": {
+    es: "Información de uso del sitio web para mejorar nuestros servicios.",
+    en: "Website usage information to improve our services.",
+    fr: "Informations d'utilisation du site web pour améliorer nos services.",
+    de: "Website-Nutzungsinformationen zur Verbesserung unserer Dienstleistungen.",
+  },
+  "privacy.section1.content3": {
+    es: "Datos de comunicación cuando nos contactas por WhatsApp, email o teléfono.",
+    en: "Communication data when you contact us via WhatsApp, email or phone.",
+    fr: "Données de communication lorsque vous nous contactez via WhatsApp, email ou téléphone.",
+    de: "Kommunikationsdaten, wenn Sie uns über WhatsApp, E-Mail oder Telefon kontaktieren.",
+  },
+  "privacy.section1.content4": {
+    es: "Información de reservas y preferencias para personalizar tu experiencia.",
+    en: "Booking information and preferences to personalize your experience.",
+    fr: "Informations de réservation et préférences pour personnaliser votre expérience.",
+    de: "Buchungsinformationen und Präferenzen zur Personalisierung Ihres Erlebnisses.",
+  },
+  "privacy.section2.title": {
+    es: "Cómo Usamos tu Información",
+    en: "How We Use Your Information",
+    fr: "Comment Nous Utilisons vos Informations",
+    de: "Wie wir Ihre Informationen verwenden",
+  },
+  "privacy.section2.content1": {
+    es: "Para procesar y confirmar tus reservas de excursiones.",
+    en: "To process and confirm your excursion bookings.",
+    fr: "Pour traiter et confirmer vos réservations d'excursions.",
+    de: "Zur Bearbeitung und Bestätigung Ihrer Ausflugsbuchungen.",
+  },
+  "privacy.section2.content2": {
+    es: "Para comunicarnos contigo sobre tu reserva y proporcionar soporte al cliente.",
+    en: "To communicate with you about your booking and provide customer support.",
+    fr: "Pour communiquer avec vous concernant votre réservation et fournir un support client.",
+    de: "Um mit Ihnen über Ihre Buchung zu kommunizieren und Kundensupport zu bieten.",
+  },
+  "privacy.section2.content3": {
+    es: "Para mejorar nuestros servicios y desarrollar nuevas excursiones.",
+    en: "To improve our services and develop new excursions.",
+    fr: "Pour améliorer nos services et développer de nouvelles excursions.",
+    de: "Zur Verbesserung unserer Dienstleistungen und Entwicklung neuer Ausflüge.",
+  },
+  "privacy.section2.content4": {
+    es: "Para enviarte información relevante sobre ofertas y novedades (solo si das tu consentimiento).",
+    en: "To send you relevant information about offers and news (only with your consent).",
+    fr: "Pour vous envoyer des informations pertinentes sur les offres et actualités (seulement avec votre consentement).",
+    de: "Um Ihnen relevante Informationen über Angebote und Neuigkeiten zu senden (nur mit Ihrer Zustimmung).",
+  },
+  "privacy.section3.title": {
+    es: "Protección de Datos",
+    en: "Data Protection",
+    fr: "Protection des Données",
+    de: "Datenschutz",
+  },
+  "privacy.section3.content1": {
+    es: "Implementamos medidas de seguridad técnicas y organizativas para proteger tu información.",
+    en: "We implement technical and organizational security measures to protect your information.",
+    fr: "Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles pour protéger vos informations.",
+    de: "Wir implementieren technische und organisatorische Sicherheitsmaßnahmen zum Schutz Ihrer Informationen.",
+  },
+  "privacy.section3.content2": {
+    es: "Tus datos se almacenan de forma segura y solo son accesibles por personal autorizado.",
+    en: "Your data is stored securely and only accessible by authorized personnel.",
+    fr: "Vos données sont stockées de manière sécurisée et ne sont accessibles que par le personnel autorisé.",
+    de: "Ihre Daten werden sicher gespeichert und sind nur für autorisiertes Personal zugänglich.",
+  },
+  "privacy.section3.content3": {
+    es: "No vendemos, alquilamos o compartimos tu información personal con terceros sin tu consentimiento.",
+    en: "We do not sell, rent or share your personal information with third parties without your consent.",
+    fr: "Nous ne vendons, ne louons ni ne partageons vos informations personnelles avec des tiers sans votre consentement.",
+    de: "Wir verkaufen, vermieten oder teilen Ihre persönlichen Daten nicht ohne Ihre Zustimmung mit Dritten.",
+  },
+  "privacy.section3.content4": {
+    es: "Cumplimos con todas las regulaciones aplicables de protección de datos, incluyendo GDPR.",
+    en: "We comply with all applicable data protection regulations, including GDPR.",
+    fr: "Nous respectons toutes les réglementations applicables de protection des données, y compris le RGPD.",
+    de: "Wir halten alle anwendbaren Datenschutzbestimmungen ein, einschließlich DSGVO.",
+  },
+  "privacy.section4.title": {
+    es: "Tus Derechos",
+    en: "Your Rights",
+    fr: "Vos Droits",
+    de: "Ihre Rechte",
+  },
+  "privacy.section4.content1": {
+    es: "Tienes derecho a acceder, rectificar o eliminar tu información personal.",
+    en: "You have the right to access, rectify or delete your personal information.",
+    fr: "Vous avez le droit d'accéder, de rectifier ou de supprimer vos informations personnelles.",
+    de: "Sie haben das Recht, auf Ihre persönlichen Daten zuzugreifen, sie zu berichtigen oder zu löschen.",
+  },
+  "privacy.section4.content2": {
+    es: "Puedes solicitar la portabilidad de tus datos o limitar su procesamiento.",
+    en: "You can request data portability or limit its processing.",
+    fr: "Vous pouvez demander la portabilité de vos données ou limiter leur traitement.",
+    de: "Sie können Datenportabilität beantragen oder deren Verarbeitung einschränken.",
+  },
+  "privacy.section4.content3": {
+    es: "Tienes derecho a retirar tu consentimiento en cualquier momento.",
+    en: "You have the right to withdraw your consent at any time.",
+    fr: "Vous avez le droit de retirer votre consentement à tout moment.",
+    de: "Sie haben das Recht, Ihre Zustimmung jederzeit zu widerrufen.",
+  },
+  "privacy.section4.content4": {
+    es: "Para ejercer estos derechos, contáctanos a través de nuestros canales oficiales.",
+    en: "To exercise these rights, contact us through our official channels.",
+    fr: "Pour exercer ces droits, contactez-nous via nos canaux officiels.",
+    de: "Um diese Rechte auszuüben, kontaktieren Sie uns über unsere offiziellen Kanäle.",
+  },
+  "privacy.section5.title": {
+    es: "Cookies y Tecnologías Similares",
+    en: "Cookies and Similar Technologies",
+    fr: "Cookies et Technologies Similaires",
+    de: "Cookies und ähnliche Technologien",
+  },
+  "privacy.section5.content1": {
+    es: "Utilizamos cookies para mejorar tu experiencia en nuestro sitio web.",
+    en: "We use cookies to improve your experience on our website.",
+    fr: "Nous utilisons des cookies pour améliorer votre expérience sur notre site web.",
+    de: "Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern.",
+  },
+  "privacy.section5.content2": {
+    es: "Puedes controlar las cookies a través de la configuración de tu navegador.",
+    en: "You can control cookies through your browser settings.",
+    fr: "Vous pouvez contrôler les cookies via les paramètres de votre navigateur.",
+    de: "Sie können Cookies über Ihre Browser-Einstellungen kontrollieren.",
+  },
+  "privacy.section5.content3": {
+    es: "Algunas funcionalidades pueden verse afectadas si deshabilitas las cookies.",
+    en: "Some functionalities may be affected if you disable cookies.",
+    fr: "Certaines fonctionnalités peuvent être affectées si vous désactivez les cookies.",
+    de: "Einige Funktionen können beeinträchtigt werden, wenn Sie Cookies deaktivieren.",
+  },
+  "privacy.section5.content4": {
+    es: "Consulta nuestra política de cookies para más información detallada.",
+    en: "Check our cookie policy for more detailed information.",
+    fr: "Consultez notre politique de cookies pour plus d'informations détaillées.",
+    de: "Lesen Sie unsere Cookie-Richtlinie für detailliertere Informationen.",
+  },
+  "privacy.section6.title": {
+    es: "Contacto",
+    en: "Contact",
+    fr: "Contact",
+    de: "Kontakt",
+  },
+  "privacy.section6.content1": {
+    es: "Si tienes preguntas sobre esta política de privacidad, contáctanos.",
+    en: "If you have questions about this privacy policy, contact us.",
+    fr: "Si vous avez des questions sur cette politique de confidentialité, contactez-nous.",
+    de: "Wenn Sie Fragen zu dieser Datenschutzrichtlinie haben, kontaktieren Sie uns.",
+  },
+  "privacy.section6.content2": {
+    es: "Email: Tenerifeparadisetoursandexcursions@hotmail.com",
+    en: "Email: Tenerifeparadisetoursandexcursions@hotmail.com",
+    fr: "Email: Tenerifeparadisetoursandexcursions@hotmail.com",
+    de: "Email: Tenerifeparadisetoursandexcursions@hotmail.com",
+  },
+  "privacy.section6.content3": {
+    es: "WhatsApp: +34 617 30 39 29",
+    en: "WhatsApp: +34 617 30 39 29",
+    fr: "WhatsApp: +34 617 30 39 29",
+    de: "WhatsApp: +34 617 30 39 29",
+  },
+  "privacy.section6.content4": {
+    es: "Nos comprometemos a responder a tus consultas en un plazo máximo de 72 horas.",
+    en: "We commit to responding to your inquiries within a maximum of 72 hours.",
+    fr: "Nous nous engageons à répondre à vos demandes dans un délai maximum de 72 heures.",
+    de: "Wir verpflichten uns, Ihre Anfragen innerhalb von maximal 72 Stunden zu beantworten.",
+  },
+  "privacy.contact_info.title": {
+    es: "Información de Contacto",
+    en: "Contact Information",
+    fr: "Informations de Contact",
+    de: "Kontaktinformationen",
+  },
+  "privacy.contact_info.company": {
+    es: "Empresa",
+    en: "Company",
+    fr: "Entreprise",
+    de: "Unternehmen",
+  },
+  "privacy.contact_info.address": {
+    es: "Dirección",
+    en: "Address",
+    fr: "Adresse",
+    de: "Adresse",
+  },
+  "privacy.contact_info.email": {
+    es: "Email",
+    en: "Email",
+    fr: "Email",
+    de: "E-Mail",
+  },
+  "privacy.contact_info.email_address": {
+    es: "Tenerifeparadisetoursandexcursions@hotmail.com",
+    en: "Tenerifeparadisetoursandexcursions@hotmail.com",
+    fr: "Tenerifeparadisetoursandexcursions@hotmail.com",
+    de: "Tenerifeparadisetoursandexcursions@hotmail.com",
+  },
+  "privacy.contact_info.phone": {
+    es: "Teléfono",
+    en: "Phone",
+    fr: "Téléphone",
+    de: "Telefon",
+  },
+  "privacy.contact_info.phone_number": {
+    es: "+34 617 30 39 29",
+    en: "+34 617 30 39 29",
+    fr: "+34 617 30 39 29",
+    de: "+34 617 30 39 29",
+  },
+  "privacy.buttons.understood": {
+    es: "Entendido",
+    en: "Understood",
+    fr: "Compris",
+    de: "Verstanden",
+  },
+  "privacy.buttons.print": {
+    es: "Imprimir",
+    en: "Print",
+    fr: "Imprimer",
+    de: "Drucken",
+  },
+
+  // Terms & Conditions - Complete
+  "terms.title": {
+    es: "Términos y Condiciones",
+    en: "Terms & Conditions",
+    fr: "Termes et Conditions",
+    de: "Geschäftsbedingungen",
+  },
+  "terms.subtitle": {
+    es: "Condiciones de uso de nuestros servicios",
+    en: "Terms of use for our services",
+    fr: "Conditions d'utilisation de nos services",
+    de: "Nutzungsbedingungen für unsere Dienstleistungen",
+  },
+  "terms.intro.title": {
+    es: "Introducción",
+    en: "Introduction",
+    fr: "Introduction",
+    de: "Einführung",
+  },
+  "terms.intro.content": {
+    es: "Estos términos y condiciones regulan el uso de los servicios ofrecidos por TenerifeParadise Tours & Excursions. Al reservar con nosotros, aceptas estos términos.",
+    en: "These terms and conditions govern the use of services offered by TenerifeParadise Tours & Excursions. By booking with us, you accept these terms.",
+    fr: "Ces termes et conditions régissent l'utilisation des services offerts par TenerifeParadise Tours & Excursions. En réservant avec nous, vous acceptez ces termes.",
+    de: "Diese Geschäftsbedingungen regeln die Nutzung der von TenerifeParadise Tours & Excursions angebotenen Dienstleistungen. Durch eine Buchung bei uns akzeptieren Sie diese Bedingungen.",
+  },
+  "terms.section1.title": {
+    es: "Reservas y Pagos",
+    en: "Bookings and Payments",
+    fr: "Réservations et Paiements",
+    de: "Buchungen und Zahlungen",
+  },
+  "terms.section1.content1": {
+    es: "Las reservas se confirman mediante WhatsApp tras completar el formulario de reserva.",
+    en: "Bookings are confirmed via WhatsApp after completing the booking form.",
+    fr: "Les réservations sont confirmées via WhatsApp après avoir complété le formulaire de réservation.",
+    de: "Buchungen werden über WhatsApp bestätigt, nachdem das Buchungsformular ausgefüllt wurde.",
+  },
+  "terms.section1.content2": {
+    es: "El pago se realiza en efectivo el día de la excursión, antes del inicio de la actividad.",
+    en: "Payment is made in cash on the day of the excursion, before the start of the activity.",
+    fr: "Le paiement s'effectue en espèces le jour de l'excursion, avant le début de l'activité.",
+    de: "Die Zahlung erfolgt in bar am Tag des Ausflugs, vor Beginn der Aktivität.",
+  },
+  "terms.section1.content3": {
+    es: "Los precios incluyen transporte, guía, seguro y servicios especificados en cada excursión.",
+    en: "Prices include transport, guide, insurance and services specified in each excursion.",
+    fr: "Les prix incluent transport, guide, assurance et services spécifiés dans chaque excursion.",
+    de: "Die Preise beinhalten Transport, Führer, Versicherung und in jedem Ausflug spezifizierte Dienstleistungen.",
+  },
+  "terms.section1.content4": {
+    es: "Nos reservamos el derecho de modificar precios con previo aviso de 48 horas.",
+    en: "We reserve the right to modify prices with 48 hours prior notice.",
+    fr: "Nous nous réservons le droit de modifier les prix avec un préavis de 48 heures.",
+    de: "Wir behalten uns das Recht vor, Preise mit 48 Stunden Vorlaufzeit zu ändern.",
+  },
+  "terms.section2.title": {
+    es: "Cancelaciones y Modificaciones",
+    en: "Cancellations and Modifications",
+    fr: "Annulations et Modifications",
+    de: "Stornierungen und Änderungen",
+  },
+  "terms.section2.content1": {
+    es: "Cancelación gratuita hasta 24 horas antes de la excursión.",
+    en: "Free cancellation up to 24 hours before the excursion.",
+    fr: "Annulation gratuite jusqu'à 24 heures avant l'excursion.",
+    de: "Kostenlose Stornierung bis 24 Stunden vor dem Ausflug.",
+  },
+  "terms.section2.content2": {
+    es: "Modificaciones de fecha sujetas a disponibilidad, sin costo adicional.",
+    en: "Date modifications subject to availability, at no additional cost.",
+    fr: "Modifications de date sous réserve de disponibilité, sans coût supplémentaire.",
+    de: "Datumsänderungen je nach Verfügbarkeit, ohne zusätzliche Kosten.",
+  },
+  "terms.section2.content3": {
+    es: "En caso de condiciones meteorológicas adversas, ofrecemos reprogramación o reembolso completo.",
+    en: "In case of adverse weather conditions, we offer rescheduling or full refund.",
+    fr: "En cas de conditions météorologiques défavorables, nous offrons une reprogrammation ou un remboursement complet.",
+    de: "Bei widrigen Wetterbedingungen bieten wir Umplanung oder vollständige Rückerstattung an.",
+  },
+  "terms.section2.content4": {
+    es: "Cancelaciones por nuestra parte por motivos de seguridad incluyen reembolso completo.",
+    en: "Cancellations by us for safety reasons include full refund.",
+    fr: "Les annulations de notre part pour des raisons de sécurité incluent un remboursement complet.",
+    de: "Stornierungen unsererseits aus Sicherheitsgründen beinhalten eine vollständige Rückerstattung.",
+  },
+  "terms.section3.title": {
+    es: "Responsabilidades y Seguros",
+    en: "Responsibilities and Insurance",
+    fr: "Responsabilités et Assurances",
+    de: "Verantwortlichkeiten und Versicherungen",
+  },
+  "terms.section3.content1": {
+    es: "Todos los participantes están cubiertos por seguro de responsabilidad civil y accidentes.",
+    en: "All participants are covered by civil liability and accident insurance.",
+    fr: "Tous les participants sont couverts par une assurance responsabilité civile et accidents.",
+    de: "Alle Teilnehmer sind durch Haftpflicht- und Unfallversicherung abgedeckt.",
+  },
+  "terms.section3.content2": {
+    es: "Los participantes deben seguir las instrucciones del guía en todo momento.",
+    en: "Participants must follow the guide's instructions at all times.",
+    fr: "Les participants doivent suivre les instructions du guide en tout temps.",
+    de: "Teilnehmer müssen jederzeit den Anweisungen des Führers folgen.",
+  },
+  "terms.section3.content3": {
+    es: "No nos hacemos responsables de objetos personales perdidos o dañados.",
+    en: "We are not responsible for lost or damaged personal items.",
+    fr: "Nous ne sommes pas responsables des objets personnels perdus ou endommagés.",
+    de: "Wir sind nicht verantwortlich für verlorene oder beschädigte persönliche Gegenstände.",
+  },
+  "terms.section3.content4": {
+    es: "Los participantes deben informar sobre condiciones médicas relevantes antes de la excursión.",
+    en: "Participants must inform about relevant medical conditions before the excursion.",
+    fr: "Les participants doivent informer des conditions médicales pertinentes avant l'excursion.",
+    de: "Teilnehmer müssen über relevante medizinische Bedingungen vor dem Ausflug informieren.",
+  },
+  "terms.section4.title": {
+    es: "Requisitos y Restricciones",
+    en: "Requirements and Restrictions",
+    fr: "Exigences et Restrictions",
+    de: "Anforderungen und Beschränkungen",
+  },
+  "terms.section4.content1": {
+    es: "Edad mínima y máxima según especificaciones de cada excursión.",
+    en: "Minimum and maximum age according to each excursion's specifications.",
+    fr: "Âge minimum et maximum selon les spécifications de chaque excursion.",
+    de: "Mindest- und Höchstalter gemäß den Spezifikationen jedes Ausflugs.",
+  },
+  "terms.section4.content2": {
+    es: "Condición física adecuada requerida para actividades de aventura.",
+    en: "Adequate physical condition required for adventure activities.",
+    fr: "Condition physique adéquate requise pour les activités d'aventure.",
+    de: "Angemessene körperliche Verfassung für Abenteueraktivitäten erforderlich.",
+  },
+  "terms.section4.content3": {
+    es: "Prohibido el consumo de alcohol o sustancias antes y durante las excursiones.",
+    en: "Consumption of alcohol or substances before and during excursions is prohibited.",
+    fr: "La consommation d'alcool ou de substances avant et pendant les excursions est interdite.",
+    de: "Der Konsum von Alkohol oder Substanzen vor und während der Ausflüge ist verboten.",
+  },
+  "terms.section4.content4": {
+    es: "Nos reservamos el derecho de rechazar participantes que no cumplan los requisitos.",
+    en: "We reserve the right to refuse participants who do not meet the requirements.",
+    fr: "Nous nous réservons le droit de refuser les participants qui ne répondent pas aux exigences.",
+    de: "Wir behalten uns das Recht vor, Teilnehmer abzulehnen, die die Anforderungen nicht erfüllen.",
+  },
+  "terms.section5.title": {
+    es: "Propiedad Intelectual",
+    en: "Intellectual Property",
+    fr: "Propriété Intellectuelle",
+    de: "Geistiges Eigentum",
+  },
+  "terms.section5.content1": {
+    es: "Las fotos y videos tomados durante las excursiones pueden ser utilizados con fines promocionales.",
+    en: "Photos and videos taken during excursions may be used for promotional purposes.",
+    fr: "Les photos et vidéos prises pendant les excursions peuvent être utilisées à des fins promotionnelles.",
+    de: "Fotos und Videos, die während der Ausflüge aufgenommen werden, können für Werbezwecke verwendet werden.",
+  },
+  "terms.section5.content2": {
+    es: "Los participantes pueden solicitar no aparecer en material promocional.",
+    en: "Participants may request not to appear in promotional material.",
+    fr: "Les participants peuvent demander de ne pas apparaître dans le matériel promotionnel.",
+    de: "Teilnehmer können beantragen, nicht in Werbematerial zu erscheinen.",
+  },
+  "terms.section5.content3": {
+    es: "Todo el contenido del sitio web está protegido por derechos de autor.",
+    en: "All website content is protected by copyright.",
+    fr: "Tout le contenu du site web est protégé par des droits d'auteur.",
+    de: "Alle Website-Inhalte sind urheberrechtlich geschützt.",
+  },
+  "terms.section5.content4": {
+    es: "Prohibida la reproducción sin autorización expresa de nuestro contenido.",
+    en: "Reproduction without express authorization of our content is prohibited.",
+    fr: "La reproduction sans autorisation expresse de notre contenu est interdite.",
+    de: "Die Reproduktion ohne ausdrückliche Genehmigung unserer Inhalte ist verboten.",
+  },
+  "terms.section6.title": {
+    es: "Jurisdicción y Ley Aplicable",
+    en: "Jurisdiction and Applicable Law",
+    fr: "Juridiction et Loi Applicable",
+    de: "Gerichtsbarkeit und anwendbares Recht",
+  },
+  "terms.section6.content1": {
+    es: "Estos términos se rigen por la legislación española.",
+    en: "These terms are governed by Spanish legislation.",
+    fr: "Ces termes sont régis par la législation espagnole.",
+    de: "Diese Bedingungen unterliegen der spanischen Gesetzgebung.",
+  },
+  "terms.section6.content2": {
+    es: "Cualquier disputa será resuelta en los tribunales de Santa Cruz de Tenerife.",
+    en: "Any dispute will be resolved in the courts of Santa Cruz de Tenerife.",
+    fr: "Tout litige sera résolu devant les tribunaux de Santa Cruz de Tenerife.",
+    de: "Jede Streitigkeit wird vor den Gerichten von Santa Cruz de Tenerife gelöst.",
+  },
+  "terms.section6.content3": {
+    es: "Intentaremos resolver cualquier conflicto de manera amistosa antes de recurrir a vías legales.",
+    en: "We will try to resolve any conflict amicably before resorting to legal means.",
+    fr: "Nous essaierons de résoudre tout conflit à l'amiable avant de recourir aux voies légales.",
+    de: "Wir werden versuchen, jeden Konflikt gütlich zu lösen, bevor wir rechtliche Schritte einleiten.",
+  },
+  "terms.section6.content4": {
+    es: "Estos términos pueden ser actualizados periódicamente, notificando a los usuarios registrados.",
+    en: "These terms may be updated periodically, notifying registered users.",
+    fr: "Ces termes peuvent être mis à jour périodiquement, en notifiant les utilisateurs enregistrés.",
+    de: "Diese Bedingungen können regelmäßig aktualisiert werden, wobei registrierte Benutzer benachrichtigt werden.",
+  },
+  "terms.important_notice.title": {
+    es: "Aviso Importante",
+    en: "Important Notice",
+    fr: "Avis Important",
+    de: "Wichtiger Hinweis",
+  },
+  "terms.important_notice.content": {
+    es: "Al realizar una reserva, confirmas que has leído, entendido y aceptado estos términos y condiciones en su totalidad.",
+    en: "By making a booking, you confirm that you have read, understood and accepted these terms and conditions in their entirety.",
+    fr: "En effectuant une réservation, vous confirmez avoir lu, compris et accepté ces termes et conditions dans leur intégralité.",
+    de: "Durch eine Buchung bestätigen Sie, dass Sie diese Geschäftsbedingungen vollständig gelesen, verstanden und akzeptiert haben.",
+  },
+  "terms.legal_info.title": {
+    es: "Información Legal",
+    en: "Legal Information",
+    fr: "Informations Légales",
+    de: "Rechtliche Informationen",
+  },
+  "terms.buttons.accept": {
+    es: "Aceptar",
+    en: "Accept",
+    fr: "Accepter",
+    de: "Akzeptieren",
+  },
+  "terms.buttons.print": {
+    es: "Imprimir",
+    en: "Print",
+    fr: "Imprimer",
+    de: "Drucken",
+  },
+
+  // FAQ - Complete
+  "faq.title": {
+    es: "Preguntas Frecuentes",
+    en: "Frequently Asked Questions",
+    fr: "Questions Fréquemment Posées",
+    de: "Häufig gestellte Fragen",
+  },
+  "faq.subtitle": {
+    es: "Encuentra respuestas a las preguntas más comunes",
+    en: "Find answers to the most common questions",
+    fr: "Trouvez des réponses aux questions les plus courantes",
+    de: "Finden Sie Antworten auf die häufigsten Fragen",
+  },
+  "faq.intro.title": {
+    es: "¿Tienes dudas?",
+    en: "Have questions?",
+    fr: "Vous avez des questions?",
+    de: "Haben Sie Fragen?",
+  },
+  "faq.intro.content": {
+    es: "Aquí encontrarás respuestas a las preguntas más frecuentes sobre nuestras excursiones. Si no encuentras lo que buscas, no dudes en contactarnos directamente.",
+    en: "Here you'll find answers to the most frequently asked questions about our excursions. If you don't find what you're looking for, don't hesitate to contact us directly.",
+    fr: "Ici vous trouverez des réponses aux questions les plus fréquemment posées sur nos excursions. Si vous ne trouvez pas ce que vous cherchez, n'hésitez pas à nous contacter directement.",
+    de: "Hier finden Sie Antworten auf die häufigsten Fragen zu unseren Ausflügen. Wenn Sie nicht finden, was Sie suchen, zögern Sie nicht, uns direkt zu kontaktieren.",
+  },
+  "faq.category1.title": {
+    es: "Reservas y Cancelaciones",
+    en: "Bookings and Cancellations",
+    fr: "Réservations et Annulations",
+    de: "Buchungen und Stornierungen",
+  },
+  "faq.category1.q1.question": {
+    es: "¿Cómo puedo hacer una reserva?",
+    en: "How can I make a booking?",
+    fr: "Comment puis-je faire une réservation?",
+    de: "Wie kann ich eine Buchung vornehmen?",
+  },
+  "faq.category1.q1.answer": {
+    es: "Puedes reservar a través de nuestro formulario online o contactándonos directamente por WhatsApp. Te confirmaremos la disponibilidad y todos los detalles inmediatamente.",
+    en: "You can book through our online form or by contacting us directly via WhatsApp. We'll confirm availability and all details immediately.",
+    fr: "Vous pouvez réserver via notre formulaire en ligne ou en nous contactant directement par WhatsApp. Nous confirmerons la disponibilité et tous les détails immédiatement.",
+    de: "Sie können über unser Online-Formular buchen oder uns direkt über WhatsApp kontaktieren. Wir bestätigen sofort die Verfügbarkeit und alle Details.",
+  },
+  "faq.category1.q2.question": {
+    es: "¿Puedo cancelar mi reserva?",
+    en: "Can I cancel my booking?",
+    fr: "Puis-je annuler ma réservation?",
+    de: "Kann ich meine Buchung stornieren?",
+  },
+  "faq.category1.q2.answer": {
+    es: "Sí, ofrecemos cancelación gratuita hasta 24 horas antes de la excursión. Para cancelaciones de último momento, contáctanos y evaluaremos cada caso individualmente.",
+    en: "Yes, we offer free cancellation up to 24 hours before the excursion. For last-minute cancellations, contact us and we'll evaluate each case individually.",
+    fr: "Oui, nous offrons une annulation gratuite jusqu'à 24 heures avant l'excursion. Pour les annulations de dernière minute, contactez-nous et nous évaluerons chaque cas individuellement.",
+    de: "Ja, wir bieten kostenlose Stornierung bis 24 Stunden vor dem Ausflug. Für Last-Minute-Stornierungen kontaktieren Sie uns und wir bewerten jeden Fall individuell.",
+  },
+  "faq.category1.q3.question": {
+    es: "¿Qué pasa si llueve el día de mi excursión?",
+    en: "What happens if it rains on the day of my excursion?",
+    fr: "Que se passe-t-il s'il pleut le jour de mon excursion?",
+    de: "Was passiert, wenn es am Tag meines Ausflugs regnet?",
+  },
+  "faq.category1.q3.answer": {
+    es: "Monitoreamos constantemente las condiciones meteorológicas. Si el clima no es seguro, te ofreceremos reprogramar para otra fecha o un reembolso completo.",
+    en: "We constantly monitor weather conditions. If the weather is not safe, we'll offer to reschedule for another date or provide a full refund.",
+    fr: "Nous surveillons constamment les conditions météorologiques. Si le temps n'est pas sûr, nous vous proposerons de reprogrammer à une autre date ou un remboursement complet.",
+    de: "Wir überwachen ständig die Wetterbedingungen. Wenn das Wetter nicht sicher ist, bieten wir eine Umplanung auf ein anderes Datum oder eine vollständige Rückerstattung an.",
+  },
+  "faq.category2.title": {
+    es: "Pagos y Precios",
+    en: "Payments and Prices",
+    fr: "Paiements et Prix",
+    de: "Zahlungen und Preise",
+  },
+  "faq.category2.q1.question": {
+    es: "¿Cuándo debo pagar?",
+    en: "When do I need to pay?",
+    fr: "Quand dois-je payer?",
+    de: "Wann muss ich bezahlen?",
+  },
+  "faq.category2.q1.answer": {
+    es: "El pago se realiza en efectivo el día de la excursión, antes de comenzar la actividad. No requerimos pago por adelantado para confirmar tu reserva.",
+    en: "Payment is made in cash on the day of the excursion, before starting the activity. We don't require advance payment to confirm your booking.",
+    fr: "Le paiement s'effectue en espèces le jour de l'excursion, avant de commencer l'activité. Nous n'exigeons pas de paiement anticipé pour confirmer votre réservation.",
+    de: "Die Zahlung erfolgt in bar am Tag des Ausflugs, vor Beginn der Aktivität. Wir benötigen keine Vorauszahlung zur Bestätigung Ihrer Buchung.",
+  },
+  "faq.category2.q2.question": {
+    es: "¿Qué incluye el precio?",
+    en: "What does the price include?",
+    fr: "Qu'est-ce que le prix inclut?",
+    de: "Was ist im Preis enthalten?",
+  },
+  "faq.category2.q2.answer": {
+    es: "Nuestros precios incluyen transporte, guía experto, seguro, y todos los servicios especificados en cada excursión. Las comidas y bebidas se especifican por separado.",
+    en: "Our prices include transport, expert guide, insurance, and all services specified in each excursion. Meals and drinks are specified separately.",
+    fr: "Nos prix incluent le transport, un guide expert, l'assurance et tous les services spécifiés dans chaque excursion. Les repas et boissons sont spécifiés séparément.",
+    de: "Unsere Preise beinhalten Transport, Expertenführer, Versicherung und alle in jedem Ausflug spezifizierten Dienstleistungen. Mahlzeiten und Getränke werden separat angegeben.",
+  },
+  "faq.category2.q3.question": {
+    es: "¿Hay descuentos para grupos?",
+    en: "Are there group discounts?",
+    fr: "Y a-t-il des réductions de groupe?",
+    de: "Gibt es Gruppenrabatte?",
+  },
+  "faq.category2.q3.answer": {
+    es: "Sí, ofrecemos descuentos especiales para grupos de 6 o más personas. Contáctanos directamente para obtener una cotización personalizada.",
+    en: "Yes, we offer special discounts for groups of 6 or more people. Contact us directly for a personalized quote.",
+    fr: "Oui, nous offrons des réductions spéciales pour les groupes de 6 personnes ou plus. Contactez-nous directement pour un devis personnalisé.",
+    de: "Ja, wir bieten spezielle Rabatte für Gruppen von 6 oder mehr Personen. Kontaktieren Sie uns direkt für ein personalisiertes Angebot.",
+  },
+  "faq.category3.title": {
+    es: "Durante la Excursión",
+    en: "During the Excursion",
+    fr: "Pendant l'Excursion",
+    de: "Während des Ausflugs",
+  },
+  "faq.category3.q1.question": {
+    es: "¿Qué debo llevar?",
+    en: "What should I bring?",
+    fr: "Que dois-je apporter?",
+    de: "Was soll ich mitbringen?",
+  },
+  "faq.category3.q1.answer": {
+    es: "Te enviaremos una lista detallada según tu excursión. Generalmente incluye ropa cómoda, calzado adecuado, protector solar, agua y cámara. El equipo especializado lo proporcionamos nosotros.",
+    en: "We'll send you a detailed list according to your excursion. Generally includes comfortable clothing, appropriate footwear, sunscreen, water and camera. We provide specialized equipment.",
+    fr: "Nous vous enverrons une liste détaillée selon votre excursion. Comprend généralement des vêtements confortables, des chaussures appropriées, de la crème solaire, de l'eau et un appareil photo. Nous fournissons l'équipement spécialisé.",
+    de: "Wir senden Ihnen eine detaillierte Liste entsprechend Ihrem Ausflug. Umfasst normalerweise bequeme Kleidung, geeignetes Schuhwerk, Sonnenschutz, Wasser und Kamera. Spezialausrüstung stellen wir zur Verfügung.",
+  },
+  "faq.category3.q2.question": {
+    es: "¿Hay límite de edad?",
+    en: "Is there an age limit?",
+    fr: "Y a-t-il une limite d'âge?",
+    de: "Gibt es eine Altersgrenze?",
+  },
+  "faq.category3.q2.answer": {
+    es: "Cada excursión tiene sus propios requisitos de edad por seguridad. Tenemos opciones para todas las edades, desde actividades familiares hasta aventuras más extremas para adultos.",
+    en: "Each excursion has its own age requirements for safety. We have options for all ages, from family activities to more extreme adventures for adults.",
+    fr: "Chaque excursion a ses propres exigences d'âge pour la sécurité. Nous avons des options pour tous les âges, des activités familiales aux aventures plus extrêmes pour adultes.",
+    de: "Jeder Ausflug hat aus Sicherheitsgründen seine eigenen Altersanforderungen. Wir haben Optionen für alle Altersgruppen, von Familienaktivitäten bis hin zu extremeren Abenteuern für Erwachsene.",
+  },
+  "faq.category3.q3.question": {
+    es: "¿Qué pasa si tengo problemas de salud?",
+    en: "What if I have health problems?",
+    fr: "Et si j'ai des problèmes de santé?",
+    de: "Was ist, wenn ich gesundheitliche Probleme habe?",
+  },
+  "faq.category3.q3.answer": {
+    es: "Es importante que nos informes sobre cualquier condición médica al hacer la reserva. Adaptaremos la excursión a tus necesidades o te recomendaremos la actividad más adecuada.",
+    en: "It's important that you inform us about any medical condition when booking. We'll adapt the excursion to your needs or recommend the most suitable activity.",
+    fr: "Il est important que vous nous informiez de toute condition médicale lors de la réservation. Nous adapterons l'excursion à vos besoins ou vous recommanderons l'activité la plus appropriée.",
+    de: "Es ist wichtig, dass Sie uns bei der Buchung über jede medizinische Bedingung informieren. Wir passen den Ausflug an Ihre Bedürfnisse an oder empfehlen die am besten geeignete Aktivität.",
+  },
+  "faq.category4.title": {
+    es: "Seguridad y Equipamiento",
+    en: "Safety and Equipment",
+    fr: "Sécurité et Équipement",
+    de: "Sicherheit und Ausrüstung",
+  },
+  "faq.category4.q1.question": {
+    es: "¿Están aseguradas las excursiones?",
+    en: "Are the excursions insured?",
+    fr: "Les excursions sont-elles assurées?",
+    de: "Sind die Ausflüge versichert?",
+  },
+  "faq.category4.q1.answer": {
+    es: "Sí, todos nuestros participantes están cubiertos por seguro de responsabilidad civil y accidentes. Trabajamos solo con compañías de seguros reconocidas.",
+    en: "Yes, all our participants are covered by civil liability and accident insurance. We work only with recognized insurance companies.",
+    fr: "Oui, tous nos participants sont couverts par une assurance responsabilité civile et accidents. Nous travaillons uniquement avec des compagnies d'assurance reconnues.",
+    de: "Ja, alle unsere Teilnehmer sind durch Haftpflicht- und Unfallversicherung abgedeckt. Wir arbeiten nur mit anerkannten Versicherungsunternehmen.",
+  },
+  "faq.category4.q2.question": {
+    es: "¿Proporcionan el equipo necesario?",
+    en: "Do you provide the necessary equipment?",
+    fr: "Fournissez-vous l'équipement nécessaire?",
+    de: "Stellen Sie die notwendige Ausrüstung zur Verfügung?",
+  },
+  "faq.category4.q2.answer": {
+    es: "Sí, proporcionamos todo el equipo especializado necesario para cada actividad. Solo necesitas traer ropa cómoda y ganas de aventura.",
+    en: "Yes, we provide all the specialized equipment necessary for each activity. You just need to bring comfortable clothes and a sense of adventure.",
+    fr: "Oui, nous fournissons tout l'équipement spécialisé nécessaire pour chaque activité. Vous n'avez qu'à apporter des vêtements confortables et un esprit d'aventure.",
+    de: "Ja, wir stellen die gesamte spezialisierte Ausrüstung zur Verfügung, die für jede Aktivität erforderlich ist. Sie müssen nur bequeme Kleidung und Abenteuerlust mitbringen.",
+  },
+  "faq.category4.q3.question": {
+    es: "¿Qué medidas de seguridad tienen?",
+    en: "What safety measures do you have?",
+    fr: "Quelles mesures de sécurité avez-vous?",
+    de: "Welche Sicherheitsmaßnahmen haben Sie?",
+  },
+  "faq.category4.q3.answer": {
+    es: "Nuestros guías están certificados en primeros auxilios, seguimos protocolos estrictos de seguridad, y realizamos briefings detallados antes de cada actividad.",
+    en: "Our guides are certified in first aid, we follow strict safety protocols, and conduct detailed briefings before each activity.",
+    fr: "Nos guides sont certifiés en premiers secours, nous suivons des protocoles de sécurité stricts et effectuons des briefings détaillés avant chaque activité.",
+    de: "Unsere Führer sind in Erster Hilfe zertifiziert, wir befolgen strenge Sicherheitsprotokolle und führen detaillierte Briefings vor jeder Aktivität durch.",
+  },
+  "faq.contact.title": {
+    es: "¿No encuentras tu respuesta?",
+    en: "Can't find your answer?",
+    fr: "Vous ne trouvez pas votre réponse?",
+    de: "Finden Sie Ihre Antwort nicht?",
+  },
+  "faq.contact.content": {
+    es: "Nuestro equipo está disponible 24/7 para resolver cualquier duda que tengas.",
+    en: "Our team is available 24/7 to resolve any questions you may have.",
+    fr: "Notre équipe est disponible 24/7 pour résoudre toutes les questions que vous pourriez avoir.",
+    de: "Unser Team ist 24/7 verfügbar, um alle Fragen zu beantworten, die Sie haben könnten.",
+  },
+  "faq.contact.whatsapp": {
+    es: "WhatsApp",
+    en: "WhatsApp",
+    fr: "WhatsApp",
+    de: "WhatsApp",
+  },
+  "faq.contact.schedule": {
+    es: "Horarios",
+    en: "Schedule",
+    fr: "Horaires",
+    de: "Zeitplan",
+  },
+  "faq.buttons.close": {
+    es: "Cerrar",
+    en: "Close",
+    fr: "Fermer",
+    de: "Schließen",
+  },
+  "faq.buttons.print": {
+    es: "Imprimir",
+    en: "Print",
+    fr: "Imprimer",
+    de: "Drucken",
+  },
+
+  // About Page - Complete
+  "about.story_badge": {
+    es: "Nuestra Historia",
+    en: "Our Story",
+    fr: "Notre Histoire",
+    de: "Unsere Geschichte",
+  },
+  "about.story_title": {
+    es: "Nuestra Historia",
+    en: "Our Story",
+    fr: "Notre Histoire",
+    de: "Unsere Geschichte",
+  },
+  "about.hero_badge": {
+    es: "Nuestra Historia",
+    en: "Our Story",
+    fr: "Notre Histoire",
+    de: "Unsere Geschichte",
+  },
+  "about.title": {
+    es: "Descubre Quiénes Somos",
+    en: "Discover Who We Are",
+    fr: "Découvrez Qui Nous Sommes",
+    de: "Entdecken Sie Wer Wir Sind",
+  },
+  "about.subtitle": {
+    es: "Expertos en aventuras inolvidables en Tenerife",
+    en: "Experts in unforgettable adventures in Tenerife",
+    fr: "Experts en aventures inoubliables à Tenerife",
+    de: "Experten für unvergessliche Abenteuer auf Teneriffa",
+  },
+  "about.description": {
+    es: "Somos un equipo apasionado de guías locales con años de experiencia mostrando la belleza de Tenerife a visitantes de todo el mundo. Nuestra misión es crear experiencias auténticas que conecten a nuestros clientes con la naturaleza, cultura y tradiciones de nuestra isla.",
+    en: "We are a passionate team of local guides with years of experience showing the beauty of Tenerife to visitors from around the world. Our mission is to create authentic experiences that connect our clients with the nature, culture and traditions of our island.",
+    fr: "Nous sommes une équipe passionnée de guides locaux avec des années d'expérience montrant la beauté de Tenerife aux visiteurs du monde entier. Notre mission est de créer des expériences authentiques qui connectent nos clients avec la nature, la culture et les traditions de notre île.",
+    de: "Wir sind ein leidenschaftliches Team lokaler Führer mit jahrelanger Erfahrung, die Schönheit Teneriffas Besuchern aus aller Welt zu zeigen. Unsere Mission ist es, authentische Erlebnisse zu schaffen, die unsere Kunden mit der Natur, Kultur und den Traditionen unserer Insel verbinden.",
+  },
+
+  // Mission, Vision, Values
+  "about.mission": {
+    es: "Misión",
+    en: "Mission",
+    fr: "Mission",
+    de: "Mission",
+  },
+  "about.mission_text": {
+    es: "Crear experiencias auténticas e inolvidables que conecten a nuestros visitantes con la verdadera esencia de Tenerife, promoviendo el turismo sostenible y responsable.",
+    en: "Create authentic and unforgettable experiences that connect our visitors with the true essence of Tenerife, promoting sustainable and responsible tourism.",
+    fr: "Créer des expériences authentiques et inoubliables qui connectent nos visiteurs avec la véritable essence de Tenerife, en promouvant un tourisme durable et responsable.",
+    de: "Authentische und unvergessliche Erlebnisse schaffen, die unsere Besucher mit der wahren Essenz Teneriffas verbinden und nachhaltigen und verantwortlichen Tourismus fördern.",
+  },
+  "about.vision": {
+    es: "Visión",
+    en: "Vision",
+    fr: "Vision",
+    de: "Vision",
+  },
+  "about.vision_text": {
+    es: "Ser la empresa líder en excursiones de Tenerife, reconocida por nuestra excelencia en el servicio, innovación y compromiso con la preservación del patrimonio natural y cultural de la isla.",
+    en: "To be the leading excursion company in Tenerife, recognized for our excellence in service, innovation and commitment to preserving the island's natural and cultural heritage.",
+    fr: "Être la société d'excursions leader à Tenerife, reconnue pour notre excellence dans le service, l'innovation et l'engagement à préserver le patrimoine naturel et culturel de l'île.",
+    de: "Das führende Ausflugsunternehmen auf Teneriffa zu sein, anerkannt für unsere Exzellenz im Service, Innovation und Engagement für die Erhaltung des natürlichen und kulturellen Erbes der Insel.",
+  },
+  "about.values": {
+    es: "Valores",
+    en: "Values",
+    fr: "Valeurs",
+    de: "Werte",
+  },
+  "about.values_text": {
+    es: "Pasión, respeto por la naturaleza, calidad en el servicio y compromiso con nuestros clientes son los pilares fundamentales que guían cada una de nuestras acciones.",
+    en: "Passion, respect for nature, quality service and commitment to our clients are the fundamental pillars that guide each of our actions.",
+    fr: "La passion, le respect de la nature, la qualité du service et l'engagement envers nos clients sont les piliers fondamentaux qui guident chacune de nos actions.",
+    de: "Leidenschaft, Respekt vor der Natur, Servicequalität und Engagement für unsere Kunden sind die grundlegenden Säulen, die jede unserer Handlungen leiten.",
+  },
+
+  // Individual Values
+  "about.value_passion_title": {
+    es: "Pasión",
+    en: "Passion",
+    fr: "Passion",
+    de: "Leidenschaft",
+  },
+  "about.value_passion_desc": {
+    es: "Amamos lo que hacemos y esa pasión se refleja en cada excursión que organizamos, transmitiendo nuestro entusiasmo por Tenerife a cada visitante.",
+    en: "We love what we do and that passion is reflected in every excursion we organize, transmitting our enthusiasm for Tenerife to every visitor.",
+    fr: "Nous aimons ce que nous faisons et cette passion se reflète dans chaque excursion que nous organisons, transmettant notre enthousiasme pour Tenerife à chaque visiteur.",
+    de: "Wir lieben was wir tun und diese Leidenschaft spiegelt sich in jedem Ausflug wider, den wir organisieren, und überträgt unsere Begeisterung für Teneriffa auf jeden Besucher.",
+  },
+  "about.value_experience_title": {
+    es: "Experiencia",
+    en: "Experience",
+    fr: "Expérience",
+    de: "Erfahrung",
+  },
+  "about.value_experience_desc": {
+    es: "Nuestro equipo cuenta con años de experiencia explorando cada rincón de Tenerife, conocimiento que compartimos para crear aventuras únicas e inolvidables.",
+    en: "Our team has years of experience exploring every corner of Tenerife, knowledge that we share to create unique and unforgettable adventures.",
+    fr: "Notre équipe a des années d'expérience à explorer chaque coin de Tenerife, des connaissances que nous partageons pour créer des aventures uniques et inoubliables.",
+    de: "Unser Team hat jahrelange Erfahrung bei der Erkundung jeder Ecke Teneriffas, Wissen, das wir teilen, um einzigartige und unvergessliche Abenteuer zu schaffen.",
+  },
+  "about.value_security_title": {
+    es: "Seguridad",
+    en: "Security",
+    fr: "Sécurité",
+    de: "Sicherheit",
+  },
+  "about.value_security_desc": {
+    es: "La seguridad de nuestros clientes es nuestra máxima prioridad. Contamos con protocolos estrictos y equipamiento de primera calidad para garantizar experiencias seguras.",
+    en: "The safety of our clients is our top priority. We have strict protocols and top-quality equipment to guarantee safe experiences.",
+    fr: "La sécurité de nos clients est notre priorité absolue. Nous avons des protocoles stricts et un équipement de première qualité pour garantir des expériences sûres.",
+    de: "Die Sicherheit unserer Kunden hat für uns oberste Priorität. Wir haben strenge Protokolle und erstklassige Ausrüstung, um sichere Erlebnisse zu gewährleisten.",
+  },
+  "about.value_quality_title": {
+    es: "Calidad",
+    en: "Quality",
+    fr: "Qualité",
+    de: "Qualität",
+  },
+  "about.value_quality_desc": {
+    es: "Nos comprometemos a ofrecer el más alto nivel de calidad en todos nuestros servicios, desde la planificación hasta la ejecución de cada excursión.",
+    en: "We are committed to offering the highest level of quality in all our services, from planning to execution of each excursion.",
+    fr: "Nous nous engageons à offrir le plus haut niveau de qualité dans tous nos services, de la planification à l'exécution de chaque excursion.",
+    de: "Wir verpflichten uns, das höchste Qualitätsniveau in all unseren Dienstleistungen zu bieten, von der Planung bis zur Durchführung jedes Ausflugs.",
+  },
+
+  // Excursions Page
+  "excursions.all_categories": {
+    es: "Todas las categorías",
+    en: "All categories",
+    fr: "Toutes les catégories",
+    de: "Alle Kategorien",
+  },
+  "excursions.filters": {
+    es: "Filtros",
+    en: "Filters",
+    fr: "Filtres",
+    de: "Filter",
+  },
+  "excursions.search_placeholder": {
+    es: "Buscar excursiones...",
+    en: "Search excursions...",
+    fr: "Rechercher des excursions...",
+    de: "Ausflüge suchen...",
+  },
+  "excursions.all_prices": {
+    es: "Todos los precios",
+    en: "All prices",
+    fr: "Tous les prix",
+    de: "Alle Preise",
+  },
+  "excursions.price_low": {
+    es: "Menos de €50",
+    en: "Under €50",
+    fr: "Moins de 50€",
+    de: "Unter 50€",
+  },
+  "excursions.price_medium": {
+    es: "€50 - €80",
+    en: "€50 - €80",
+    fr: "50€ - 80€",
+    de: "50€ - 80€",
+  },
+  "excursions.price_high": {
+    es: "Más de €80",
+    en: "Over €80",
+    fr: "Plus de 80€",
+    de: "Über 80€",
+  },
+  "excursions.sort_featured": {
+    es: "Destacados",
+    en: "Featured",
+    fr: "En vedette",
+    de: "Empfohlen",
+  },
+  "excursions.sort_price_low": {
+    es: "Precio: Menor a mayor",
+    en: "Price: Low to high",
+    fr: "Prix: Croissant",
+    de: "Preis: Niedrig bis hoch",
+  },
+  "excursions.sort_price_high": {
+    es: "Precio: Mayor a menor",
+    en: "Price: High to low",
+    fr: "Prix: Décroissant",
+    de: "Preis: Hoch bis niedrig",
+  },
+  "excursions.sort_name": {
+    es: "Nombre A-Z",
+    en: "Name A-Z",
+    fr: "Nom A-Z",
+    de: "Name A-Z",
+  },
+  "excursions.found": {
+    es: "excursión encontrada",
+    en: "excursion found",
+    fr: "excursion trouvée",
+    de: "Ausflug gefunden",
+  },
+  "excursions.found_plural": {
+    es: "excursiones encontradas",
+    en: "excursions found",
+    fr: "excursions trouvées",
+    de: "Ausflüge gefunden",
+  },
+  "excursions.showing_all": {
+    es: "Mostrando todas las experiencias disponibles",
+    en: "Showing all available experiences",
+    fr: "Affichage de toutes les expériences disponibles",
+    de: "Alle verfügbaren Erlebnisse anzeigen",
+  },
+  "excursions.filtered_from": {
+    es: "Filtrado de",
+    en: "Filtered from",
+    fr: "Filtré de",
+    de: "Gefiltert von",
+  },
+  "excursions.total_experiences": {
+    es: "experiencias totales",
+    en: "total experiences",
+    fr: "expériences totales",
+    de: "Gesamterlebnisse",
+  },
+  "excursions.no_results": {
+    es: "No se encontraron resultados",
+    en: "No results found",
+    fr: "Aucun résultat trouvé",
+    de: "Keine Ergebnisse gefunden",
+  },
+  "excursions.no_results_text": {
+    es: "Intenta ajustar tus filtros o buscar con términos diferentes para encontrar la excursión perfecta.",
+    en: "Try adjusting your filters or searching with different terms to find the perfect excursion.",
+    fr: "Essayez d'ajuster vos filtres ou de rechercher avec des termes différents pour trouver l'excursion parfaite.",
+    de: "Versuchen Sie, Ihre Filter anzupassen oder mit anderen Begriffen zu suchen, um den perfekten Ausflug zu finden.",
+  },
+  "excursions.view_all": {
+    es: "Ver todas las excursiones",
+    en: "View all excursions",
+    fr: "Voir toutes les excursions",
+    de: "Alle Ausflüge ansehen",
+  },
+  "excursions.custom_experience": {
+    es: "¿Buscas una experiencia personalizada?",
+    en: "Looking for a custom experience?",
+    fr: "Vous cherchez une expérience personnalisée?",
+    de: "Suchen Sie ein individuelles Erlebnis?",
+  },
+  "excursions.custom_text": {
+    es: "Creamos excursiones únicas adaptadas a tus intereses y necesidades específicas.",
+    en: "We create unique excursions tailored to your specific interests and needs.",
+    fr: "Nous créons des excursions uniques adaptées à vos intérêts et besoins spécifiques.",
+    de: "Wir erstellen einzigartige Ausflüge, die auf Ihre spezifischen Interessen und Bedürfnisse zugeschnitten sind.",
+  },
+  "excursions.contact_custom": {
+    es: "Contactar para experiencia personalizada",
+    en: "Contact for custom experience",
+    fr: "Contacter pour une expérience personnalisée",
+    de: "Kontakt für individuelles Erlebnis",
+  },
+  "excursions.clear_filters": {
+    es: "Limpiar filtros",
+    en: "Clear filters",
+    fr: "Effacer les filtres",
+    de: "Filter löschen",
+  },
+  "excursions.search_label": {
+    es: "Búsqueda",
+    en: "Search",
+    fr: "Recherche",
+    de: "Suche",
+  },
+
+  // Categories
+  "category.naturaleza": {
+    es: "Naturaleza",
+    en: "Nature",
+    fr: "Nature",
+    de: "Natur",
+  },
+  "category.marina": {
+    es: "Marina",
+    en: "Marine",
+    fr: "Marine",
+    de: "Meerestiere",
+  },
+  "category.senderismo": {
+    es: "Senderismo",
+    en: "Hiking",
+    fr: "Randonnée",
+    de: "Wandern",
+  },
+  "category.gastronomia": {
+    es: "Gastronomía",
+    en: "Gastronomy",
+    fr: "Gastronomie",
+    de: "Gastronomie",
+  },
+  "category.paisajes": {
+    es: "Paisajes",
+    en: "Landscapes",
+    fr: "Paysages",
+    de: "Landschaften",
+  },
+  "category.familia": {
+    es: "Familia",
+    en: "Family",
+    fr: "Famille",
+    de: "Familie",
+  },
+
+  // Common
+  "common.loading_experiences": {
+    es: "Cargando experiencias...",
+    en: "Loading experiences...",
+    fr: "Chargement des expériences...",
+    de: "Erlebnisse werden geladen...",
+  },
+  "common.all_ratings": {
+    es: "Todas las valoraciones verificadas",
+    en: "All verified ratings",
+    fr: "Toutes les évaluations vérifiées",
+    de: "Alle verifizierten Bewertungen",
+  },
+
+  // Footer
+  "footer.company_description": {
+    es: "Descubre la magia de Tenerife con nuestras excursiones únicas. Experiencias inolvidables en la isla de la eterna primavera.",
+    en: "Discover the magic of Tenerife with our unique excursions. Unforgettable experiences on the island of eternal spring.",
+    fr: "Découvrez la magie de Tenerife avec nos excursions uniques. Des expériences inoubliables sur l'île de l'éternel printemps.",
+    de: "Entdecken Sie die Magie Teneriffas mit unseren einzigartigen Ausflügen. Unvergessliche Erlebnisse auf der Insel des ewigen Frühlings.",
+  },
+  "footer.quick_links": {
+    es: "Enlaces Rápidos",
+    en: "Quick Links",
+    fr: "Liens Rapides",
+    de: "Schnelle Links",
+  },
+  "footer.contact_info": {
+    es: "Información de Contacto",
+    en: "Contact Information",
+    fr: "Informations de Contact",
+    de: "Kontaktinformationen",
+  },
+  "footer.newsletter": {
+    es: "Newsletter",
+    en: "Newsletter",
+    fr: "Newsletter",
+    de: "Newsletter",
+  },
+  "footer.newsletter_text": {
+    es: "Suscríbete para recibir ofertas especiales y novedades sobre nuestras excursiones.",
+    en: "Subscribe to receive special offers and news about our excursions.",
+    fr: "Abonnez-vous pour recevoir des offres spéciales et des nouvelles sur nos excursions.",
+    de: "Abonnieren Sie, um Sonderangebote und Neuigkeiten über unsere Ausflüge zu erhalten.",
+  },
+  "footer.subscribe": {
+    es: "Suscribirse",
+    en: "Subscribe",
+    fr: "S'abonner",
+    de: "Abonnieren",
+  },
+  "footer.copyright": {
+    es: "© 2024 TenerifeParadise Tours & Excursions. Todos los derechos reservados.",
+    en: "© 2024 TenerifeParadise Tours & Excursions. All rights reserved.",
+    fr: "© 2024 TenerifeParadise Tours & Excursions. Tous droits réservés.",
+    de: "© 2024 TenerifeParadise Tours & Excursions. Alle Rechte vorbehalten.",
+  },
+  "footer.designed_by": {
+    es: "Diseñado por",
+    en: "Designed by",
+    fr: "Conçu par",
+    de: "Entworfen von",
+  },
+  "footer.privacy": {
+    es: "Política de Privacidad",
+    en: "Privacy Policy",
+    fr: "Politique de Confidentialité",
+    de: "Datenschutzrichtlinie",
+  },
+  "footer.terms": {
+    es: "Términos y Condiciones",
+    en: "Terms & Conditions",
+    fr: "Termes et Conditions",
+    de: "Geschäftsbedingungen",
+  },
+  "footer.faq": {
+    es: "Preguntas Frecuentes",
+    en: "FAQ",
+    fr: "FAQ",
+    de: "FAQ",
+  },
+
+  // Gallery
+  "gallery.badge": {
+    es: "Galería de fotos",
+    en: "Photo gallery",
+    fr: "Galerie de photos",
+    de: "Fotogalerie",
+  },
+  "gallery.title": {
+    es: "Momentos Inolvidables",
+    en: "Unforgettable Moments",
+    fr: "Moments Inoubliables",
+    de: "Unvergessliche Momente",
+  },
+  "gallery.subtitle": {
+    es: "Descubre la belleza de Tenerife a través de nuestras aventuras",
+    en: "Discover the beauty of Tenerife through our adventures",
+    fr: "Découvrez la beauté de Tenerife à travers nos aventures",
+    de: "Entdecken Sie die Schönheit Teneriffas durch unsere Abenteuer",
+  },
+  "gallery.loading": {
+    es: "Cargando galería...",
+    en: "Loading gallery...",
+    fr: "Chargement de la galerie...",
+    de: "Galerie wird geladen...",
+  },
+  "gallery.no_images": {
+    es: "No hay imágenes disponibles",
+    en: "No images available",
+    fr: "Aucune image disponible",
+    de: "Keine Bilder verfügbar",
+  },
+  "gallery.close": {
+    es: "Cerrar",
+    en: "Close",
+    fr: "Fermer",
+    de: "Schließen",
+  },
+  "gallery.previous": {
+    es: "Anterior",
+    en: "Previous",
+    fr: "Précédent",
+    de: "Vorherige",
+  },
+  "gallery.next": {
+    es: "Siguiente",
+    en: "Next",
+    fr: "Suivant",
+    de: "Nächste",
+  },
+  "gallery.instructions": {
+    es: "Usa las flechas del teclado o haz clic para navegar",
+    en: "Use keyboard arrows or click to navigate",
+    fr: "Utilisez les flèches du clavier ou cliquez pour naviguer",
+    de: "Verwenden Sie die Pfeiltasten oder klicken Sie zum Navigieren",
+  },
+
+  // Home page
+  "home.hero.title": {
+    es: "Descubre la Magia de Tenerife",
+    en: "Discover the Magic of Tenerife",
+    fr: "Découvrez la Magie de Tenerife",
+    de: "Entdecke die Magie von Teneriffa",
+  },
+  "home.hero.subtitle": {
+    es: "Explora paisajes volcánicos únicos, playas paradisíacas y experiencias inolvidables en la isla de la eterna primavera.",
+    en: "Explore unique volcanic landscapes, paradise beaches and unforgettable experiences on the island of eternal spring.",
+    fr: "Explorez des paysages volcaniques uniques, des plages paradisiaques et des expériences inoubliables sur l'île de l'éternel printemps.",
+    de: "Erkunden Sie einzigartige Vulkanlandschaften, paradiesische Strände und unvergessliche Erlebnisse auf der Insel des ewigen Frühlings.",
+  },
+  "home.hero.cta": {
+    es: "Ver Excursiones",
+    en: "View Excursions",
+    fr: "Voir les Excursions",
+    de: "Ausflüge ansehen",
+  },
+  "home.featured.title": {
+    es: "Excursiones Destacadas",
+    en: "Featured Excursions",
+    fr: "Excursions en Vedette",
+    de: "Empfohlene Ausflüge",
+  },
+  "home.featured.subtitle": {
+    es: "Descubre nuestras experiencias más populares",
+    en: "Discover our most popular experiences",
+    fr: "Découvrez nos expériences les plus populaires",
+    de: "Entdecken Sie unsere beliebtesten Erlebnisse",
+  },
+
+  // ExcursionCard
+  "excursion.duration": {
+    es: "Duración",
+    en: "Duration",
+    fr: "Durée",
+    de: "Dauer",
+  },
+  "excursion.hours": {
+    es: "horas",
+    en: "hours",
+    fr: "heures",
+    de: "Stunden",
+  },
+  "excursion.from": {
+    es: "Desde",
+    en: "From",
+    fr: "À partir de",
+    de: "Ab",
+  },
+  "excursion.to": {
+    es: "hasta",
+    en: "to",
+    fr: "jusqu'à",
+    de: "bis",
+  },
+  "excursion.bookNow": {
+    es: "Reservar Ahora",
+    en: "Book Now",
+    fr: "Réserver Maintenant",
+    de: "Jetzt Buchen",
+  },
+  "excursion.viewDetails": {
+    es: "Ver Detalles",
+    en: "View Details",
+    fr: "Voir les Détails",
+    de: "Details ansehen",
+  },
+
+  // Search
+  "search.placeholder": {
+    es: "Buscar excursiones...",
+    en: "Search excursions...",
+    fr: "Rechercher des excursions...",
+    de: "Ausflüge suchen...",
+  },
+  "search.popular": {
+    es: "Excursiones Populares",
+    en: "Popular Excursions",
+    fr: "Excursions Populaires",
+    de: "Beliebte Ausflüge",
+  },
+  "search.results": {
+    es: "Resultados de búsqueda",
+    en: "Search results",
+    fr: "Résultats de recherche",
+    de: "Suchergebnisse",
+  },
+  "search.noResults": {
+    es: "No se encontraron resultados",
+    en: "No results found",
+    fr: "Aucun résultat trouvé",
+    de: "Keine Ergebnisse gefunden",
+  },
+
+  // Home
+  "hero.title": {
+    es: "Descubre la Magia de Tenerife",
+    en: "Discover the Magic of Tenerife",
+    fr: "Découvrez la Magie de Tenerife",
+    de: "Entdecke die Magie von Teneriffa",
+  },
+  "hero.subtitle": {
+    es: "Explora paisajes volcánicos únicos, playas paradisíacas y experiencias inolvidables en la isla de la eterna primavera.",
+    en: "Explore unique volcanic landscapes, paradise beaches and unforgettable experiences on the island of eternal spring.",
+    fr: "Explorez des paysages volcaniques uniques, des plages paradisiaques et des expériences inoubliables sur l'île de l'éternel printemps.",
+    de: "Erkunden Sie einzigartige Vulkanlandschaften, paradiesische Strände und unvergessliche Erlebnisse auf der Insel des ewigen Frühlings.",
+  },
+  "hero.description": {
+    es: "Vive aventuras inolvidables en Tenerife. Excursiones para todos los gustos.",
+    en: "Live unforgettable adventures in Tenerife. Excursions for all tastes.",
+    fr: "Vivez des aventures inoubliables à Tenerife. Des excursions pour tous les goûts.",
+    de: "Erleben Sie unvergessliche Abenteuer auf Teneriffa. Ausflüge für jeden Geschmack.",
+  },
+  "hero.description2": {
+    es: "Reserva ahora y explora la isla de la eterna primavera.",
+    en: "Book now and explore the island of eternal spring.",
+    fr: "Réservez maintenant et explorez l'île de l'éternel printemps.",
+    de: "Buchen Sie jetzt und erkunden Sie die Insel des ewigen Frühlings.",
+  },
+  "featured.title": {
+    es: "Excursiones Destacadas",
+    en: "Featured Excursions",
+    fr: "Excursions en Vedette",
+    de: "Empfohlene Ausflüge",
+  },
+  "featured.subtitle": {
+    es: "Descubre nuestras experiencias más populares",
+    en: "Discover our most popular experiences",
+    fr: "Découvrez nos expériences les plus populaires",
+    de: "Entdecken Sie unsere beliebtesten Erlebnisse",
+  },
+  "featured.badge": {
+    es: "Más vendido",
+    en: "Best Seller",
+    fr: "Meilleures ventes",
+    de: "Bestseller",
+  },
+  "featured.view_all": {
+    es: "Ver todas las excursiones",
+    en: "View all excursions",
+    fr: "Voir toutes les excursions",
+    de: "Alle Ausflüge ansehen",
+  },
+  "featured.whatsapp_interest": {
+    es: "¿Te interesa esta excursión?",
+    en: "Are you interested in this excursion?",
+    fr: "Cette excursion vous intéresse-t-elle ?",
+    de: "Interessieren Sie sich für diesen Ausflug?",
+  },
+  "featured.whatsapp_info": {
+    es: "¡Pregúntanos por WhatsApp!",
+    en: "Ask us on WhatsApp!",
+    fr: "Demandez-nous sur WhatsApp !",
+    de: "Fragen Sie uns auf WhatsApp!",
+  },
+  "featured.per_person": {
+    es: "por persona",
+    en: "per person",
+    fr: "par personne",
+    de: "pro Person",
+  },
+  "featured.small_group": {
+    es: "Grupo pequeño",
+    en: "Small group",
+    fr: "Petit groupe",
+    de: "Kleine Gruppe",
+  },
+  "featured.max_people": {
+    es: "Máx. {maxPeople} personas",
+    en: "Max. {maxPeople} people",
+    fr: "Max. {maxPeople} personnes",
+    de: "Max. {maxPeople} Personen",
+  },
+  "featured.free_cancellation": {
+    es: "Cancelación gratuita",
+    en: "Free cancellation",
+    fr: "Annulation gratuite",
+    de: "Kostenlose Stornierung",
+  },
+  "featured.book_now": {
+    es: "Reservar ahora",
+    en: "Book now",
+    fr: "Réserver maintenant",
+    de: "Jetzt buchen",
+  },
+  "featured.view_details": {
+    es: "Ver detalles",
+    en: "View details",
+    fr: "Voir les détails",
+    de: "Details ansehen",
+  },
+  "featured.featured_badge": {
+    es: "Destacado",
+    en: "Featured",
+    fr: "En vedette",
+    de: "Empfohlen",
+  },
+  "featured.hour": {
+    es: "hora",
+    en: "hour",
+    fr: "heure",
+    de: "Stunde",
+  },
+  "featured.hours": {
+    es: "horas",
+    en: "hours",
+    fr: "heures",
+    de: "Stunden",
+  },
+  "featured.services_included": {
+    es: "Servicios incluidos",
+    en: "Services included",
+    fr: "Services inclus",
+    de: "Inkludierte Leistungen",
+  },
+  "featured.services_not_included": {
+    es: "Servicios no incluidos",
+    en: "Services not included",
+    fr: "Services non inclus",
+    de: "Nicht inkludierte Leistungen",
+  },
+  "services.included": {
+    es: "servicios incluidos",
+    en: "services included",
+    fr: "services inclus",
+    de: "Leistungen inbegriffen",
+  },
+  "services.not_included": {
+    es: "servicios no incluidos",
+    en: "services not included",
+    fr: "services non inclus",
+    de: "Leistungen nicht inbegriffen",
+  },
+  "featured.reviews": {
+    es: "Reseñas",
+    en: "Reviews",
+    fr: "Avis",
+    de: "Bewertungen",
+  },
+  "featured.review": {
+    es: "Reseña",
+    en: "Review",
+    fr: "Avis",
+    de: "Bewertung",
+  },
+  "cta.ready_title": {
+    es: "¿Listo para la aventura?",
+    en: "Ready for adventure?",
+    fr: "Prêt pour l'aventure ?",
+    de: "Bereit für das Abenteuer?",
+  },
+  "cta.adventure_title": {
+    es: "Descubre Tenerife con nuestras",
+    en: "Discover Tenerife with our",
+    fr: "Découvrez Tenerife avec nos",
+    de: "Entdecken Sie Teneriffa mit unseren",
+  },
+  "cta.adventure_title2": {
+    es: "excursiones",
+    en: "excursions",
+    fr: "excursions",
+    de: "Ausflügen",
+  },
+  "cta.adventure_text": {
+    es: "Vive experiencias inolvidables explorando la isla.",
+    en: "Live unforgettable experiences exploring the island.",
+    fr: "Vivez des expériences inoubliables en explorant l'île.",
+    de: "Erleben Sie unvergessliche Erlebnisse bei der Erkundung der Insel.",
+  },
+  "cta.adventure_text2": {
+    es: "¡Reserva ahora y comienza tu aventura!",
+    en: "Book now and start your adventure!",
+    fr: "Réservez maintenant et commencez votre aventure !",
+    de: "Buchen Sie jetzt und starten Sie Ihr Abenteuer!",
+  },
+  "cta.book_now": {
+    es: "Reservar ahora",
+    en: "Book now",
+    fr: "Réserver maintenant",
+    de: "Jetzt buchen",
+  },
+  "cta.more_info": {
+    es: "Más información",
+    en: "More info",
+    fr: "Plus d'informations",
+    de: "Mehr Informationen",
+  },
+  "common.preparing": {
+    es: "Preparando...",
+    en: "Preparing...",
+    fr: "Préparation...",
+    de: "Vorbereitung...",
+  },
+  "cookies.title": {
+    es: "Política de Cookies",
+    en: "Cookies Policy",
+    fr: "Politique de Cookies",
+    de: "Cookie-Richtlinie",
+  },
+  "cookies.description": {
+    es: "Utilizamos cookies para mejorar tu experiencia en nuestra web. Al continuar navegando, aceptas nuestra política de cookies.",
+    en: "We use cookies to improve your experience on our website. By continuing to browse, you accept our cookies policy.",
+    fr: "Nous utilisons des cookies pour améliorer votre expérience sur notre site web. En continuant à naviguer, vous acceptez notre politique de cookies.",
+    de: "Wir verwenden Cookies, um Ihre Erfahrung auf unserer Website zu verbessern. Durch das weitere Surfen akzeptieren Sie unsere Cookie-Richtlinie.",
+  },
+  "cookies.accept_all": {
+    es: "Aceptar todas",
+    en: "Accept all",
+    fr: "Tout accepter",
+    de: "Alle akzeptieren",
+  },
+  "cookies.necessary_only": {
+    es: "Solo necesarias",
+    en: "Necessary only",
+    fr: "Nécessaires seulement",
+    de: "Nur notwendige",
+  },
+  "cookies.customize": {
+    es: "Personalizar",
+    en: "Customize",
+    fr: "Personnaliser",
+    de: "Anpassen",
+  },
+  "cookies.more_info": {
+    es: "Más información",
+    en: "More information",
+    fr: "Plus d'informations",
+    de: "Mehr Informationen",
+  },
+  "cookies.privacy_policy": {
+    es: "Política de privacidad",
+    en: "Privacy policy",
+    fr: "Politique de confidentialité",
+    de: "Datenschutzrichtlinie",
+  },
+}
 
 interface LanguageContextType {
   language: Language
@@ -12,1630 +1927,14 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
 
-const translations = {
-  es: {
-    // Navigation
-    "nav.home": "Inicio",
-    "nav.excursions": "Excursiones",
-    "nav.contact": "Contacto",
-    "nav.about": "Sobre Nosotros",
-    "nav.booking": "Reservas",
-    "nav.language": "Idioma",
-
-    // Hero Section
-    "hero.title": "Vive Tenerife",
-    "hero.subtitle": "de forma extraordinaria",
-    "hero.description": "¿Listo para vivir experiencias que cambiarán tu perspectiva de Tenerife para siempre?",
-    "hero.description2": "Tu próxima gran aventura está a solo un mensaje de distancia.",
-    "hero.search": "Buscar excursiones...",
-
-    // Featured Excursions
-    "featured.title": "Aventuras que Enamoran",
-    "featured.subtitle": "Cada experiencia está diseñada para crear recuerdos que durarán toda la vida",
-    "featured.book": "Reservar por WhatsApp",
-    "featured.from": "Desde",
-    "featured.badge": "Experiencias Más Valoradas",
-    "featured.view_all": "Descubrir Todas las Aventuras",
-    "featured.whatsapp_interest": "Hola! Me interesa la excursión",
-    "featured.whatsapp_info": "¿Podrían darme más información?",
-    // Featured Excursions - Dropdown específico
-    "featured.teide_stars": "Teide y Estrellas",
-    "featured.whale_watching": "Avistamiento Ballenas",
-    "featured.anaga_hiking": "Senderismo Anaga",
-    "featured.view_all_short": "Ver Todas",
-
-    // Reviews
-    "reviews.title": "Lo que Dicen Nuestros Clientes",
-    "reviews.subtitle": "Experiencias reales de viajeros satisfechos",
-
-    // Footer
-    "footer.quick_links": "Enlaces Rápidos",
-    "footer.contact_info": "Información de Contacto",
-    "footer.follow_us": "Síguenos",
-    "footer.newsletter": "Newsletter",
-    "footer.newsletter_text": "Suscríbete para recibir ofertas especiales",
-    "footer.subscribe": "Suscribirse",
-    "footer.privacy": "Política de Privacidad",
-    "footer.terms": "Términos y Condiciones",
-    "footer.faq": "Preguntas Frecuentes",
-    // Footer - Textos específicos
-    "footer.company_description":
-      "Explora Tenerife como nunca antes con excursiones diseñadas para crear recuerdos inolvidables.",
-    "footer.copyright": "© 2024 TenerifeParadiseTours. Todos los derechos reservados.",
-    "footer.designed_by": "Diseñado por",
-
-    // Contact
-    "contact.title": "Contáctanos",
-    "contact.subtitle": "Estamos aquí para ayudarte a planificar tu aventura perfecta",
-    "contact.subtitle_extended":
-      "Nuestro equipo de expertos locales está listo para diseñar la experiencia de tus sueños en Tenerife.",
-    "contact.name": "Nombre",
-    "contact.email": "Email",
-    "contact.phone": "Teléfono",
-    "contact.message": "Mensaje",
-    "contact.send": "Enviar Mensaje",
-    "contact.success_title": "¡Mensaje Enviado!",
-    "contact.success_message":
-      "Gracias por contactarnos. Nuestro equipo se pondrá en contacto contigo muy pronto para ayudarte a planificar tu aventura perfecta.",
-    "contact.whatsapp_contact": "Contactar por WhatsApp",
-    "contact.send_another": "Enviar Otro Mensaje",
-
-    // Contact Page Specific
-    "contact.here_to_help": "Estamos Aquí Para Ayudarte",
-    "contact.perfect_adventure_starts": "Tu Aventura Perfecta Comienza Aquí",
-    "contact.send_consultation": "Envíanos tu Consulta",
-    "contact.tell_us_about_trip": "Cuéntanos sobre tu viaje ideal y te ayudaremos a hacerlo realidad",
-    "contact.immediate_contact": "Contacto Inmediato",
-    "contact.why_choose_us": "¿Por Qué Elegirnos?",
-    "contact.faq_preview": "Preguntas Frecuentes",
-    "contact.quick_response_question":
-      "¿Necesitas una respuesta rápida? Contáctanos directamente por WhatsApp para atención inmediata.",
-    "contact.open_whatsapp": "Abrir WhatsApp",
-    "contact.attention_schedule": "Horario de Atención",
-    "contact.schedule_text": "Lunes - Domingo: 8:00 - 20:00\nWhatsApp: 24/7 disponible",
-    "contact.how_to_book": "¿Cómo puedo reservar?",
-    "contact.how_to_book_answer":
-      "Puedes reservar fácilmente a través de WhatsApp, nuestro formulario web o llamándonos directamente.",
-    "contact.what_includes": "¿Qué incluyen las excursiones?",
-    "contact.what_includes_answer":
-      "Transporte, guía profesional, seguro y todas las actividades especificadas en cada tour.",
-    "contact.group_discounts": "¿Hay descuentos para grupos?",
-    "contact.group_discounts_answer": "Sí, ofrecemos descuentos especiales para grupos de 6 o más personas.",
-    "contact.hero_badge": "Estamos Aquí Para Ayudarte",
-    "contact.hero_subtitle": "Tu Aventura Perfecta Comienza Aquí",
-    "contact.form_title": "Envíanos tu Consulta",
-    "contact.form_subtitle": "Cuéntanos sobre tu viaje ideal y te ayudaremos a hacerlo realidad",
-    "contact.faq": "Preguntas Frecuentes",
-
-    // About
-    "about.title": "Sobre TenerifeParadiseTours",
-    "about.subtitle": "Tu Ventana al Paraíso",
-    "about.description":
-      "Somos una empresa familiar apasionada por mostrar la verdadera esencia de Tenerife. Con más de 15 años de experiencia, hemos ayudado a miles de viajeros a descubrir los rincones más mágicos de nuestra hermosa isla.",
-    "about.mission": "Nuestra Misión",
-    "about.mission_text":
-      "Ofrecer experiencias auténticas y memorables que conecten a nuestros visitantes con la verdadera esencia de Tenerife, promoviendo un turismo responsable y sostenible.",
-    "about.vision": "Nuestra Visión",
-    "about.vision_text":
-      "Ser la empresa de turismo más reconocida y respetada de Tenerife, siendo referente en calidad, sostenibilidad y experiencias únicas.",
-    "about.values": "Nuestros Valores",
-    "about.values_text":
-      "Pasión, autenticidad, respeto por el medio ambiente, excelencia en el servicio y compromiso con la comunidad local.",
-    "about.story_title": "Nuestra Historia",
-    "about.story_badge": "Desde 2009",
-    // About Page Specific
-    "about.hero_badge": "Conoce Nuestra Historia",
-    "about.achievements": "Nuestros Logros",
-    "about.achievements_subtitle": "Números que reflejan nuestro compromiso con la excelencia",
-    "about.stat_excursions": "Excursiones Diferentes",
-    "about.stat_rating": "Valoración Media",
-    "about.story_p1":
-      "TenerifeParadiseTours nació del amor profundo por nuestra isla y el deseo de compartir sus tesoros ocultos con viajeros de todo el mundo. Fundada en 2009 por una familia local, comenzamos con un pequeño grupo de guías apasionados.",
-    "about.story_p2":
-      "A lo largo de los años, hemos crecido manteniendo siempre nuestros valores fundamentales: autenticidad, respeto por el medio ambiente y un servicio personalizado que hace que cada cliente se sienta especial.",
-    "about.story_p3":
-      "Hoy, somos reconocidos como una de las empresas de turismo más confiables de Tenerife, pero seguimos siendo esa familia que ama mostrar los secretos mejor guardados de nuestra isla.",
-    "about.pillars_title": "Nuestros Pilares",
-    "about.pillars_subtitle": "Los valores que nos definen y nos impulsan cada día",
-    "about.value_passion_title": "Pasión por Tenerife",
-    "about.value_passion_desc":
-      "Amamos nuestra isla y queremos compartir su belleza contigo de la manera más auténtica posible.",
-    "about.value_experience_title": "Experiencia Personalizada",
-    "about.value_experience_desc": "Cada excursión está diseñada para ofrecerte una experiencia única y memorable.",
-    "about.value_security_title": "Seguridad Garantizada",
-    "about.value_security_desc":
-      "Tu seguridad es nuestra prioridad. Todos nuestros tours cumplen con los más altos estándares.",
-    "about.value_quality_title": "Calidad Excepcional",
-    "about.value_quality_desc": "Nos esforzamos por superar tus expectativas en cada detalle de nuestros servicios.",
-    "about.certifications_title": "Certificaciones y Reconocimientos",
-    "about.certifications_subtitle": "Avalados por las principales organizaciones turísticas",
-    "about.cert_sustainable": "Certificado de Turismo Sostenible",
-    "about.cert_guides": "Guías Oficiales de Canarias",
-    "about.cert_responsible": "Empresa Responsable",
-    "about.cert_excellence": "Excelencia TripAdvisor",
-    "about.cta_title": "¿Listo para Vivir la Experiencia?",
-    "about.cta_description":
-      "Únete a miles de aventureros que han confiado en nosotros para descubrir la verdadera magia de Tenerife",
-    "about.cta_view_excursions": "Ver Nuestras Excursiones",
-    "about.cta_contact": "Contactar Ahora",
-    "about.team_caption": "Nuestro equipo",
-    "about.team_subtitle": "Compartiendo pasión por Tenerife",
-    // About Page - Certificaciones corregidas
-    "about.cert_sustainable_tourism": "Certificado de Turismo Sostenible",
-    "about.cert_official_guides": "Guías Oficiales de Canarias",
-    "about.cert_responsible_company": "Empresa Responsable",
-    "about.cert_tripadvisor_excellence": "Excelencia TripAdvisor",
-
-    // Booking
-    "booking.title": "Reservar Excursión",
-    "booking.subtitle": "Completa el formulario y continúa tu reserva por WhatsApp.",
-    "booking.subtitle2": "¡Tu próxima aventura está a solo unos clics!",
-    "booking.select_excursion": "Seleccionar Excursión",
-    "booking.date": "Fecha Preferida",
-    "booking.people": "Número de Personas",
-    "booking.requests": "Solicitudes Especiales",
-    "booking.submit": "Continuar en WhatsApp",
-    "booking.personal_info": "Información Personal",
-    "booking.excursion_details": "Detalles de la Excursión",
-    "booking.summary": "Resumen de Reserva",
-    "booking.total_estimated": "Total estimado",
-    "booking.per_person": "por persona",
-    "booking.included_price": "Incluido en el precio:",
-    "booking.transport": "Transporte ida y vuelta",
-    "booking.guide": "Guía profesional",
-    "booking.insurance": "Seguro de actividad",
-    "booking.photos": "Fotos del recorrido",
-
-    // Booking - Traducciones adicionales
-    "booking.hero_badge": "Reserva tu aventura perfecta",
-    "booking.form_title": "Información de Reserva",
-    "booking.name_placeholder": "Tu nombre completo",
-    "booking.email_placeholder": "tu@email.com",
-    "booking.excursion_placeholder": "Elige tu aventura perfecta...",
-    "booking.premium_label": "Premium",
-    "booking.people_count": "persona|personas",
-    "booking.requests_placeholder":
-      "Cuéntanos sobre alergias, necesidades especiales, celebraciones o cualquier cosa que debamos saber...",
-    "booking.processing": "Procesando...",
-    "booking.duration_label": "Duración",
-    "booking.category_label": "Categoría",
-    "booking.rating_label": "Valoración",
-    "booking.reviews_label": "reseñas",
-    "booking.price_per_person": "Precio por persona",
-    "booking.people_summary": "Personas",
-    "booking.select_excursion_message": "Selecciona una excursión para ver el resumen",
-    "booking.select_excursion_subtitle": "Elige tu aventura perfecta del formulario",
-    "booking.why_choose_us": "¿Por qué elegirnos?",
-    "booking.trust_guides": "Guías locales expertos",
-    "booking.trust_groups": "Grupos reducidos",
-    "booking.feature_confirmation": "Confirmación Inmediata",
-    "booking.feature_confirmation_desc": "Recibe confirmación de tu reserva en WhatsApp en menos de 2 horas",
-    "booking.feature_payment": "Pago Seguro",
-    "booking.feature_payment_desc": "Paga de forma segura el día de la excursión o por transferencia",
-    "booking.feature_experience": "Experiencia Premium",
-    "booking.feature_experience_desc": "Grupos reducidos y atención personalizada para una experiencia única",
-    "booking.trust_confirmation": "Confirmación inmediata",
-    "booking.trust_cancellation": "Cancelación gratuita 24h",
-    "booking.trust_support": "Soporte 24/7",
-    "booking.success_title": "¡Reserva Iniciada!",
-    "booking.success_message": "Abriendo WhatsApp con todos tus datos...",
-    "booking.error_message": "Error al procesar la reserva. Por favor, inténtelo de nuevo.",
-    "booking.whatsapp_greeting": "¡Hola! Quiero reservar una excursión",
-    "booking.whatsapp_excursion": "Excursión",
-    "booking.whatsapp_date": "Fecha preferida",
-    "booking.whatsapp_people": "Personas",
-    "booking.whatsapp_price": "Precio estimado",
-    "booking.whatsapp_requests": "Solicitudes especiales",
-    "booking.whatsapp_confirm": "¿Podrían confirmar la disponibilidad? ¡Gracias!",
-
-    // Excursions Page
-    "excursions.title": "Todas Nuestras",
-    "excursions.title2": "Experiencias",
-    "excursions.subtitle":
-      "Descubre la magia de Tenerife con nuestras excursiones cuidadosamente seleccionadas. Desde aventuras en la naturaleza hasta experiencias gastronómicas únicas.",
-    "excursions.filters": "Filtros y Búsqueda",
-    "excursions.search_placeholder": "Buscar por nombre o descripción...",
-    "excursions.all_categories": "Todas las categorías",
-    "excursions.all_prices": "Todos los precios",
-    "excursions.price_low": "Menos de €50",
-    "excursions.price_medium": "€50 - €80",
-    "excursions.price_high": "Más de €80",
-    "excursions.sort_featured": "Destacadas",
-    "excursions.sort_price_low": "Precio: Menor a Mayor",
-    "excursions.sort_price_high": "Precio: Mayor a Menor",
-    "excursions.sort_name": "Nombre A-Z",
-    "excursions.found": "Experiencia",
-    "excursions.found_plural": "Experiencias Encontradas",
-    "excursions.showing_all": "Mostrando todas nuestras experiencias disponibles",
-    "excursions.filtered_from": "Filtrado de",
-    "excursions.total_experiences": "experiencias totales",
-    "excursions.no_results": "No se encontraron excursiones",
-    "excursions.no_results_text":
-      "No encontramos excursiones que coincidan con tus filtros. Prueba ajustando los criterios de búsqueda.",
-    "excursions.view_all": "Ver todas las excursiones",
-    "excursions.clear_filters": "Limpiar todos",
-    "excursions.custom_experience": "¿No encuentras lo que buscas?",
-    "excursions.custom_text":
-      "Nuestro equipo puede crear experiencias personalizadas según tus intereses. Contáctanos y diseñaremos la aventura perfecta para ti.",
-    "excursions.contact_custom": "Contactar para Experiencia Personalizada",
-
-    // Common
-    "common.loading": "Cargando...",
-    "common.error": "Error al cargar datos",
-    "common.success": "Éxito",
-    "common.duration": "Duración",
-    "common.price": "Precio",
-    "common.category": "Categoría",
-    "common.rating": "Valoración",
-    "common.reviews": "reseñas",
-    "common.free_cancellation": "Cancelación gratuita",
-    "common.small_group": "Grupo reducido",
-    "common.all_ratings": "Todas con valoración 4.8+ ⭐",
-    "common.preparing": "Preparando tu aventura...",
-    "common.loading_experiences": "Cargando experiencias...",
-
-    // CTA Sections
-    "cta.adventure_title": "Comienza tu",
-    "cta.adventure_title2": "Aventura Perfecta",
-    "cta.adventure_text": "Empieza esta aventura con nosotros y descubre la cara más auténtica de la isla",
-    "cta.adventure_text2": "Tu historia extraordinaria comienza con un solo clic.",
-    "cta.book_now": "Reservar Ahora",
-    "cta.more_info": "Más Información",
-    "cta.ready_title": "¿Listo Para Tu Próxima Aventura?",
-    "cta.ready_text":
-      "Nuestro equipo está esperando para ayudarte a crear recuerdos inolvidables en Tenerife. ¡Tu aventura perfecta está a solo un mensaje de distancia!",
-    "cta.contact_now": "Contactar Ahora",
-    "cta.view_excursions": "Ver Excursiones",
-
-    // Contact Info
-    "contact_info.phone": "Teléfono",
-    "contact_info.whatsapp": "WhatsApp",
-    "contact_info.email": "Email",
-    "contact_info.location": "Ubicación",
-    "contact_info.available": "Disponible 8:00 - 20:00",
-    "contact_info.immediate_response": "Respuesta inmediata",
-    "contact_info.response_time": "Respuesta en 2-4 horas",
-    "contact_info.canary_islands": "Islas Canarias, España",
-
-    // Trust Indicators
-    "trust.guaranteed_response": "Respuesta Garantizada",
-    "trust.guaranteed_text": "Te respondemos en menos de 2 horas",
-    "trust.personal_attention": "Atención Personalizada",
-    "trust.personal_text": "Cada consulta recibe atención individual",
-    "trust.multilingual": "Multiidioma",
-    "trust.multilingual_text": "Hablamos español, inglés y alemán",
-    "trust.service_passion": "Pasión por el Servicio",
-    "trust.service_text": "Nos encanta ayudarte a planificar tu aventura",
-
-    // Quick Booking
-    "quick.title": "Reserva Rápida",
-    "quick.subtitle": "Reserva tu aventura en 3 simples pasos",
-    "quick.step1": "Elegir Excursión",
-    "quick.step2": "Tus Datos",
-    "quick.step3": "Confirmar",
-    "quick.step4": "¡Listo!",
-    "quick.choose_experience": "Elige tu Experiencia Favorita",
-    "quick.contact_data": "Tus Datos de Contacto",
-    "quick.confirm_booking": "Confirma tu Reserva",
-    "quick.booking_started": "¡Reserva Iniciada!",
-    "quick.whatsapp_opening": "Abriendo WhatsApp con todos tus datos...",
-
-    // Categories
-    "category.naturaleza": "Naturaleza",
-    "category.marina": "Marina",
-    "category.senderismo": "Senderismo",
-    "category.gastronomia": "Gastronomía",
-    "category.paisajes": "Paisajes",
-    "category.familia": "Familia",
-    "category.aventura": "Aventura",
-    "category.cultural": "Cultural",
-
-    // Gallery
-    "gallery.badge": "Galería de Fotos",
-    "gallery.title": "Descubre Tenerife",
-    "gallery.subtitle": "Una colección de los momentos más increíbles de nuestras excursiones",
-    "gallery.loading": "Cargando galería...",
-    "gallery.no_images": "No hay imágenes disponibles",
-    "gallery.close": "Cerrar",
-    "gallery.previous": "Anterior",
-    "gallery.next": "Siguiente",
-    "gallery.instructions": "Usa las flechas del teclado o haz clic para navegar",
-
-    // Privacy Policy
-    "privacy.title": "Política de Privacidad",
-    "privacy.subtitle": "TenerifeParadiseTours - Actualizada: Enero 2024",
-    "privacy.intro.title": "Compromiso con tu Privacidad",
-    "privacy.intro.content":
-      "En TenerifeParadiseTours, respetamos y protegemos tu privacidad. Esta política explica cómo recopilamos, utilizamos y protegemos tu información personal cuando utilizas nuestros servicios. Cumplimos con el Reglamento General de Protección de Datos (RGPD) y la legislación española de protección de datos.",
-
-    "privacy.section1.title": "1. Información que Recopilamos",
-    "privacy.section1.content1": "• Datos personales: nombre, email, teléfono cuando realizas una reserva",
-    "privacy.section1.content2": "• Información de contacto para comunicarnos contigo sobre tu excursión",
-    "privacy.section1.content3": "• Preferencias de idioma y solicitudes especiales",
-    "privacy.section1.content4": "• Datos de navegación para mejorar nuestro sitio web",
-
-    "privacy.section2.title": "2. Cómo Utilizamos tu Información",
-    "privacy.section2.content1": "• Procesar y confirmar tus reservas de excursiones",
-    "privacy.section2.content2": "• Enviarte información relevante sobre tu experiencia",
-    "privacy.section2.content3": "• Mejorar nuestros servicios y experiencia del usuario",
-    "privacy.section2.content4": "• Cumplir con obligaciones legales y de seguridad",
-
-    "privacy.section3.title": "3. Protección de Datos",
-    "privacy.section3.content1": "• Utilizamos encriptación SSL para proteger tus datos",
-    "privacy.section3.content2": "• No compartimos tu información con terceros sin tu consentimiento",
-    "privacy.section3.content3": "• Almacenamos tus datos de forma segura en servidores protegidos",
-    "privacy.section3.content4": "• Solo el personal autorizado tiene acceso a tu información",
-
-    "privacy.section4.title": "4. Tus Derechos",
-    "privacy.section4.content1": "• Derecho a acceder a tus datos personales",
-    "privacy.section4.content2": "• Derecho a rectificar información incorrecta",
-    "privacy.section4.content3": "• Derecho a eliminar tus datos (derecho al olvido)",
-    "privacy.section4.content4": "• Derecho a la portabilidad de datos",
-
-    "privacy.section5.title": "5. Cookies y Tecnologías Similares",
-    "privacy.section5.content1": "• Utilizamos cookies esenciales para el funcionamiento del sitio",
-    "privacy.section5.content2": "• Cookies de análisis para entender cómo usas nuestro sitio",
-    "privacy.section5.content3": "• Puedes gestionar las cookies desde tu navegador",
-    "privacy.section5.content4": "• No utilizamos cookies de terceros para publicidad",
-
-    "privacy.section6.title": "6. Contacto y Consultas",
-    "privacy.section6.content1": "• Para ejercer tus derechos, contacta: info@tenerifeparadisetours.com",
-    "privacy.section6.content2": "• Responderemos a tu solicitud en un plazo máximo de 30 días",
-    "privacy.section6.content3": "• Puedes presentar una queja ante la Agencia Española de Protección de Datos",
-    "privacy.section6.content4": "• Nuestro delegado de protección de datos está disponible para consultas",
-
-    "privacy.contact_info.title": "Información de Contacto",
-    "privacy.contact_info.company": "Empresa",
-    "privacy.contact_info.company_name": "TenerifeParadiseTours S.L.",
-    "privacy.contact_info.cif": "CIF",
-    "privacy.contact_info.cif_number": "B-12345678",
-    "privacy.contact_info.address": "Dirección",
-    "privacy.contact_info.address_text": "Santa Cruz de Tenerife, España",
-    "privacy.contact_info.email": "Email",
-    "privacy.contact_info.email_address": "Tenerifeparadisetoursandexcursions@hotmail.com",
-    "privacy.contact_info.phone": "Teléfono",
-    "privacy.contact_info.phone_number": "+34 617 30 39 29",
-
-    "privacy.buttons.understood": "Entendido",
-    "privacy.buttons.print": "Imprimir Política",
-
-    // Terms and Conditions
-    "terms.title": "Términos y Condiciones",
-    "terms.subtitle": "TenerifeParadiseTours - Vigentes desde Enero 2024",
-    "terms.intro.title": "Condiciones Generales de Contratación",
-    "terms.intro.content":
-      "Estos términos y condiciones regulan la prestación de servicios turísticos por parte de TenerifeParadiseTours S.L. Al realizar una reserva, aceptas cumplir con estas condiciones. Te recomendamos leer detenidamente este documento antes de confirmar tu reserva.",
-
-    "terms.section1.title": "1. Aceptación de los Términos",
-    "terms.section1.content1": "• Al utilizar nuestros servicios, aceptas estos términos y condiciones",
-    "terms.section1.content2": "• Estos términos se aplican a todas las reservas y servicios de TenerifeParadiseTours",
-    "terms.section1.content3": "• Nos reservamos el derecho de modificar estos términos en cualquier momento",
-    "terms.section1.content4": "• Es tu responsabilidad revisar periódicamente estos términos",
-
-    "terms.section2.title": "2. Reservas y Confirmaciones",
-    "terms.section2.content1": "• Las reservas se confirman mediante WhatsApp o email",
-    "terms.section2.content2": "• Se requiere información personal válida para procesar la reserva",
-    "terms.section2.content3": "• Los precios pueden variar según temporada y disponibilidad",
-    "terms.section2.content4": "• La confirmación final depende de la disponibilidad en la fecha solicitada",
-
-    "terms.section3.title": "3. Precios y Pagos",
-    "terms.section3.content1": "• Los precios incluyen transporte, guía y actividades especificadas",
-    "terms.section3.content2": "• El pago se realiza el día de la excursión o por transferencia previa",
-    "terms.section3.content3": "• Los precios están sujetos a cambios sin previo aviso",
-    "terms.section3.content4": "• No se incluyen comidas ni gastos personales salvo indicación contraria",
-
-    "terms.section4.title": "4. Cancelaciones y Modificaciones",
-    "terms.section4.content1": "• Cancelación gratuita hasta 24 horas antes de la excursión",
-    "terms.section4.content2": "• Cancelaciones tardías pueden estar sujetas a penalizaciones",
-    "terms.section4.content3": "• Modificaciones de fecha sujetas a disponibilidad",
-    "terms.section4.content4": "• No se realizan reembolsos por no presentarse (no-show)",
-
-    "terms.section5.title": "5. Responsabilidades y Seguros",
-    "terms.section5.content1": "• Todas las excursiones incluyen seguro de responsabilidad civil",
-    "terms.section5.content2": "• Los participantes deben informar sobre condiciones médicas relevantes",
-    "terms.section5.content3": "• TenerifeParadiseTours no se responsabiliza por objetos personales perdidos",
-    "terms.section5.content4": "• Se requiere seguir las instrucciones del guía en todo momento",
-
-    "terms.section6.title": "6. Comportamiento y Normas",
-    "terms.section6.content1": "• Se espera un comportamiento respetuoso hacia guías y otros participantes",
-    "terms.section6.content2": "• Prohibido el consumo de alcohol durante las excursiones",
-    "terms.section6.content3": "• Nos reservamos el derecho de excluir a participantes disruptivos",
-    "terms.section6.content4": "• Es obligatorio seguir las normas de seguridad establecidas",
-
-    "terms.important_notice.title": "Aviso Importante",
-    "terms.important_notice.content":
-      "Las condiciones meteorológicas adversas pueden resultar en la cancelación o modificación de excursiones por razones de seguridad. En estos casos, se ofrecerá una fecha alternativa o reembolso completo.",
-
-    "terms.legal_info.title": "Información Legal",
-    "terms.legal_info.company": "Razón Social",
-    "terms.legal_info.company_name": "TenerifeParadiseTours S.L.",
-    "terms.legal_info.cif": "CIF",
-    "terms.legal_info.cif_number": "B-12345678",
-    "terms.legal_info.license": "Licencia Turística",
-    "terms.legal_info.license_number": "AT-123456",
-    "terms.legal_info.registry": "Registro Mercantil",
-    "terms.legal_info.registry_text": "Santa Cruz de Tenerife, Tomo 1234, Folio 567",
-    "terms.legal_info.jurisdiction": "Jurisdicción",
-    "terms.legal_info.jurisdiction_text": "Tribunales de Santa Cruz de Tenerife",
-
-    "terms.buttons.accept": "Acepto los Términos",
-    "terms.buttons.print": "Imprimir Términos",
-
-    // FAQ
-    "faq.title": "Preguntas Frecuentes",
-    "faq.subtitle": "Resolvemos tus dudas más comunes",
-    "faq.intro.title": "¿Tienes alguna duda?",
-    "faq.intro.content":
-      "Aquí encontrarás respuestas a las preguntas más frecuentes sobre nuestras excursiones. Si no encuentras lo que buscas, no dudes en contactarnos por WhatsApp o teléfono.",
-
-    // FAQ Category 1: Reservas y Cancelaciones
-    "faq.category1.title": "Reservas y Cancelaciones",
-    "faq.category1.q1.question": "¿Cómo puedo reservar una excursión?",
-    "faq.category1.q1.answer":
-      "Puedes reservar de tres formas: 1) A través de nuestro formulario web, 2) Contactándonos por WhatsApp al +34 617 30 39 29, o 3) Llamándonos directamente. Te confirmaremos la disponibilidad en menos de 2 horas.",
-    "faq.category1.q2.question": "¿Puedo cancelar mi reserva?",
-    "faq.category1.q2.answer":
-      "Sí, ofrecemos cancelación gratuita hasta 24 horas antes de la excursión. Para cancelaciones con menos de 24 horas, consulta nuestros términos y condiciones.",
-    "faq.category1.q3.question": "¿Qué pasa si llueve el día de mi excursión?",
-    "faq.category1.q3.answer":
-      "Monitoreamos constantemente las condiciones meteorológicas. Si el tiempo no es seguro, te ofreceremos cambiar la fecha o un reembolso completo. La seguridad es nuestra prioridad.",
-
-    // FAQ Category 2: Precios y Pagos
-    "faq.category2.title": "Precios y Pagos",
-    "faq.category2.q1.question": "¿Qué incluye el precio de la excursión?",
-    "faq.category2.q1.answer":
-      "Nuestros precios incluyen: transporte en vehículo cómodo, guía profesional certificado, seguro de responsabilidad civil, y todas las actividades especificadas. No incluye comidas ni gastos personales.",
-    "faq.category2.q2.question": "¿Cuándo debo pagar?",
-    "faq.category2.q2.answer":
-      "Puedes pagar el día de la excursión en efectivo o tarjeta, o realizar una transferencia bancaria previa. Te enviaremos los detalles de pago al confirmar tu reserva.",
-    "faq.category2.q3.question": "¿Hay descuentos para grupos?",
-    "faq.category2.q3.answer":
-      "¡Sí! Ofrecemos descuentos especiales para grupos de 6 o más personas. También tenemos tarifas reducidas para niños menores de 12 años. Contacta con nosotros para más detalles.",
-
-    // FAQ Category 3: Grupos y Participantes
-    "faq.category3.title": "Grupos y Participantes",
-    "faq.category3.q1.question": "¿Cuál es el tamaño máximo del grupo?",
-    "faq.category3.q1.answer":
-      "Mantenemos grupos pequeños para una experiencia más personalizada. El máximo es de 8 personas por vehículo. Para grupos más grandes, utilizamos varios vehículos.",
-    "faq.category3.q2.question": "¿Pueden participar niños?",
-    "faq.category3.q2.answer":
-      "¡Por supuesto! Nuestras excursiones son familiares. Los niños menores de 3 años viajan gratis. Tenemos asientos infantiles disponibles - solo avísanos al reservar.",
-    "faq.category3.q3.question": "¿Qué nivel físico se requiere?",
-    "faq.category3.q3.answer":
-      "Cada excursión tiene un nivel de dificultad especificado. Desde paseos suaves hasta senderismo moderado. Te informaremos sobre los requisitos físicos al reservar.",
-
-    // FAQ Category 4: Logística y Transporte
-    "faq.category4.title": "Logística y Transporte",
-    "faq.category4.q1.question": "¿Dónde es el punto de encuentro?",
-    "faq.category4.q1.answer":
-      "Tenemos varios puntos de recogida en las principales zonas turísticas. También ofrecemos recogida en hoteles en ciertas áreas. Te confirmaremos el punto exacto al reservar.",
-    "faq.category4.q2.question": "¿Qué debo llevar?",
-    "faq.category4.q2.answer":
-      "Recomendamos: calzado cómodo, protector solar, agua, cámara, y ropa según la actividad. Te enviaremos una lista específica según tu excursión.",
-    "faq.category4.q3.question": "¿Hablan otros idiomas además del español?",
-    "faq.category4.q3.answer":
-      "Sí, nuestros guías hablan español, inglés y alemán. Algunos también hablan francés e italiano. Especifica tu idioma preferido al reservar.",
-
-    // FAQ Contact Section
-    "faq.contact.title": "¿No encuentras tu respuesta?",
-    "faq.contact.content": "Nuestro equipo está disponible para resolver cualquier duda específica sobre tu excursión.",
-    "faq.contact.whatsapp": "WhatsApp: +34 617 30 39 29",
-    "faq.contact.schedule": "Horario: 8:00 - 20:00",
-
-    // FAQ Buttons
-    "faq.buttons.close": "Cerrar FAQ",
-    "faq.buttons.print": "Imprimir FAQ",
-
-    // Cookies
-    "cookies.title": "Configuración de Cookies",
-    "cookies.description":
-      "Utilizamos cookies para mejorar tu experiencia de navegación, analizar el tráfico del sitio y personalizar el contenido. Puedes elegir qué tipos de cookies aceptar.",
-    "cookies.preferences_title": "Preferencias de Cookies",
-    "cookies.necessary": "Cookies Necesarias",
-    "cookies.necessary_desc": "Esenciales para el funcionamiento básico del sitio web",
-    "cookies.analytics": "Cookies de Análisis",
-    "cookies.analytics_desc": "Nos ayudan a entender cómo interactúas con nuestro sitio",
-    "cookies.functional": "Cookies Funcionales",
-    "cookies.functional_desc": "Mejoran la funcionalidad y personalización del sitio",
-    "cookies.accept_all": "Aceptar Todas",
-    "cookies.necessary_only": "Solo Necesarias",
-    "cookies.customize": "Personalizar",
-    "cookies.save_preferences": "Guardar Preferencias",
-    "cookies.more_info": "Para más información, consulta nuestra",
-    "cookies.privacy_policy": "Política de Privacidad",
-    "cookies.close": "Cerrar",
-  },
-  en: {
-    // Navigation
-    "nav.home": "Home",
-    "nav.excursions": "Excursions",
-    "nav.contact": "Contact",
-    "nav.about": "About Us",
-    "nav.booking": "Booking",
-    "nav.language": "Language",
-
-    // Hero Section
-    "hero.title": "Experience Tenerife",
-    "hero.subtitle": "in an extraordinary way",
-    "hero.description": "Ready to live experiences that will change your perspective of Tenerife forever?",
-    "hero.description2": "Your next great adventure is just one message away.",
-    "hero.search": "Search excursions...",
-
-    // Featured Excursions
-    "featured.title": "Adventures that Captivate",
-    "featured.subtitle": "Each experience is designed to create memories that will last a lifetime",
-    "featured.book": "Book via WhatsApp",
-    "featured.from": "From",
-    "featured.badge": "Most Valued Experiences",
-    "featured.view_all": "Discover All Adventures",
-    "featured.whatsapp_interest": "Hello! I'm interested in the excursion",
-    "featured.whatsapp_info": "Could you give me more information?",
-    // Featured Excursions - Dropdown específico
-    "featured.teide_stars": "Teide & Stars",
-    "featured.whale_watching": "Whale Watching",
-    "featured.anaga_hiking": "Anaga Hiking",
-    "featured.view_all_short": "View All",
-
-    // Reviews
-    "reviews.title": "What Our Customers Say",
-    "reviews.subtitle": "Real experiences from satisfied travelers",
-
-    // Footer
-    "footer.quick_links": "Quick Links",
-    "footer.contact_info": "Contact Information",
-    "footer.follow_us": "Follow Us",
-    "footer.newsletter": "Newsletter",
-    "footer.newsletter_text": "Subscribe to receive special offers",
-    "footer.subscribe": "Subscribe",
-    "footer.privacy": "Privacy Policy",
-    "footer.terms": "Terms and Conditions",
-    "footer.faq": "FAQ",
-    // Footer - Textos específicos
-    "footer.company_description":
-      "Explore Tenerife like never before with excursions designed to create unforgettable memories.",
-    "footer.copyright": "© 2024 TenerifeParadiseTours. All rights reserved.",
-    "footer.designed_by": "Designed by",
-
-    // Contact
-    "contact.title": "Contact Us",
-    "contact.subtitle": "We are here to help you plan your perfect adventure",
-    "contact.subtitle_extended": "Our team of local experts is ready to design your dream experience in Tenerife.",
-    "contact.name": "Name",
-    "contact.email": "Email",
-    "contact.phone": "Phone",
-    "contact.message": "Message",
-    "contact.send": "Send Message",
-    "contact.success_title": "Message Sent!",
-    "contact.success_message":
-      "Thank you for contacting us. Our team will get in touch with you very soon to help you plan your perfect adventure.",
-    "contact.whatsapp_contact": "Contact via WhatsApp",
-    "contact.send_another": "Send Another Message",
-
-    // Contact Page Specific
-    "contact.here_to_help": "We Are Here To Help You",
-    "contact.perfect_adventure_starts": "Your Perfect Adventure Starts Here",
-    "contact.send_consultation": "Send Us Your Inquiry",
-    "contact.tell_us_about_trip": "Tell us about your ideal trip and we'll help you make it a reality",
-    "contact.immediate_contact": "Immediate Contact",
-    "contact.why_choose_us": "Why Choose Us?",
-    "contact.faq_preview": "Frequently Asked Questions",
-    "contact.quick_response_question":
-      "Need a quick response? Contact us directly via WhatsApp for immediate attention.",
-    "contact.open_whatsapp": "Open WhatsApp",
-    "contact.attention_schedule": "Service Hours",
-    "contact.schedule_text": "Monday - Sunday: 8:00 AM - 8:00 PM\nWhatsApp: 24/7 available",
-    "contact.how_to_book": "How can I book?",
-    "contact.how_to_book_answer": "You can easily book through WhatsApp, our web form or by calling us directly.",
-    "contact.what_includes": "What do the excursions include?",
-    "contact.what_includes_answer":
-      "Transport, professional guide, insurance and all activities specified in each tour.",
-    "contact.group_discounts": "Are there group discounts?",
-    "contact.group_discounts_answer": "Yes, we offer special discounts for groups of 6 or more people.",
-    "contact.hero_badge": "We Are Here To Help You",
-    "contact.hero_subtitle": "Your Perfect Adventure Starts Here",
-    "contact.form_title": "Send Us Your Inquiry",
-    "contact.form_subtitle": "Tell us about your ideal trip and we'll help you make it a reality",
-    "contact.faq": "Frequently Asked Questions",
-
-    // About
-    "about.title": "About TenerifeParadiseTours",
-    "about.subtitle": "Your Gateway to Paradise",
-    "about.description":
-      "We are a family business passionate about showing the true essence of Tenerife. With over 15 years of experience, we have helped thousands of travelers discover the most magical corners of our beautiful island.",
-    "about.mission": "Our Mission",
-    "about.mission_text":
-      "To offer authentic and memorable experiences that connect our visitors with the true essence of Tenerife, promoting responsible and sustainable tourism.",
-    "about.vision": "Our Vision",
-    "about.vision_text":
-      "To be the most recognized and respected tourism company in Tenerife, being a reference in quality, sustainability and unique experiences.",
-    "about.values": "Our Values",
-    "about.values_text":
-      "Passion, authenticity, respect for the environment, excellence in service and commitment to the local community.",
-    "about.story_title": "Our Story",
-    "about.story_badge": "Since 2009",
-    // About Page Specific
-    "about.hero_badge": "Learn Our Story",
-    "about.achievements": "Our Achievements",
-    "about.achievements_subtitle": "Numbers that reflect our commitment to excellence",
-    "about.stat_excursions": "Different Excursions",
-    "about.stat_rating": "Average Rating",
-    "about.story_p1":
-      "TenerifeParadiseTours was born from a deep love for our island and the desire to share its hidden treasures with travelers from around the world. Founded in 2009 by a local family, we started with a small group of passionate guides.",
-    "about.story_p2":
-      "Over the years, we have grown while always maintaining our core values: authenticity, respect for the environment, and personalized service that makes every client feel special.",
-    "about.story_p3":
-      "Today, we are recognized as one of the most trusted tourism companies in Tenerife, but we remain that family that loves to show the best-kept secrets of our island.",
-    "about.pillars_title": "Our Pillars",
-    "about.pillars_subtitle": "The values that define us and drive us every day",
-    "about.value_passion_title": "Passion for Tenerife",
-    "about.value_passion_desc":
-      "We love our island and want to share its beauty with you in the most authentic way possible.",
-    "about.value_experience_title": "Personalized Experience",
-    "about.value_experience_desc": "Each excursion is designed to offer you a unique and memorable experience.",
-    "about.value_security_title": "Guaranteed Safety",
-    "about.value_security_desc": "Your safety is our priority. All our tours meet the highest standards.",
-    "about.value_quality_title": "Exceptional Quality",
-    "about.value_quality_desc": "We strive to exceed your expectations in every detail of our services.",
-    "about.certifications_title": "Certifications and Recognition",
-    "about.certifications_subtitle": "Endorsed by leading tourism organizations",
-    "about.cert_sustainable": "Sustainable Tourism Certificate",
-    "about.cert_guides": "Official Canary Islands Guides",
-    "about.cert_responsible": "Responsible Company",
-    "about.cert_excellence": "TripAdvisor Excellence",
-    "about.cta_title": "Ready to Live the Experience?",
-    "about.cta_description": "Join thousands of adventurers who have trusted us to discover the true magic of Tenerife",
-    "about.cta_view_excursions": "View Our Excursions",
-    "about.cta_contact": "Contact Now",
-    "about.team_caption": "Our team",
-    "about.team_subtitle": "Sharing passion for Tenerife",
-    // About Page - Certificaciones corregidas
-    "about.cert_sustainable_tourism": "Sustainable Tourism Certificate",
-    "about.cert_official_guides": "Official Canary Islands Guides",
-    "about.cert_responsible_company": "Responsible Company",
-    "about.cert_tripadvisor_excellence": "TripAdvisor Excellence",
-
-    // Booking
-    "booking.title": "Book Excursion",
-    "booking.subtitle": "Complete the form and continue your booking via WhatsApp.",
-    "booking.subtitle2": "Your next adventure is just a few clicks away!",
-    "booking.select_excursion": "Select Excursion",
-    "booking.date": "Preferred Date",
-    "booking.people": "Number of People",
-    "booking.requests": "Special Requests",
-    "booking.submit": "Continue on WhatsApp",
-    "booking.personal_info": "Personal Information",
-    "booking.excursion_details": "Excursion Details",
-    "booking.summary": "Booking Summary",
-    "booking.total_estimated": "Estimated total",
-    "booking.per_person": "per person",
-    "booking.included_price": "Included in the price:",
-    "booking.transport": "Round trip transport",
-    "booking.guide": "Professional guide",
-    "booking.insurance": "Activity insurance",
-    "booking.photos": "Tour photos",
-
-    // Booking - Traducciones adicionales
-    "booking.hero_badge": "Book your perfect adventure",
-    "booking.form_title": "Booking Information",
-    "booking.name_placeholder": "Your full name",
-    "booking.email_placeholder": "your@email.com",
-    "booking.excursion_placeholder": "Choose your perfect adventure...",
-    "booking.premium_label": "Premium",
-    "booking.people_count": "person|people",
-    "booking.requests_placeholder":
-      "Tell us about allergies, special needs, celebrations or anything we should know...",
-    "booking.processing": "Processing...",
-    "booking.duration_label": "Duration",
-    "booking.category_label": "Category",
-    "booking.rating_label": "Rating",
-    "booking.reviews_label": "reviews",
-    "booking.price_per_person": "Price per person",
-    "booking.people_summary": "People",
-    "booking.select_excursion_message": "Select an excursion to see the summary",
-    "booking.select_excursion_subtitle": "Choose your perfect adventure from the form",
-    "booking.why_choose_us": "Why choose us?",
-    "booking.trust_guides": "Expert local guides",
-    "booking.trust_groups": "Small groups",
-    "booking.feature_confirmation": "Immediate Confirmation",
-    "booking.feature_confirmation_desc": "Receive booking confirmation via WhatsApp in less than 2 hours",
-    "booking.feature_payment": "Secure Payment",
-    "booking.feature_payment_desc": "Pay securely on the day of the excursion or by bank transfer",
-    "booking.feature_experience": "Premium Experience",
-    "booking.feature_experience_desc": "Small groups and personalized attention for a unique experience",
-    "booking.trust_confirmation": "Immediate confirmation",
-    "booking.trust_cancellation": "Free cancellation 24h",
-    "booking.trust_support": "24/7 Support",
-    "booking.success_title": "Booking Started!",
-    "booking.success_message": "Opening WhatsApp with all your details...",
-    "booking.error_message": "Error processing booking. Please try again.",
-    "booking.whatsapp_greeting": "Hello! I want to book an excursion",
-    "booking.whatsapp_excursion": "Excursion",
-    "booking.whatsapp_date": "Preferred date",
-    "booking.whatsapp_people": "People",
-    "booking.whatsapp_price": "Estimated price",
-    "booking.whatsapp_requests": "Special requests",
-    "booking.whatsapp_confirm": "Could you confirm availability? Thank you!",
-
-    // Excursions Page
-    "excursions.title": "All Our",
-    "excursions.title2": "Experiences",
-    "excursions.subtitle":
-      "Discover the magic of Tenerife with our carefully selected excursions. From nature adventures to unique gastronomic experiences.",
-    "excursions.filters": "Filters and Search",
-    "excursions.search_placeholder": "Search by name or description...",
-    "excursions.all_categories": "All categories",
-    "excursions.all_prices": "All prices",
-    "excursions.price_low": "Less than €50",
-    "excursions.price_medium": "€50 - €80",
-    "excursions.price_high": "More than €80",
-    "excursions.sort_featured": "Featured",
-    "excursions.sort_price_low": "Price: Low to High",
-    "excursions.sort_price_high": "Price: High to Low",
-    "excursions.sort_name": "Name A-Z",
-    "excursions.found": "Experience",
-    "excursions.found_plural": "Experiences Found",
-    "excursions.showing_all": "Showing all our available experiences",
-    "excursions.filtered_from": "Filtered from",
-    "excursions.total_experiences": "total experiences",
-    "excursions.no_results": "No excursions found",
-    "excursions.no_results_text":
-      "We couldn't find excursions matching your filters. Try adjusting your search criteria.",
-
-    "excursions.view_all": "View all excursions",
-    "excursions.clear_filters": "Clear all",
-    "excursions.custom_experience": "Can't find what you're looking for?",
-    "excursions.custom_text":
-      "Our team can create personalized experiences according to your interests. Contact us and we'll design the perfect adventure for you.",
-    "excursions.contact_custom": "Contact for Custom Experience",
-
-    // Common
-    "common.loading": "Loading...",
-    "common.error": "Error loading data",
-    "common.success": "Success",
-    "common.duration": "Duration",
-    "common.price": "Price",
-    "common.category": "Category",
-    "common.rating": "Rating",
-    "common.reviews": "reviews",
-    "common.free_cancellation": "Free cancellation",
-    "common.small_group": "Small group",
-    "common.all_ratings": "All with 4.8+ rating ⭐",
-    "common.preparing": "Preparing your adventure...",
-    "common.loading_experiences": "Loading experiences...",
-
-    // CTA Sections
-    "cta.adventure_title": "Start your",
-    "cta.adventure_title2": "Perfect Adventure",
-    "cta.adventure_text": "Start this adventure with us and discover the most authentic face of the island",
-    "cta.adventure_text2": "Your extraordinary story begins with a single click.",
-    "cta.book_now": "Book Now",
-    "cta.more_info": "More Information",
-    "cta.ready_title": "Ready For Your Next Adventure?",
-    "cta.ready_text":
-      "Our team is waiting to help you create unforgettable memories in Tenerife. Your perfect adventure is just one message away!",
-    "cta.contact_now": "Contact Now",
-    "cta.view_excursions": "View Excursions",
-
-    // Contact Info
-    "contact_info.phone": "Phone",
-    "contact_info.whatsapp": "WhatsApp",
-    "contact_info.email": "Email",
-    "contact_info.location": "Location",
-    "contact_info.available": "Available 8:00 AM - 8:00 PM",
-    "contact_info.immediate_response": "Immediate response",
-    "contact_info.response_time": "Response in 2-4 hours",
-    "contact_info.canary_islands": "Canary Islands, Spain",
-
-    // Trust Indicators
-    "trust.guaranteed_response": "Guaranteed Response",
-    "trust.guaranteed_text": "We respond in less than 2 hours",
-    "trust.personal_attention": "Personal Attention",
-    "trust.personal_text": "Each inquiry receives individual attention",
-    "trust.multilingual": "Multilingual",
-    "trust.multilingual_text": "We speak Spanish, English and German",
-    "trust.service_passion": "Passion for Service",
-    "trust.service_text": "We love helping you plan your adventure",
-
-    // Quick Booking
-    "quick.title": "Quick Booking",
-    "quick.subtitle": "Book your adventure in 3 simple steps",
-    "quick.step1": "Choose Excursion",
-    "quick.step2": "Your Details",
-    "quick.step3": "Confirm",
-    "quick.step4": "Done!",
-    "quick.choose_experience": "Choose Your Favorite Experience",
-    "quick.contact_data": "Your Contact Details",
-    "quick.confirm_booking": "Confirm Your Booking",
-    "quick.booking_started": "Booking Started!",
-    "quick.whatsapp_opening": "Opening WhatsApp with all your details...",
-
-    // Categories
-    "category.naturaleza": "Nature",
-    "category.marina": "Marine",
-    "category.senderismo": "Hiking",
-    "category.gastronomia": "Gastronomy",
-    "category.paisajes": "Landscapes",
-    "category.familia": "Family",
-    "category.aventura": "Adventure",
-    "category.cultural": "Cultural",
-
-    // Gallery
-    "gallery.badge": "Photo Gallery",
-    "gallery.title": "Discover Tenerife",
-    "gallery.subtitle": "A collection of the most incredible moments from our excursions",
-    "gallery.loading": "Loading gallery...",
-    "gallery.no_images": "No images available",
-    "gallery.close": "Close",
-    "gallery.previous": "Previous",
-    "gallery.next": "Next",
-    "gallery.instructions": "Use keyboard arrows or click to navigate",
-
-    // Privacy Policy
-    "privacy.title": "Privacy Policy",
-    "privacy.subtitle": "TenerifeParadiseTours - Updated: January 2024",
-    "privacy.intro.title": "Commitment to Your Privacy",
-    "privacy.intro.content":
-      "At TenerifeParadiseTours, we respect and protect your privacy. This policy explains how we collect, use and protect your personal information when you use our services. We comply with the General Data Protection Regulation (GDPR) and Spanish data protection legislation.",
-
-    "privacy.section1.title": "1. Information We Collect",
-    "privacy.section1.content1": "• Personal data: name, email, phone when you make a booking",
-    "privacy.section1.content2": "• Contact information to communicate with you about your excursion",
-    "privacy.section1.content3": "• Language preferences and special requests",
-    "privacy.section1.content4": "• Browsing data to improve our website",
-
-    "privacy.section2.title": "2. How We Use Your Information",
-    "privacy.section2.content1": "• Process and confirm your excursion bookings",
-    "privacy.section2.content2": "• Send you relevant information about your experience",
-    "privacy.section2.content3": "• Improve our services and user experience",
-    "privacy.section2.content4": "• Comply with legal and security obligations",
-
-    "privacy.section3.title": "3. Data Protection",
-    "privacy.section3.content1": "• We use SSL encryption to protect your data",
-    "privacy.section3.content2": "• We do not share your information with third parties without your consent",
-    "privacy.section3.content3": "• We store your data securely on protected servers",
-    "privacy.section3.content4": "• Only authorized personnel have access to your information",
-
-    "privacy.section4.title": "4. Your Rights",
-    "privacy.section4.content1": "• Right to access your personal data",
-    "privacy.section4.content2": "• Right to rectify incorrect information",
-    "privacy.section4.content3": "• Right to delete your data (right to be forgotten)",
-    "privacy.section4.content4": "• Right to data portability",
-
-    "privacy.section5.title": "5. Cookies and Similar Technologies",
-    "privacy.section5.content1": "• We use essential cookies for site functionality",
-    "privacy.section5.content2": "• Analytics cookies to understand how you use our site",
-    "privacy.section5.content3": "• You can manage cookies from your browser",
-    "privacy.section5.content4": "• We do not use third-party cookies for advertising",
-
-    "privacy.section6.title": "6. Contact and Inquiries",
-    "privacy.section6.content1": "• To exercise your rights, contact: info@tenerifeparadisetours.com",
-    "privacy.section6.content2": "• We will respond to your request within a maximum of 30 days",
-    "privacy.section6.content3": "• You can file a complaint with the Spanish Data Protection Agency",
-    "privacy.section6.content4": "• Our data protection officer is available for inquiries",
-
-    "privacy.contact_info.title": "Contact Information",
-    "privacy.contact_info.company": "Company",
-    "privacy.contact_info.company_name": "TenerifeParadiseTours S.L.",
-    "privacy.contact_info.cif": "Tax ID",
-    "privacy.contact_info.cif_number": "B-12345678",
-    "privacy.contact_info.address": "Address",
-    "privacy.contact_info.address_text": "Santa Cruz de Tenerife, Spain",
-    "privacy.contact_info.email": "Email",
-    "privacy.contact_info.email_address": "Tenerifeparadisetoursandexcursions@hotmail.com",
-    "privacy.contact_info.phone": "Phone",
-    "privacy.contact_info.phone_number": "+34 617 30 39 29",
-
-    "privacy.buttons.understood": "Understood",
-    "privacy.buttons.print": "Print Policy",
-
-    // Terms and Conditions
-    "terms.title": "Terms and Conditions",
-    "terms.subtitle": "TenerifeParadiseTours - Effective from January 2024",
-    "terms.intro.title": "General Terms of Service",
-    "terms.intro.content":
-      "These terms and conditions govern the provision of tourism services by TenerifeParadiseTours S.L. By making a booking, you agree to comply with these conditions. We recommend reading this document carefully before confirming your booking.",
-
-    "terms.section1.title": "1. Acceptance of Terms",
-    "terms.section1.content1": "• By using our services, you accept these terms and conditions",
-    "terms.section1.content2": "• These terms apply to all bookings and services of TenerifeParadiseTours",
-    "terms.section1.content3": "• We reserve the right to modify these terms at any time",
-    "terms.section1.content4": "• It is your responsibility to periodically review these terms",
-
-    "terms.section2.title": "2. Bookings and Confirmations",
-    "terms.section2.content1": "• Bookings are confirmed via WhatsApp or email",
-    "terms.section2.content2": "• Valid personal information is required to process the booking",
-    "terms.section2.content3": "• Prices may vary according to season and availability",
-    "terms.section2.content4": "• Final confirmation depends on availability on the requested date",
-
-    "terms.section3.title": "3. Prices and Payments",
-    "terms.section3.content1": "• Prices include transport, guide and specified activities",
-    "terms.section3.content2": "• Payment is made on the day of the excursion or by prior transfer",
-    "terms.section3.content3": "• Prices are subject to change without prior notice",
-    "terms.section3.content4": "• Meals and personal expenses are not included unless otherwise indicated",
-
-    "terms.section4.title": "4. Cancellations and Modifications",
-    "terms.section4.content1": "• Free cancellation up to 24 hours before the excursion",
-    "terms.section4.content2": "• Late cancellations may be subject to penalties",
-    "terms.section4.content3": "• Date modifications subject to availability",
-    "terms.section4.content4": "• No refunds for no-shows",
-
-    "terms.section5.title": "5. Responsibilities and Insurance",
-    "terms.section5.content1": "• All excursions include civil liability insurance",
-    "terms.section5.content2": "• Participants must report relevant medical conditions",
-    "terms.section5.content3": "• TenerifeParadiseTours is not responsible for lost personal items",
-    "terms.section5.content4": "• Following guide instructions is required at all times",
-
-    "terms.section6.title": "6. Behavior and Rules",
-    "terms.section6.content1": "• Respectful behavior towards guides and other participants is expected",
-    "terms.section6.content2": "• Alcohol consumption during excursions is prohibited",
-    "terms.section6.content3": "• We reserve the right to exclude disruptive participants",
-    "terms.section6.content4": "• Following established safety rules is mandatory",
-
-    "terms.important_notice.title": "Important Notice",
-    "terms.important_notice.content":
-      "Adverse weather conditions may result in cancellation or modification of excursions for safety reasons. In these cases, an alternative date or full refund will be offered.",
-
-    "terms.legal_info.title": "Legal Information",
-    "terms.legal_info.company": "Company Name",
-    "terms.legal_info.company_name": "TenerifeParadiseTours S.L.",
-    "terms.legal_info.cif": "Tax ID",
-    "terms.legal_info.cif_number": "B-12345678",
-    "terms.legal_info.license": "Tourism License",
-    "terms.legal_info.license_number": "AT-123456",
-    "terms.legal_info.registry": "Commercial Registry",
-    "terms.legal_info.registry_text": "Santa Cruz de Tenerife, Volume 1234, Folio 567",
-    "terms.legal_info.jurisdiction": "Jurisdiction",
-    "terms.legal_info.jurisdiction_text": "Courts of Santa Cruz de Tenerife",
-
-    "terms.buttons.accept": "Accept Terms",
-    "terms.buttons.print": "Print Terms",
-
-    // FAQ
-    "faq.title": "Frequently Asked Questions",
-    "faq.subtitle": "We solve your most common doubts",
-    "faq.intro.title": "Do you have any questions?",
-    "faq.intro.content":
-      "Here you will find answers to the most frequently asked questions about our excursions. If you can't find what you're looking for, don't hesitate to contact us via WhatsApp or phone.",
-
-    // FAQ Category 1: Bookings and Cancellations
-    "faq.category1.title": "Bookings and Cancellations",
-    "faq.category1.q1.question": "How can I book an excursion?",
-    "faq.category1.q1.answer":
-      "You can book in three ways: 1) Through our web form, 2) Contacting us via WhatsApp at +34 617 30 39 29, or 3) Calling us directly. We will confirm availability in less than 2 hours.",
-    "faq.category1.q2.question": "Can I cancel my booking?",
-    "faq.category1.q2.answer":
-      "Yes, we offer free cancellation up to 24 hours before the excursion. For cancellations with less than 24 hours, check our terms and conditions.",
-    "faq.category1.q3.question": "What happens if it rains on the day of my excursion?",
-    "faq.category1.q3.answer":
-      "We constantly monitor weather conditions. If the weather is not safe, we will offer you to change the date or a full refund. Safety is our priority.",
-
-    // FAQ Category 2: Prices and Payments
-    "faq.category2.title": "Prices and Payments",
-    "faq.category2.q1.question": "What does the excursion price include?",
-    "faq.category2.q1.answer":
-      "Our prices include: transport in comfortable vehicle, certified professional guide, civil liability insurance, and all specified activities. It does not include meals or personal expenses.",
-    "faq.category2.q2.question": "When should I pay?",
-    "faq.category2.q2.answer":
-      "You can pay on the day of the excursion in cash or card, or make a prior bank transfer. We will send you payment details when confirming your booking.",
-    "faq.category2.q3.question": "Are there group discounts?",
-    "faq.category2.q3.answer":
-      "Yes! We offer special discounts for groups of 6 or more people. We also have reduced rates for children under 12 years. Contact us for more details.",
-
-    // FAQ Category 3: Groups and Participants
-    "faq.category3.title": "Groups and Participants",
-    "faq.category3.q1.question": "What is the maximum group size?",
-    "faq.category3.q1.answer":
-      "We keep groups small for a more personalized experience. The maximum is 8 people per vehicle. For larger groups, we use multiple vehicles.",
-    "faq.category3.q2.question": "Can children participate?",
-    "faq.category3.q2.answer":
-      "Of course! Our excursions are family-friendly. Children under 3 years travel free. We have child seats available - just let us know when booking.",
-    "faq.category3.q3.question": "What fitness level is required?",
-    "faq.category3.q3.answer":
-      "Each excursion has a specified difficulty level. From gentle walks to moderate hiking. We will inform you about physical requirements when booking.",
-
-    // FAQ Category 4: Logistics and Transport
-    "faq.category4.title": "Logistics and Transport",
-    "faq.category4.q1.question": "Where is the meeting point?",
-    "faq.category4.q1.answer":
-      "We have several pickup points in the main tourist areas. We also offer hotel pickup in certain areas. We will confirm the exact point when booking.",
-    "faq.category4.q2.question": "What should I bring?",
-    "faq.category4.q2.answer":
-      "We recommend: comfortable shoes, sunscreen, water, camera, and clothing according to the activity. We will send you a specific list according to your excursion.",
-    "faq.category4.q3.question": "Do you speak other languages besides English?",
-    "faq.category4.q3.answer":
-      "Yes, our guides speak Spanish, English and German. Some also speak French and Italian. Specify your preferred language when booking.",
-
-    // FAQ Contact Section
-    "faq.contact.title": "Can't find your answer?",
-    "faq.contact.content": "Our team is available to resolve any specific questions about your excursion.",
-    "faq.contact.whatsapp": "WhatsApp: +34 617 30 39 29",
-    "faq.contact.schedule": "Hours: 8:00 AM - 8:00 PM",
-
-    // FAQ Buttons
-    "faq.buttons.close": "Close FAQ",
-    "faq.buttons.print": "Print FAQ",
-
-    // Cookies
-    "cookies.title": "Cookie Settings",
-    "cookies.description":
-      "We use cookies to improve your browsing experience, analyze site traffic, and personalize content. You can choose which types of cookies to accept.",
-    "cookies.preferences_title": "Cookie Preferences",
-    "cookies.necessary": "Necessary Cookies",
-    "cookies.necessary_desc": "Essential for basic website functionality",
-    "cookies.analytics": "Analytics Cookies",
-    "cookies.analytics_desc": "Help us understand how you interact with our site",
-    "cookies.functional": "Functional Cookies",
-    "cookies.functional_desc": "Enhance site functionality and personalization",
-    "cookies.accept_all": "Accept All",
-    "cookies.necessary_only": "Necessary Only",
-    "cookies.customize": "Customize",
-    "cookies.save_preferences": "Save Preferences",
-    "cookies.more_info": "For more information, see our",
-    "cookies.privacy_policy": "Privacy Policy",
-    "cookies.close": "Close",
-  },
-  de: {
-    // Navigation
-    "nav.home": "Startseite",
-    "nav.excursions": "Ausflüge",
-    "nav.contact": "Kontakt",
-    "nav.about": "Über Uns",
-    "nav.booking": "Buchung",
-    "nav.language": "Sprache",
-
-    // Hero Section
-    "hero.title": "Erleben Sie Teneriffa",
-    "hero.subtitle": "auf außergewöhnliche Weise",
-    "hero.description": "Bereit für Erlebnisse, die Ihre Sicht auf Teneriffa für immer verändern werden?",
-    "hero.description2": "Ihr nächstes großes Abenteuer ist nur eine Nachricht entfernt.",
-    "hero.search": "Ausflüge suchen...",
-
-    // Featured Excursions
-    "featured.title": "Abenteuer, die Begeistern",
-    "featured.subtitle": "Jedes Erlebnis ist darauf ausgelegt, Erinnerungen zu schaffen, die ein Leben lang halten",
-    "featured.book": "Über WhatsApp buchen",
-    "featured.from": "Ab",
-    "featured.badge": "Bestbewertete Erlebnisse",
-    "featured.view_all": "Alle Abenteuer Entdecken",
-    "featured.whatsapp_interest": "Hallo! Ich interessiere mich für den Ausflug",
-    "featured.whatsapp_info": "Könnten Sie mir weitere Informationen geben?",
-    // Featured Excursions - Dropdown específico
-    "featured.teide_stars": "Teide & Sterne",
-    "featured.whale_watching": "Walbeobachtung",
-    "featured.anaga_hiking": "Anaga Wanderung",
-    "featured.view_all_short": "Alle Anzeigen",
-
-    // Reviews
-    "reviews.title": "Was Unsere Kunden Sagen",
-    "reviews.subtitle": "Echte Erfahrungen zufriedener Reisender",
-
-    // Footer
-    "footer.quick_links": "Schnelle Links",
-    "footer.contact_info": "Kontaktinformationen",
-    "footer.follow_us": "Folgen Sie Uns",
-    "footer.newsletter": "Newsletter",
-    "footer.newsletter_text": "Abonnieren Sie für spezielle Angebote",
-    "footer.subscribe": "Abonnieren",
-    "footer.privacy": "Datenschutz",
-    "footer.terms": "Geschäftsbedingungen",
-    "footer.faq": "FAQ",
-    // Footer - Textos específicos
-    "footer.company_description":
-      "Entdecken Sie Teneriffa wie nie zuvor mit Ausflügen, die unvergessliche Erinnerungen schaffen.",
-    "footer.copyright": "© 2024 TenerifeParadiseTours. Alle Rechte vorbehalten.",
-    "footer.designed_by": "Entworfen von",
-
-    // Contact
-    "contact.title": "Kontaktieren Sie Uns",
-    "contact.subtitle": "Wir helfen Ihnen bei der Planung Ihres perfekten Abenteuers",
-    "contact.subtitle_extended":
-      "Unser Team lokaler Experten ist bereit, Ihr Traumerlebnis auf Teneriffa zu gestalten.",
-    "contact.name": "Name",
-    "contact.email": "E-Mail",
-    "contact.phone": "Telefon",
-    "contact.message": "Nachricht",
-    "contact.send": "Nachricht Senden",
-    "contact.success_title": "Nachricht Gesendet!",
-    "contact.success_message":
-      "Vielen Dank für Ihre Kontaktaufnahme. Unser Team wird sich sehr bald mit Ihnen in Verbindung setzen, um Ihnen bei der Planung Ihres perfekten Abenteuers zu helfen.",
-    "contact.whatsapp_contact": "Über WhatsApp kontaktieren",
-    "contact.send_another": "Weitere Nachricht senden",
-
-    // Contact Page Specific
-    "contact.here_to_help": "Wir Sind Hier, Um Ihnen Zu Helfen",
-    "contact.perfect_adventure_starts": "Ihr Perfektes Abenteuer Beginnt Hier",
-    "contact.send_consultation": "Senden Sie Uns Ihre Anfrage",
-    "contact.tell_us_about_trip": "Erzählen Sie uns von Ihrer idealen Reise und wir helfen Ihnen, sie zu verwirklichen",
-    "contact.immediate_contact": "Sofortiger Kontakt",
-    "contact.why_choose_us": "Warum Uns Wählen?",
-    "contact.faq_preview": "Häufig Gestellte Fragen",
-    "contact.quick_response_question":
-      "Benötigen Sie eine schnelle Antwort? Kontaktieren Sie uns direkt über WhatsApp für sofortige Betreuung.",
-    "contact.open_whatsapp": "WhatsApp Öffnen",
-    "contact.attention_schedule": "Servicezeiten",
-    "contact.schedule_text": "Montag - Sonntag: 8:00 - 20:00\nWhatsApp: 24/7 verfügbar",
-    "contact.how_to_book": "Wie kann ich buchen?",
-    "contact.how_to_book_answer":
-      "Sie können einfach über WhatsApp, unser Webformular oder durch direkten Anruf buchen.",
-    "contact.what_includes": "Was beinhalten die Ausflüge?",
-    "contact.what_includes_answer":
-      "Transport, professioneller Führer, Versicherung und alle in jeder Tour angegebenen Aktivitäten.",
-    "contact.group_discounts": "Gibt es Gruppenrabatte?",
-    "contact.group_discounts_answer": "Ja, wir bieten spezielle Rabatte für Gruppen ab 6 Personen.",
-    "contact.hero_badge": "Wir Sind Hier, Um Ihnen Zu Helfen",
-    "contact.hero_subtitle": "Ihr Perfektes Abenteuer Beginnt Hier",
-    "contact.form_title": "Senden Sie Uns Ihre Anfrage",
-    "contact.form_subtitle": "Erzählen Sie uns von Ihrer idealen Reise und wir helfen Ihnen, sie zu verwirklichen",
-    "contact.faq": "Häufig Gestellte Fragen",
-
-    // About
-    "about.title": "Über TenerifeParadiseTours",
-    "about.subtitle": "Ihr Tor zum Paradies",
-    "about.description":
-      "Wir sind ein Familienunternehmen mit Leidenschaft dafür, die wahre Essenz Teneriffas zu zeigen. Mit über 15 Jahren Erfahrung haben wir Tausenden von Reisenden geholfen, die magischsten Ecken unserer wunderschönen Insel zu entdecken.",
-    "about.mission": "Unsere Mission",
-    "about.mission_text":
-      "Authentische und unvergessliche Erlebnisse zu bieten, die unsere Besucher mit der wahren Essenz Teneriffas verbinden und verantwortlichen und nachhaltigen Tourismus fördern.",
-    "about.vision": "Unsere Vision",
-    "about.vision_text":
-      "Das anerkannteste und respektierteste Tourismusunternehmen auf Teneriffa zu sein und eine Referenz für Qualität, Nachhaltigkeit und einzigartige Erlebnisse zu werden.",
-    "about.values": "Unsere Werte",
-    "about.values_text":
-      "Leidenschaft, Authentizität, Respekt für die Umwelt, Exzellenz im Service und Engagement für die lokale Gemeinschaft.",
-    "about.story_title": "Unsere Geschichte",
-    "about.story_badge": "Seit 2009",
-    // About Page Specific
-    "about.hero_badge": "Lernen Sie Unsere Geschichte Kennen",
-    "about.achievements": "Unsere Erfolge",
-    "about.achievements_subtitle": "Zahlen, die unser Engagement für Exzellenz widerspiegeln",
-    "about.stat_excursions": "Verschiedene Ausflüge",
-    "about.stat_rating": "Durchschnittliche Bewertung",
-    "about.story_p1":
-      "TenerifeParadiseTours entstand aus der tiefen Liebe zu unserer Insel und dem Wunsch, ihre verborgenen Schätze mit Reisenden aus aller Welt zu teilen. 2009 von einer einheimischen Familie gegründet, begannen wir mit einer kleinen Gruppe leidenschaftlicher Führer.",
-    "about.story_p2":
-      "Im Laufe der Jahre sind wir gewachsen, haben aber immer unsere Grundwerte beibehalten: Authentizität, Respekt für die Umwelt und persönlichen Service, der jeden Kunden sich besonders fühlen lässt.",
-    "about.story_p3":
-      "Heute sind wir als eines der vertrauenswürdigsten Tourismusunternehmen auf Teneriffa anerkannt, aber wir bleiben diese Familie, die es liebt, die bestgehüteten Geheimnisse unserer Insel zu zeigen.",
-    "about.pillars_title": "Unsere Säulen",
-    "about.pillars_subtitle": "Die Werte, die uns definieren und jeden Tag antreiben",
-    "about.value_passion_title": "Leidenschaft für Teneriffa",
-    "about.value_passion_desc":
-      "Wir lieben unsere Insel und möchten ihre Schönheit auf die authentischste Art mit Ihnen teilen.",
-    "about.value_experience_title": "Personalisierte Erfahrung",
-    "about.value_experience_desc":
-      "Jeder Ausflug ist darauf ausgelegt, Ihnen ein einzigartiges und unvergessliches Erlebnis zu bieten.",
-    "about.value_security_title": "Garantierte Sicherheit",
-    "about.value_security_desc":
-      "Ihre Sicherheit ist unsere Priorität. Alle unsere Touren erfüllen die höchsten Standards.",
-    "about.value_quality_title": "Außergewöhnliche Qualität",
-    "about.value_quality_desc":
-      "Wir bemühen uns, Ihre Erwartungen in jedem Detail unserer Dienstleistungen zu übertreffen.",
-    "about.certifications_title": "Zertifizierungen und Anerkennungen",
-    "about.certifications_subtitle": "Unterstützt von führenden Tourismusorganisationen",
-    "about.cert_sustainable": "Nachhaltiges Tourismus-Zertifikat",
-    "about.cert_guides": "Offizielle Kanarische Inseln Führer",
-    "about.cert_responsible": "Verantwortliches Unternehmen",
-    "about.cert_excellence": "TripAdvisor Exzellenz",
-    "about.cta_title": "Bereit, Das Erlebnis Zu Leben?",
-    "about.cta_description":
-      "Schließen Sie sich Tausenden von Abenteurern an, die uns vertraut haben, um die wahre Magie Teneriffas zu entdecken",
-    "about.cta_view_excursions": "Unsere Ausflüge Anzeigen",
-    "about.cta_contact": "Jetzt Kontaktieren",
-    "about.team_caption": "Unser Team",
-    "about.team_subtitle": "Leidenschaft für Teneriffa teilen",
-    // About Page - Certificaciones corregidas
-    "about.cert_sustainable_tourism": "Nachhaltiges Tourismus-Zertifikat",
-    "about.cert_official_guides": "Offizielle Kanarische Inseln Führer",
-    "about.cert_responsible_company": "Verantwortliches Unternehmen",
-    "about.cert_tripadvisor_excellence": "TripAdvisor Exzellenz",
-
-    // Booking
-    "booking.title": "Ausflug Buchen",
-    "booking.subtitle": "Füllen Sie das Formular aus und setzen Sie Ihre Buchung über WhatsApp fort.",
-    "booking.subtitle2": "Ihr nächstes Abenteuer ist nur wenige Klicks entfernt!",
-    "booking.select_excursion": "Ausflug Auswählen",
-    "booking.date": "Bevorzugtes Datum",
-    "booking.people": "Anzahl Personen",
-    "booking.requests": "Besondere Wünsche",
-    "booking.submit": "Weiter auf WhatsApp",
-    "booking.personal_info": "Persönliche Informationen",
-    "booking.excursion_details": "Ausflug Details",
-    "booking.summary": "Buchungsübersicht",
-    "booking.total_estimated": "Geschätzte Gesamtsumme",
-    "booking.per_person": "pro Person",
-    "booking.included_price": "Im Preis enthalten:",
-    "booking.transport": "Hin- und Rücktransport",
-    "booking.guide": "Professioneller Führer",
-    "booking.insurance": "Aktivitätsversicherung",
-    "booking.photos": "Tour-Fotos",
-
-    // Booking - Traducciones adicionales
-    "booking.hero_badge": "Buchen Sie Ihr perfektes Abenteuer",
-    "booking.form_title": "Buchungsinformationen",
-    "booking.name_placeholder": "Ihr vollständiger Name",
-    "booking.email_placeholder": "ihre@email.com",
-    "booking.excursion_placeholder": "Wählen Sie Ihr perfektes Abenteuer...",
-    "booking.premium_label": "Premium",
-    "booking.people_count": "Person|Personen",
-    "booking.requests_placeholder":
-      "Erzählen Sie uns von Allergien, besonderen Bedürfnissen, Feiern oder allem, was wir wissen sollten...",
-    "booking.processing": "Verarbeitung...",
-    "booking.duration_label": "Dauer",
-    "booking.category_label": "Kategorie",
-    "booking.rating_label": "Bewertung",
-    "booking.reviews_label": "Bewertungen",
-    "booking.price_per_person": "Preis pro Person",
-    "booking.people_summary": "Personen",
-    "booking.select_excursion_message": "Wählen Sie einen Ausflug, um die Zusammenfassung zu sehen",
-    "booking.select_excursion_subtitle": "Wählen Sie Ihr perfektes Abenteuer aus dem Formular",
-    "booking.why_choose_us": "Warum uns wählen?",
-    "booking.trust_guides": "Erfahrene lokale Führer",
-    "booking.trust_groups": "Kleine Gruppen",
-    "booking.feature_confirmation": "Sofortige Bestätigung",
-    "booking.feature_confirmation_desc": "Erhalten Sie Buchungsbestätigung per WhatsApp in weniger als 2 Stunden",
-    "booking.feature_payment": "Sichere Zahlung",
-    "booking.feature_payment_desc": "Zahlen Sie sicher am Tag des Ausflugs oder per Banküberweisung",
-    "booking.feature_experience": "Premium-Erlebnis",
-    "booking.feature_experience_desc": "Kleine Gruppen und persönliche Betreuung für ein einzigartiges Erlebnis",
-    "booking.trust_confirmation": "Sofortige Bestätigung",
-    "booking.trust_cancellation": "Kostenlose Stornierung 24h",
-    "booking.trust_support": "24/7 Support",
-    "booking.success_title": "Buchung Gestartet!",
-    "booking.success_message": "WhatsApp wird mit all Ihren Daten geöffnet...",
-    "booking.error_message": "Fehler bei der Buchungsverarbeitung. Bitte versuchen Sie es erneut.",
-    "booking.whatsapp_greeting": "Hallo! Ich möchte einen Ausflug buchen",
-    "booking.whatsapp_excursion": "Ausflug",
-    "booking.whatsapp_date": "Bevorzugtes Datum",
-    "booking.whatsapp_people": "Personen",
-    "booking.whatsapp_price": "Geschätzter Preis",
-    "booking.whatsapp_requests": "Besondere Wünsche",
-    "booking.whatsapp_confirm": "Könnten Sie die Verfügbarkeit bestätigen? Danke!",
-
-    // Excursions Page
-    "excursions.title": "Alle Unsere",
-    "excursions.title2": "Erlebnisse",
-    "excursions.subtitle":
-      "Entdecken Sie die Magie Teneriffas mit unseren sorgfältig ausgewählten Ausflügen. Von Naturabenteuern bis hin zu einzigartigen gastronomischen Erlebnissen.",
-    "excursions.filters": "Filter und Suche",
-    "excursions.search_placeholder": "Nach Name oder Beschreibung suchen...",
-    "excursions.all_categories": "Alle Kategorien",
-    "excursions.all_prices": "Alle Preise",
-    "excursions.price_low": "Weniger als €50",
-    "excursions.price_medium": "€50 - €80",
-    "excursions.price_high": "Mehr als €80",
-    "excursions.sort_featured": "Empfohlen",
-    "excursions.sort_price_low": "Preis: Niedrig zu Hoch",
-    "excursions.sort_price_high": "Preis: Hoch zu Niedrig",
-    "excursions.sort_name": "Name A-Z",
-    "excursions.found": "Erlebnis",
-    "excursions.found_plural": "Erlebnisse Gefunden",
-    "excursions.showing_all": "Zeige alle unsere verfügbaren Erlebnisse",
-    "excursions.filtered_from": "Gefiltert von",
-    "excursions.total_experiences": "Gesamterlebnisse",
-    "excursions.no_results": "Keine Ausflüge gefunden",
-    "excursions.no_results_text":
-      "Wir konnten keine Ausflüge finden, die Ihren Filtern entsprechen. Versuchen Sie, Ihre Suchkriterien anzupassen.",
-    "excursions.view_all": "Alle Ausflüge anzeigen",
-    "excursions.clear_filters": "Alle löschen",
-    "excursions.custom_experience": "Finden Sie nicht, was Sie suchen?",
-    "excursions.custom_text":
-      "Unser Team kann personalisierte Erlebnisse nach Ihren Interessen erstellen. Kontaktieren Sie uns und wir gestalten das perfekte Abenteuer für Sie.",
-    "excursions.contact_custom": "Kontakt für Maßgeschneidertes Erlebnis",
-
-    // Common
-    "common.loading": "Laden...",
-    "common.error": "Fehler beim Laden der Daten",
-    "common.success": "Erfolg",
-    "common.duration": "Dauer",
-    "common.price": "Preis",
-    "common.category": "Kategorie",
-    "common.rating": "Bewertung",
-    "common.reviews": "Bewertungen",
-    "common.free_cancellation": "Kostenlose Stornierung",
-    "common.small_group": "Kleine Gruppe",
-    "common.all_ratings": "Alle mit 4.8+ Bewertung ⭐",
-    "common.preparing": "Ihr Abenteuer wird vorbereitet...",
-    "common.loading_experiences": "Erlebnisse werden geladen...",
-
-    // CTA Sections
-    "cta.adventure_title": "Beginnen Sie Ihr",
-    "cta.adventure_title2": "Perfektes Abenteuer",
-    "cta.adventure_text":
-      "Beginnen Sie dieses Abenteuer mit uns und entdecken Sie das authentischste Gesicht der Insel",
-    "cta.adventure_text2": "Ihre außergewöhnliche Geschichte beginnt mit einem einzigen Klick.",
-    "cta.book_now": "Jetzt Buchen",
-    "cta.more_info": "Mehr Informationen",
-    "cta.ready_title": "Bereit Für Ihr Nächstes Abenteuer?",
-    "cta.ready_text":
-      "Unser Team wartet darauf, Ihnen zu helfen, unvergessliche Erinnerungen auf Teneriffa zu schaffen. Ihr perfektes Abenteuer ist nur eine Nachricht entfernt!",
-    "cta.contact_now": "Jetzt Kontaktieren",
-    "cta.view_excursions": "Ausflüge Anzeigen",
-
-    // Contact Info
-    "contact_info.phone": "Telefon",
-    "contact_info.whatsapp": "WhatsApp",
-    "contact_info.email": "E-Mail",
-    "contact_info.location": "Standort",
-    "contact_info.available": "Verfügbar 8:00 - 20:00",
-    "contact_info.immediate_response": "Sofortige Antwort",
-    "contact_info.response_time": "Antwort in 2-4 Stunden",
-    "contact_info.canary_islands": "Kanarische Inseln, Spanien",
-
-    // Trust Indicators
-    "trust.guaranteed_response": "Garantierte Antwort",
-    "trust.guaranteed_text": "Wir antworten in weniger als 2 Stunden",
-    "trust.personal_attention": "Persönliche Betreuung",
-    "trust.personal_text": "Jede Anfrage erhält individuelle Aufmerksamkeit",
-    "trust.multilingual": "Mehrsprachig",
-    "trust.multilingual_text": "Wir sprechen Spanisch, Englisch und Deutsch",
-    "trust.service_passion": "Leidenschaft für Service",
-    "trust.service_text": "Wir lieben es, Ihnen bei der Planung Ihres Abenteuers zu helfen",
-
-    // Quick Booking
-    "quick.title": "Schnellbuchung",
-    "quick.subtitle": "Buchen Sie Ihr Abenteuer in 3 einfachen Schritten",
-    "quick.step1": "Ausflug Wählen",
-    "quick.step2": "Ihre Daten",
-    "quick.step3": "Bestätigen",
-    "quick.step4": "Fertig!",
-    "quick.choose_experience": "Wählen Sie Ihr Lieblingserlebnis",
-    "quick.contact_data": "Ihre Kontaktdaten",
-    "quick.confirm_booking": "Bestätigen Sie Ihre Buchung",
-    "quick.booking_started": "Buchung Gestartet!",
-    "quick.whatsapp_opening": "WhatsApp wird mit all Ihren Daten geöffnet...",
-
-    // Categories
-    "category.naturaleza": "Natur",
-    "category.marina": "Meeresbereich",
-    "category.senderismo": "Wandern",
-    "category.gastronomia": "Gastronomie",
-    "category.paisajes": "Landschaften",
-    "category.familia": "Familie",
-    "category.aventura": "Abenteuer",
-    "category.cultural": "Kulturell",
-
-    // Gallery
-    "gallery.badge": "Fotogalerie",
-    "gallery.title": "Entdecke Teneriffa",
-    "gallery.subtitle": "Eine Sammlung der unglaublichsten Momente unserer Ausflüge",
-    "gallery.loading": "Galerie wird geladen...",
-    "gallery.no_images": "Keine Bilder verfügbar",
-    "gallery.close": "Schließen",
-    "gallery.previous": "Zurück",
-    "gallery.next": "Weiter",
-    "gallery.instructions": "Verwenden Sie die Pfeiltasten oder klicken Sie zum Navigieren",
-
-    // Privacy Policy
-    "privacy.title": "Datenschutzrichtlinie",
-    "privacy.subtitle": "TenerifeParadiseTours - Aktualisiert: Januar 2024",
-    "privacy.intro.title": "Unser Engagement für Ihren Datenschutz",
-    "privacy.intro.content":
-      "Bei TenerifeParadiseTours respektieren und schützen wir Ihre Privatsphäre. Diese Richtlinie erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen, wenn Sie unsere Dienste nutzen. Wir halten uns an die Datenschutz-Grundverordnung (DSGVO) und die spanische Datenschutzgesetzgebung.",
-
-    "privacy.section1.title": "1. Informationen, die wir sammeln",
-    "privacy.section1.content1": "• Persönliche Daten: Name, E-Mail, Telefon bei einer Buchung",
-    "privacy.section1.content2": "• Kontaktinformationen zur Kommunikation über Ihren Ausflug",
-    "privacy.section1.content3": "• Sprachpräferenzen und besondere Wünsche",
-    "privacy.section1.content4": "• Browsing-Daten zur Verbesserung unserer Website",
-
-    "privacy.section2.title": "2. Wie wir Ihre Informationen verwenden",
-    "privacy.section2.content1": "• Verarbeitung und Bestätigung Ihrer Ausflugsbuchungen",
-    "privacy.section2.content2": "• Zusendung relevanter Informationen über Ihr Erlebnis",
-    "privacy.section2.content3": "• Verbesserung unserer Dienste und Benutzererfahrung",
-    "privacy.section2.content4": "• Erfüllung rechtlicher und sicherheitstechnischer Verpflichtungen",
-
-    "privacy.section3.title": "3. Datenschutz",
-    "privacy.section3.content1": "• Wir verwenden SSL-Verschlüsselung zum Schutz Ihrer Daten",
-    "privacy.section3.content2": "• Wir geben Ihre Informationen nicht ohne Ihre Zustimmung an Dritte weiter",
-    "privacy.section3.content3": "• Wir speichern Ihre Daten sicher auf geschützten Servern",
-    "privacy.section3.content4": "• Nur autorisiertes Personal hat Zugang zu Ihren Informationen",
-
-    "privacy.section4.title": "4. Ihre Rechte",
-    "privacy.section4.content1": "• Recht auf Zugang zu Ihren persönlichen Daten",
-    "privacy.section4.content2": "• Recht auf Berichtigung falscher Informationen",
-    "privacy.section4.content3": "• Recht auf Löschung Ihrer Daten (Recht auf Vergessenwerden)",
-    "privacy.section4.content4": "• Recht auf Datenübertragbarkeit",
-
-    "privacy.section5.title": "5. Cookies und ähnliche Technologien",
-    "privacy.section5.content1": "• Wir verwenden wesentliche Cookies für die Website-Funktionalität",
-    "privacy.section5.content2": "• Analyse-Cookies, um zu verstehen, wie Sie unsere Website nutzen",
-    "privacy.section5.content3": "• Sie können Cookies über Ihren Browser verwalten",
-    "privacy.section5.content4": "• Wir verwenden keine Drittanbieter-Cookies für Werbung",
-
-    "privacy.section6.title": "6. Kontakt und Anfragen",
-    "privacy.section6.content1": "• Zur Ausübung Ihrer Rechte kontaktieren Sie: info@tenerifeparadisetours.com",
-    "privacy.section6.content2": "• Wir antworten auf Ihre Anfrage innerhalb von maximal 30 Tagen",
-    "privacy.section6.content3": "• Sie können eine Beschwerde bei der spanischen Datenschutzbehörde einreichen",
-    "privacy.section6.content4": "• Unser Datenschutzbeauftragter steht für Anfragen zur Verfügung",
-
-    "privacy.contact_info.title": "Kontaktinformationen",
-    "privacy.contact_info.company": "Unternehmen",
-    "privacy.contact_info.company_name": "TenerifeParadiseTours S.L.",
-    "privacy.contact_info.cif": "Steuer-ID",
-    "privacy.contact_info.cif_number": "B-12345678",
-    "privacy.contact_info.address": "Adresse",
-    "privacy.contact_info.address_text": "Santa Cruz de Tenerife, Spanien",
-    "privacy.contact_info.email": "E-Mail",
-    "privacy.contact_info.email_address": "Tenerifeparadisetoursandexcursions@hotmail.com",
-    "privacy.contact_info.phone": "Telefon",
-    "privacy.contact_info.phone_number": "+34 617 30 39 29",
-
-    "privacy.buttons.understood": "Verstanden",
-    "privacy.buttons.print": "Richtlinie drucken",
-
-    // Terms and Conditions
-    "terms.title": "Geschäftsbedingungen",
-    "terms.subtitle": "TenerifeParadiseTours - Gültig ab Januar 2024",
-    "terms.intro.title": "Allgemeine Geschäftsbedingungen",
-    "terms.intro.content":
-      "Diese Geschäftsbedingungen regeln die Erbringung von Tourismusdienstleistungen durch TenerifeParadiseTours S.L. Mit einer Buchung stimmen Sie zu, diese Bedingungen einzuhalten. Wir empfehlen, dieses Dokument vor der Bestätigung Ihrer Buchung sorgfältig zu lesen.",
-
-    "terms.section1.title": "1. Annahme der Bedingungen",
-    "terms.section1.content1": "• Durch die Nutzung unserer Dienste akzeptieren Sie diese Geschäftsbedingungen",
-    "terms.section1.content2": "• Diese Bedingungen gelten für alle Buchungen und Dienste von TenerifeParadiseTours",
-    "terms.section1.content3": "• Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern",
-    "terms.section1.content4": "• Es liegt in Ihrer Verantwortung, diese Bedingungen regelmäßig zu überprüfen",
-
-    "terms.section2.title": "2. Buchungen und Bestätigungen",
-    "terms.section2.content1": "• Buchungen werden über WhatsApp oder E-Mail bestätigt",
-    "terms.section2.content2": "• Gültige persönliche Informationen sind zur Bearbeitung der Buchung erforderlich",
-    "terms.section2.content3": "• Preise können je nach Saison und Verfügbarkeit variieren",
-    "terms.section2.content4": "• Die endgültige Bestätigung hängt von der Verfügbarkeit am gewünschten Datum ab",
-
-    "terms.section3.title": "3. Preise und Zahlungen",
-    "terms.section3.content1": "• Preise beinhalten Transport, Führer und spezifizierte Aktivitäten",
-    "terms.section3.content2": "• Zahlung erfolgt am Tag des Ausflugs oder per Vorabüberweisung",
-    "terms.section3.content3": "• Preise können ohne Vorankündigung geändert werden",
-    "terms.section3.content4":
-      "• Mahlzeiten und persönliche Ausgaben sind nicht enthalten, sofern nicht anders angegeben",
-
-    "terms.section4.title": "4. Stornierungen und Änderungen",
-    "terms.section4.content1": "• Kostenlose Stornierung bis 24 Stunden vor dem Ausflug",
-    "terms.section4.content2": "• Späte Stornierungen können Strafen unterliegen",
-    "terms.section4.content3": "• Datumsänderungen je nach Verfügbarkeit",
-    "terms.section4.content4": "• Keine Rückerstattung bei Nichterscheinen",
-
-    "terms.section5.title": "5. Verantwortlichkeiten und Versicherung",
-    "terms.section5.content1": "• Alle Ausflüge beinhalten eine Haftpflichtversicherung",
-    "terms.section5.content2": "• Teilnehmer müssen relevante medizinische Bedingungen melden",
-    "terms.section5.content3": "• TenerifeParadiseTours ist nicht verantwortlich für verlorene persönliche Gegenstände",
-    "terms.section5.content4": "• Das Befolgen der Anweisungen des Führers ist jederzeit erforderlich",
-
-    "terms.section6.title": "6. Verhalten und Regeln",
-    "terms.section6.content1": "• Respektvolles Verhalten gegenüber Führern und anderen Teilnehmern wird erwartet",
-    "terms.section6.content2": "• Alkoholkonsum während der Ausflüge ist verboten",
-    "terms.section6.content3": "• Wir behalten uns das Recht vor, störende Teilnehmer auszuschließen",
-    "terms.section6.content4": "• Das Befolgen der festgelegten Sicherheitsregeln ist obligatorisch",
-
-    "terms.important_notice.title": "Wichtiger Hinweis",
-    "terms.important_notice.content":
-      "Ungünstige Wetterbedingungen können zur Stornierung oder Änderung von Ausflügen aus Sicherheitsgründen führen. In diesen Fällen wird ein alternatives Datum oder eine vollständige Rückerstattung angeboten.",
-
-    "terms.legal_info.title": "Rechtliche Informationen",
-    "terms.legal_info.company": "Firmenname",
-    "terms.legal_info.company_name": "TenerifeParadiseTours S.L.",
-    "terms.legal_info.cif": "Steuer-ID",
-    "terms.legal_info.cif_number": "B-12345678",
-    "terms.legal_info.license": "Tourismuslizenz",
-    "terms.legal_info.license_number": "AT-123456",
-    "terms.legal_info.registry": "Handelsregister",
-    "terms.legal_info.registry_text": "Santa Cruz de Tenerife, Band 1234, Blatt 567",
-    "terms.legal_info.jurisdiction": "Gerichtsbarkeit",
-    "terms.legal_info.jurisdiction_text": "Gerichte von Santa Cruz de Tenerife",
-
-    "terms.buttons.accept": "Bedingungen Akzeptieren",
-    "terms.buttons.print": "Bedingungen Drucken",
-
-    // FAQ
-    "faq.title": "Häufig Gestellte Fragen",
-    "faq.subtitle": "Wir lösen Ihre häufigsten Zweifel",
-    "faq.intro.title": "Haben Sie Fragen?",
-    "faq.intro.content":
-      "Hier finden Sie Antworten auf die häufigsten Fragen zu unseren Ausflügen. Wenn Sie nicht finden, was Sie suchen, zögern Sie nicht, uns über WhatsApp oder Telefon zu kontaktieren.",
-
-    // FAQ Category 1: Buchungen und Stornierungen
-    "faq.category1.title": "Buchungen und Stornierungen",
-    "faq.category1.q1.question": "Wie kann ich einen Ausflug buchen?",
-    "faq.category1.q1.answer":
-      "Sie können auf drei Arten buchen: 1) Über unser Webformular, 2) Kontaktieren Sie uns per WhatsApp unter +34 617 30 39 29, oder 3) Rufen Sie uns direkt an. Wir bestätigen die Verfügbarkeit in weniger als 2 Stunden.",
-    "faq.category1.q2.question": "Kann ich meine Buchung stornieren?",
-    "faq.category1.q2.answer":
-      "Ja, wir bieten kostenlose Stornierung bis 24 Stunden vor dem Ausflug. Für Stornierungen mit weniger als 24 Stunden, überprüfen Sie unsere Geschäftsbedingungen.",
-    "faq.category1.q3.question": "Was passiert, wenn es am Tag meines Ausflugs regnet?",
-    "faq.category1.q3.answer":
-      "Wir überwachen ständig die Wetterbedingungen. Wenn das Wetter nicht sicher ist, bieten wir Ihnen an, das Datum zu ändern oder eine vollständige Rückerstattung. Sicherheit ist unsere Priorität.",
-
-    // FAQ Category 2: Preise und Zahlungen
-    "faq.category2.title": "Preise und Zahlungen",
-    "faq.category2.q1.question": "Was beinhaltet der Ausflugspreis?",
-    "faq.category2.q1.answer":
-      "Unsere Preise beinhalten: Transport in komfortablem Fahrzeug, zertifizierten professionellen Führer, Haftpflichtversicherung und alle spezifizierten Aktivitäten. Es beinhaltet keine Mahlzeiten oder persönliche Ausgaben.",
-    "faq.category2.q2.question": "Wann soll ich bezahlen?",
-    "faq.category2.q2.answer":
-      "Sie können am Tag des Ausflugs bar oder mit Karte bezahlen oder eine vorherige Banküberweisung vornehmen. Wir senden Ihnen die Zahlungsdetails bei der Bestätigung Ihrer Buchung.",
-    "faq.category2.q3.question": "Gibt es Gruppenrabatte?",
-    "faq.category2.q3.answer":
-      "Ja! Wir bieten spezielle Rabatte für Gruppen ab 6 Personen. Wir haben auch reduzierte Tarife für Kinder unter 12 Jahren. Kontaktieren Sie uns für weitere Details.",
-
-    // FAQ Category 3: Gruppen und Teilnehmer
-    "faq.category3.title": "Gruppen und Teilnehmer",
-    "faq.category3.q1.question": "Wie groß ist die maximale Gruppengröße?",
-    "faq.category3.q1.answer":
-      "Wir halten Gruppen klein für ein persönlicheres Erlebnis. Das Maximum sind 8 Personen pro Fahrzeug. Für größere Gruppen verwenden wir mehrere Fahrzeuge.",
-    "faq.category3.q2.question": "Können Kinder teilnehmen?",
-    "faq.category3.q2.answer":
-      "Natürlich! Unsere Ausflüge sind familienfreundlich. Kinder unter 3 Jahren reisen kostenlos. Wir haben Kindersitze verfügbar - teilen Sie uns dies einfach bei der Buchung mit.",
-    "faq.category3.q3.question": "Welches Fitnessniveau ist erforderlich?",
-    "faq.category3.q3.answer":
-      "Jeder Ausflug hat ein spezifiziertes Schwierigkeitsniveau. Von sanften Spaziergängen bis zu moderatem Wandern. Wir informieren Sie über die körperlichen Anforderungen bei der Buchung.",
-
-    // FAQ Category 4: Logistik und Transport
-    "faq.category4.title": "Logistik und Transport",
-    "faq.category4.q1.question": "Wo ist der Treffpunkt?",
-    "faq.category4.q1.answer":
-      "Wir haben mehrere Abholpunkte in den wichtigsten Touristengebieten. Wir bieten auch Hotelabholung in bestimmten Bereichen an. Wir bestätigen den genauen Punkt bei der Buchung.",
-    "faq.category4.q2.question": "Was soll ich mitbringen?",
-    "faq.category4.q2.answer":
-      "Wir empfehlen: bequeme Schuhe, Sonnenschutz, Wasser, Kamera und Kleidung je nach Aktivität. Wir senden Ihnen eine spezifische Liste entsprechend Ihrem Ausflug.",
-    "faq.category4.q3.question": "Sprechen Sie andere Sprachen außer Deutsch?",
-    "faq.category4.q3.answer":
-      "Ja, unsere Führer sprechen Spanisch, Englisch und Deutsch. Einige sprechen auch Französisch und Italienisch. Geben Sie Ihre bevorzugte Sprache bei der Buchung an.",
-
-    // FAQ Contact Section
-    "faq.contact.title": "Finden Sie Ihre Antwort nicht?",
-    "faq.contact.content": "Unser Team steht zur Verfügung, um spezifische Fragen zu Ihrem Ausflug zu lösen.",
-    "faq.contact.whatsapp": "WhatsApp: +34 617 30 39 29",
-    "faq.contact.schedule": "Öffnungszeiten: 8:00 - 20:00",
-
-    // FAQ Buttons
-    "faq.buttons.close": "FAQ Schließen",
-    "faq.buttons.print": "FAQ Drucken",
-
-    // Cookies
-    "cookies.title": "Cookie-Einstellungen",
-    "cookies.description":
-      "Wir verwenden Cookies, um Ihr Browsing-Erlebnis zu verbessern, den Website-Traffic zu analysieren und Inhalte zu personalisieren. Sie können wählen, welche Cookie-Arten Sie akzeptieren möchten.",
-    "cookies.preferences_title": "Cookie-Präferenzen",
-    "cookies.necessary": "Notwendige Cookies",
-    "cookies.necessary_desc": "Wesentlich für die grundlegende Website-Funktionalität",
-    "cookies.analytics": "Analyse-Cookies",
-    "cookies.analytics_desc": "Helfen uns zu verstehen, wie Sie mit unserer Website interagieren",
-    "cookies.functional": "Funktionale Cookies",
-    "cookies.functional_desc": "Verbessern Website-Funktionalität und Personalisierung",
-    "cookies.accept_all": "Alle Akzeptieren",
-    "cookies.necessary_only": "Nur Notwendige",
-    "cookies.customize": "Anpassen",
-    "cookies.save_preferences": "Einstellungen Speichern",
-    "cookies.more_info": "Weitere Informationen finden Sie in unserer",
-    "cookies.privacy_policy": "Datenschutzrichtlinie",
-    "cookies.close": "Schließen",
-  },
-}
-
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguage] = useState<Language>("es")
 
-  useEffect(() => {
-    const savedLanguage = localStorage.getItem("language") as Language
-    if (savedLanguage && ["es", "en", "de"].includes(savedLanguage)) {
-      setLanguage(savedLanguage)
-    }
-  }, [])
-
-  const handleSetLanguage = (lang: Language) => {
-    setLanguage(lang)
-    localStorage.setItem("language", lang)
-  }
-
   const t = (key: string): string => {
-    return translations[language][key as keyof (typeof translations)[typeof language]] || key
+    return translations[key]?.[language] || key
   }
 
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage: handleSetLanguage, t }}>
-      {children}
-    </LanguageContext.Provider>
-  )
+  return <LanguageContext.Provider value={{ language, setLanguage, t }}>{children}</LanguageContext.Provider>
 }
 
 export function useLanguage() {

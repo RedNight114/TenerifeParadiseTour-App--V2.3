@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
 import {
   CheckCircle,
   ArrowLeft,
@@ -1059,97 +1058,189 @@ const ExcursionFormPage = () => {
                 </div>
 
                 {/* Servicios Incluidos */}
-                <div className="bg-gray-50 rounded-lg p-6">
-                  <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios Incluidos</Label>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                  <Label className="text-lg font-bold text-green-900 mb-6 block flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                      <CheckCircle className="w-4 h-4 text-white" />
+                    </div>
+                    Servicios Incluidos
+                  </Label>
+
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {includedServices.map((service) => (
-                        <div
-                          key={service.id}
-                          className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors"
-                        >
-                          <input
-                            type="checkbox"
-                            id={`included-${service.id}`}
-                            checked={formData.included_services.includes(service.name_es)}
-                            onChange={() => toggleIncludedService(service.name_es)}
-                            className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                          />
-                          <Label
-                            htmlFor={`included-${service.id}`}
-                            className="text-sm font-medium text-gray-700 cursor-pointer"
-                          >
-                            {service.name_es}
-                          </Label>
+                    {/* Servicios Predefinidos */}
+                    <div>
+                      <h4 className="font-semibold text-green-800 mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        Servicios Predefinidos
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {includedServices
+                          .filter((service) => !formData.included_services.includes(service.name_es))
+                          .map((service) => (
+                            <div
+                              key={service.id}
+                              className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-green-200 hover:bg-green-50 transition-colors cursor-pointer"
+                              onClick={() => toggleIncludedService(service.name_es)}
+                            >
+                              <div className="w-5 h-5 border-2 border-green-400 rounded flex items-center justify-center">
+                                <Plus className="w-3 h-3 text-green-600" />
+                              </div>
+                              <Label className="text-sm font-medium text-gray-700 cursor-pointer flex-1">
+                                {service.name_es}
+                              </Label>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Servicios Seleccionados */}
+                    {formData.included_services.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-green-800 mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Servicios Seleccionados ({formData.included_services.length})
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {formData.included_services.map((service, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-green-100 rounded-lg border border-green-300"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <CheckCircle className="w-5 h-5 text-green-600" />
+                                <span className="text-sm font-medium text-green-800">{service}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeIncludedService(index)}
+                                className="text-green-600 hover:text-green-800 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
-                      <Input
-                        value={customIncludedService}
-                        onChange={(e) => setCustomIncludedService(e.target.value)}
-                        placeholder="Añadir servicio personalizado"
-                        className="flex-1"
-                      />
-                      <Button onClick={addCustomIncludedService} size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.included_services.map((service, index) => (
-                        <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                          {service}
-                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeIncludedService(index)} />
-                        </Badge>
-                      ))}
+                      </div>
+                    )}
+
+                    {/* Añadir Servicio Personalizado */}
+                    <div className="border-t border-green-200 pt-4">
+                      <h4 className="font-semibold text-green-800 mb-3 flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        Añadir Servicio Personalizado
+                      </h4>
+                      <div className="flex gap-3">
+                        <Input
+                          value={customIncludedService}
+                          onChange={(e) => setCustomIncludedService(e.target.value)}
+                          placeholder="Escribir servicio personalizado..."
+                          className="flex-1 border-green-300 focus:border-green-500 focus:ring-green-500"
+                          onKeyPress={(e) => e.key === "Enter" && addCustomIncludedService()}
+                        />
+                        <Button
+                          type="button"
+                          onClick={addCustomIncludedService}
+                          disabled={!customIncludedService.trim()}
+                          className="bg-green-600 hover:bg-green-700 text-white px-6"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Añadir
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Servicios No Incluidos */}
-                <div className="bg-red-50 rounded-lg p-6">
-                  <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios No Incluidos</Label>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {notIncludedServices.map((service) => (
-                        <div
-                          key={service.id}
-                          className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-red-50 transition-colors"
-                        >
-                          <input
-                            type="checkbox"
-                            id={`not-included-${service.id}`}
-                            checked={formData.not_included_services.includes(service.name_es)}
-                            onChange={() => toggleNotIncludedService(service.name_es)}
-                            className="h-4 w-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
-                          />
-                          <Label
-                            htmlFor={`not-included-${service.id}`}
-                            className="text-sm font-medium text-gray-700 cursor-pointer"
-                          >
-                            {service.name_es}
-                          </Label>
+                <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-6 border border-red-200">
+                  <Label className="text-lg font-bold text-red-900 mb-6 block flex items-center">
+                    <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
+                      <X className="w-4 h-4 text-white" />
+                    </div>
+                    Servicios No Incluidos
+                  </Label>
+
+                  <div className="space-y-6">
+                    {/* Servicios Predefinidos */}
+                    <div>
+                      <h4 className="font-semibold text-red-800 mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                        Servicios Predefinidos
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {notIncludedServices
+                          .filter((service) => !formData.not_included_services.includes(service.name_es))
+                          .map((service) => (
+                            <div
+                              key={service.id}
+                              className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
+                              onClick={() => toggleNotIncludedService(service.name_es)}
+                            >
+                              <div className="w-5 h-5 border-2 border-red-400 rounded flex items-center justify-center">
+                                <Plus className="w-3 h-3 text-red-600" />
+                              </div>
+                              <Label className="text-sm font-medium text-gray-700 cursor-pointer flex-1">
+                                {service.name_es}
+                              </Label>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Servicios Seleccionados */}
+                    {formData.not_included_services.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-red-800 mb-4 flex items-center">
+                          <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                          Servicios Seleccionados ({formData.not_included_services.length})
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {formData.not_included_services.map((service, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-red-100 rounded-lg border border-red-300"
+                            >
+                              <div className="flex items-center space-x-3">
+                                <X className="w-5 h-5 text-red-600" />
+                                <span className="text-sm font-medium text-red-800">{service}</span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeNotIncludedService(index)}
+                                className="text-red-600 hover:text-red-800 transition-colors"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    <div className="flex gap-2">
-                      <Input
-                        value={customNotIncludedService}
-                        onChange={(e) => setCustomNotIncludedService(e.target.value)}
-                        placeholder="Añadir servicio no incluido personalizado"
-                        className="flex-1"
-                      />
-                      <Button onClick={addCustomNotIncludedService} size="sm">
-                        <Plus className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {formData.not_included_services.map((service, index) => (
-                        <Badge key={index} variant="outline" className="flex items-center gap-1">
-                          {service}
-                          <X className="h-3 w-3 cursor-pointer" onClick={() => removeNotIncludedService(index)} />
-                        </Badge>
-                      ))}
+                      </div>
+                    )}
+
+                    {/* Añadir Servicio Personalizado */}
+                    <div className="border-t border-red-200 pt-4">
+                      <h4 className="font-semibold text-red-800 mb-3 flex items-center">
+                        <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                        Añadir Servicio Personalizado
+                      </h4>
+                      <div className="flex gap-3">
+                        <Input
+                          value={customNotIncludedService}
+                          onChange={(e) => setCustomNotIncludedService(e.target.value)}
+                          placeholder="Escribir servicio no incluido personalizado..."
+                          className="flex-1 border-red-300 focus:border-red-500 focus:ring-red-500"
+                          onKeyPress={(e) => e.key === "Enter" && addCustomNotIncludedService()}
+                        />
+                        <Button
+                          type="button"
+                          onClick={addCustomNotIncludedService}
+                          disabled={!customNotIncludedService.trim()}
+                          className="bg-red-600 hover:bg-red-700 text-white px-6"
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Añadir
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

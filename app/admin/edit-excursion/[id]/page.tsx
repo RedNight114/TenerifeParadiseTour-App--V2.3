@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Badge } from "@/components/ui/badge"
 import {
   CheckCircle,
   ArrowLeft,
@@ -38,6 +37,7 @@ import {
 import { useRouter, useParams } from "next/navigation"
 import { toast } from "sonner"
 import { ImageUpload } from "@/components/image-upload"
+import { MultiImageUpload } from "@/components/multi-image-upload"
 
 const DIFFICULTY_LEVELS = [
   { value: "facil", label: "Fácil" },
@@ -133,6 +133,7 @@ const EditExcursionPage = () => {
     max_people: "",
     children_price: "",
     children_age_range: "",
+    gallery_images: [] as string[],
   })
 
   useEffect(() => {
@@ -182,6 +183,7 @@ const EditExcursionPage = () => {
           max_people: excursionData.max_people?.toString() || "",
           children_price: excursionData.children_price?.toString() || "",
           children_age_range: excursionData.children_age_range || "",
+          gallery_images: excursionData.gallery_images || [],
         })
 
         // Extract time slots from special_notes if they exist
@@ -848,7 +850,7 @@ const EditExcursionPage = () => {
                 </div>
               </div>
 
-              <div>
+              <div className="space-y-6">
                 <ImageUpload
                   value={formData.image_url}
                   onChange={(url) => updateFormData("image_url", url)}
@@ -856,18 +858,47 @@ const EditExcursionPage = () => {
                   placeholder="URL de la imagen principal"
                   required
                 />
-              </div>
 
-              <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                <Switch
-                  id="featured"
-                  checked={formData.featured}
-                  onCheckedChange={(checked) => updateFormData("featured", checked)}
-                />
-                <Label htmlFor="featured" className="flex items-center text-base font-medium">
-                  <Star className="h-5 w-5 mr-2 text-yellow-600" />
-                  Marcar como Excursión Destacada
-                </Label>
+                {/* Galería de Imágenes Secundarias */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block flex items-center">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                      Galería de Imágenes Secundarias
+                    </div>
+                  </Label>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Añade hasta 6 imágenes adicionales que se mostrarán en la galería de la excursión
+                  </p>
+                  <MultiImageUpload
+                    value={formData.gallery_images}
+                    onChange={(urls) => updateFormData("gallery_images", urls)}
+                    maxImages={6}
+                    label="Imágenes de la Galería"
+                  />
+                  <div className="mt-3 text-xs text-gray-500">{formData.gallery_images.length}/6 imágenes añadidas</div>
+                </div>
+
+                <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                  <Switch
+                    id="featured"
+                    checked={formData.featured}
+                    onCheckedChange={(checked) => updateFormData("featured", checked)}
+                  />
+                  <Label htmlFor="featured" className="flex items-center text-base font-medium">
+                    <Star className="h-5 w-5 mr-2 text-yellow-600" />
+                    Marcar como Excursión Destacada
+                  </Label>
+                </div>
               </div>
             </div>
           )}
@@ -892,97 +923,189 @@ const EditExcursionPage = () => {
               </div>
 
               {/* Servicios Incluidos */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios Incluidos</Label>
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                <Label className="text-lg font-bold text-green-900 mb-6 block flex items-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center mr-3">
+                    <CheckCircle className="w-4 h-4 text-white" />
+                  </div>
+                  Servicios Incluidos
+                </Label>
+
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {includedServices.map((service) => (
-                      <div
-                        key={service.id}
-                        className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-blue-50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          id={`included-${service.id}`}
-                          checked={formData.included_services.includes(service.name_es)}
-                          onChange={() => toggleIncludedService(service.name_es)}
-                          className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                        />
-                        <Label
-                          htmlFor={`included-${service.id}`}
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          {service.name_es}
-                        </Label>
+                  {/* Servicios Predefinidos */}
+                  <div>
+                    <h4 className="font-semibold text-green-800 mb-4 flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      Servicios Predefinidos
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {includedServices
+                        .filter((service) => !formData.included_services.includes(service.name_es))
+                        .map((service) => (
+                          <div
+                            key={service.id}
+                            className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-green-200 hover:bg-green-50 transition-colors cursor-pointer"
+                            onClick={() => toggleIncludedService(service.name_es)}
+                          >
+                            <div className="w-5 h-5 border-2 border-green-400 rounded flex items-center justify-center">
+                              <Plus className="w-3 h-3 text-green-600" />
+                            </div>
+                            <Label className="text-sm font-medium text-gray-700 cursor-pointer flex-1">
+                              {service.name_es}
+                            </Label>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Servicios Seleccionados */}
+                  {formData.included_services.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-green-800 mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                        Servicios Seleccionados ({formData.included_services.length})
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {formData.included_services.map((service, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 bg-green-100 rounded-lg border border-green-300"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <CheckCircle className="w-5 h-5 text-green-600" />
+                              <span className="text-sm font-medium text-green-800">{service}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeIncludedService(index)}
+                              className="text-green-600 hover:text-green-800 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={customIncludedService}
-                      onChange={(e) => setCustomIncludedService(e.target.value)}
-                      placeholder="Añadir servicio personalizado"
-                      className="flex-1"
-                    />
-                    <Button onClick={addCustomIncludedService} size="sm">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.included_services.map((service, index) => (
-                      <Badge key={index} variant="secondary" className="flex items-center gap-1">
-                        {service}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeIncludedService(index)} />
-                      </Badge>
-                    ))}
+                    </div>
+                  )}
+
+                  {/* Añadir Servicio Personalizado */}
+                  <div className="border-t border-green-200 pt-4">
+                    <h4 className="font-semibold text-green-800 mb-3 flex items-center">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                      Añadir Servicio Personalizado
+                    </h4>
+                    <div className="flex gap-3">
+                      <Input
+                        value={customIncludedService}
+                        onChange={(e) => setCustomIncludedService(e.target.value)}
+                        placeholder="Escribir servicio personalizado..."
+                        className="flex-1 border-green-300 focus:border-green-500 focus:ring-green-500"
+                        onKeyPress={(e) => e.key === "Enter" && addCustomIncludedService()}
+                      />
+                      <Button
+                        type="button"
+                        onClick={addCustomIncludedService}
+                        disabled={!customIncludedService.trim()}
+                        className="bg-green-600 hover:bg-green-700 text-white px-6"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Añadir
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Servicios No Incluidos */}
-              <div className="bg-red-50 rounded-lg p-6">
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">Servicios No Incluidos</Label>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {notIncludedServices.map((service) => (
-                      <div
-                        key={service.id}
-                        className="flex items-center space-x-3 p-3 bg-white rounded-lg border hover:bg-red-50 transition-colors"
-                      >
-                        <input
-                          type="checkbox"
-                          id={`not-included-${service.id}`}
-                          checked={formData.not_included_services.includes(service.name_es)}
-                          onChange={() => toggleNotIncludedService(service.name_es)}
-                          className="h-4 w-4 text-red-600 rounded border-gray-300 focus:ring-red-500"
-                        />
-                        <Label
-                          htmlFor={`not-included-${service.id}`}
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          {service.name_es}
-                        </Label>
+              <div className="bg-gradient-to-br from-red-50 to-rose-50 rounded-xl p-6 border border-red-200">
+                <Label className="text-lg font-bold text-red-900 mb-6 block flex items-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center mr-3">
+                    <X className="w-4 h-4 text-white" />
+                  </div>
+                  Servicios No Incluidos
+                </Label>
+
+                <div className="space-y-6">
+                  {/* Servicios Predefinidos */}
+                  <div>
+                    <h4 className="font-semibold text-red-800 mb-4 flex items-center">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                      Servicios Predefinidos
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {notIncludedServices
+                        .filter((service) => !formData.not_included_services.includes(service.name_es))
+                        .map((service) => (
+                          <div
+                            key={service.id}
+                            className="flex items-center space-x-3 p-3 bg-white rounded-lg border border-red-200 hover:bg-red-50 transition-colors cursor-pointer"
+                            onClick={() => toggleNotIncludedService(service.name_es)}
+                          >
+                            <div className="w-5 h-5 border-2 border-red-400 rounded flex items-center justify-center">
+                              <Plus className="w-3 h-3 text-red-600" />
+                            </div>
+                            <Label className="text-sm font-medium text-gray-700 cursor-pointer flex-1">
+                              {service.name_es}
+                            </Label>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+
+                  {/* Servicios Seleccionados */}
+                  {formData.not_included_services.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-red-800 mb-4 flex items-center">
+                        <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                        Servicios Seleccionados ({formData.not_included_services.length})
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {formData.not_included_services.map((service, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center justify-between p-3 bg-red-100 rounded-lg border border-red-300"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <X className="w-5 h-5 text-red-600" />
+                              <span className="text-sm font-medium text-red-800">{service}</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeNotIncludedService(index)}
+                              className="text-red-600 hover:text-red-800 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <div className="flex gap-2">
-                    <Input
-                      value={customNotIncludedService}
-                      onChange={(e) => setCustomNotIncludedService(e.target.value)}
-                      placeholder="Añadir servicio no incluido personalizado"
-                      className="flex-1"
-                    />
-                    <Button onClick={addCustomNotIncludedService} size="sm">
-                      <Plus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {formData.not_included_services.map((service, index) => (
-                      <Badge key={index} variant="outline" className="flex items-center gap-1">
-                        {service}
-                        <X className="h-3 w-3 cursor-pointer" onClick={() => removeNotIncludedService(index)} />
-                      </Badge>
-                    ))}
+                    </div>
+                  )}
+
+                  {/* Añadir Servicio Personalizado */}
+                  <div className="border-t border-red-200 pt-4">
+                    <h4 className="font-semibold text-red-800 mb-3 flex items-center">
+                      <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                      Añadir Servicio Personalizado
+                    </h4>
+                    <div className="flex gap-3">
+                      <Input
+                        value={customNotIncludedService}
+                        onChange={(e) => setCustomNotIncludedService(e.target.value)}
+                        placeholder="Escribir servicio no incluido personalizado..."
+                        className="flex-1 border-red-300 focus:border-red-500 focus:ring-red-500"
+                        onKeyPress={(e) => e.key === "Enter" && addCustomNotIncludedService()}
+                      />
+                      <Button
+                        type="button"
+                        onClick={addCustomNotIncludedService}
+                        disabled={!customNotIncludedService.trim()}
+                        className="bg-red-600 hover:bg-red-700 text-white px-6"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Añadir
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1095,111 +1218,6 @@ const EditExcursionPage = () => {
                   rows={3}
                 />
               </div>
-
-              {/* FAQs */}
-              <div>
-                <Label className="text-base font-semibold text-gray-900 mb-4 block">Preguntas Frecuentes</Label>
-                <div className="space-y-4">
-                  {formData.faqs.map((faq, index) => (
-                    <Card key={index} className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium">FAQ {index + 1}</h4>
-                        <Button onClick={() => removeFAQ(index)} variant="ghost" size="sm">
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-                        <div>
-                          <strong>ES:</strong> {faq.question_es}
-                          <br />
-                          <span className="text-gray-600">{faq.answer_es}</span>
-                        </div>
-                        <div>
-                          <strong>EN:</strong> {faq.question_en}
-                          <br />
-                          <span className="text-gray-600">{faq.answer_en}</span>
-                        </div>
-                        <div>
-                          <strong>DE:</strong> {faq.question_de}
-                          <br />
-                          <span className="text-gray-600">{faq.answer_de}</span>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-
-                  <Card className="p-4 border-dashed">
-                    <h4 className="font-medium mb-4">Añadir Nueva FAQ</h4>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <Label className="text-xs">Pregunta (Español)</Label>
-                          <Input
-                            value={newFAQ.question_es}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_es: e.target.value }))}
-                            placeholder="¿Pregunta en español?"
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Pregunta (Inglés)</Label>
-                          <Input
-                            value={newFAQ.question_en}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_en: e.target.value }))}
-                            placeholder="Question in English?"
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Pregunta (Alemán)</Label>
-                          <Input
-                            value={newFAQ.question_de}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, question_de: e.target.value }))}
-                            placeholder="Frage auf Deutsch?"
-                            className="mt-1"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <Label className="text-xs">Respuesta (Español)</Label>
-                          <Textarea
-                            value={newFAQ.answer_es}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_es: e.target.value }))}
-                            placeholder="Respuesta en español"
-                            className="mt-1"
-                            rows={2}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Respuesta (Inglés)</Label>
-                          <Textarea
-                            value={newFAQ.answer_en}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_en: e.target.value }))}
-                            placeholder="Answer in English"
-                            className="mt-1"
-                            rows={2}
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs">Respuesta (Alemán)</Label>
-                          <Textarea
-                            value={newFAQ.answer_de}
-                            onChange={(e) => setNewFAQ((prev) => ({ ...prev, answer_de: e.target.value }))}
-                            placeholder="Antwort auf Deutsch"
-                            className="mt-1"
-                            rows={2}
-                          />
-                        </div>
-                      </div>
-                      <Button onClick={addFAQ} size="sm" className="w-full">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Añadir FAQ
-                      </Button>
-                    </div>
-                  </Card>
-                </div>
-              </div>
             </div>
           )}
 
@@ -1300,17 +1318,51 @@ const EditExcursionPage = () => {
           Anterior
         </Button>
 
-        {currentStep < 6 ? (
-          <Button
-            onClick={nextStep}
-            disabled={!stepValidation[currentStep]}
-            size="lg"
-            className="flex items-center px-6 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700"
-          >
-            Siguiente
-            <ArrowRight className="h-5 w-5 ml-2" />
-          </Button>
-        ) : null}
+        <div className="flex items-center space-x-4">
+          {/* Step indicator */}
+          <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
+            <span>
+              Paso {currentStep} de {steps.length}
+            </span>
+            <div className="w-16 bg-gray-200 rounded-full h-1">
+              <div
+                className="bg-blue-500 h-1 rounded-full transition-all duration-300"
+                style={{ width: `${(currentStep / steps.length) * 100}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {currentStep < 6 ? (
+            <Button
+              onClick={nextStep}
+              disabled={!stepValidation[currentStep]}
+              size="lg"
+              className="flex items-center px-6 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700"
+            >
+              Siguiente
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          ) : (
+            <Button
+              onClick={handleUpdateExcursion}
+              disabled={isSubmitting}
+              size="lg"
+              className="flex items-center px-6 py-3 text-base font-medium bg-green-600 hover:bg-green-700"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  Guardando Cambios...
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+                  Guardar Cambios
+                </>
+              )}
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   )
