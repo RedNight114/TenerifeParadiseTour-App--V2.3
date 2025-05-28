@@ -25,14 +25,14 @@ export function ExcursionCard({ excursion, className }: ExcursionCardProps) {
     window.open(`https://wa.me/34617303929?text=${message}`, "_blank")
   }
 
-  const getPremiumLabel = () => {
+  const getFeaturedLabel = () => {
     switch (language) {
       case "en":
-        return "Premium"
+        return "Featured"
       case "de":
-        return "Premium"
+        return "Hervorgehoben"
       default:
-        return "Premium"
+        return "Destacado"
     }
   }
 
@@ -166,7 +166,7 @@ export function ExcursionCard({ excursion, className }: ExcursionCardProps) {
         {/* Badge Premium */}
         {excursion.featured && (
           <Badge className="absolute top-3 left-3 bg-blue-600 text-white px-3 py-1 text-sm font-semibold">
-            {getPremiumLabel()}
+            {getFeaturedLabel()}
           </Badge>
         )}
 

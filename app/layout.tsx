@@ -5,6 +5,7 @@ import "./globals.css"
 import { LanguageProvider } from "@/lib/language-context"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { CookieBanner } from "@/components/cookie-banner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
     description: "Descubre la magia de Tenerife con nuestras excursiones únicas",
     images: ["/placeholder.svg?height=630&width=1200&text=Tenerife+Paradise+Tours"],
   },
-    generator: 'v0.dev'
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
@@ -33,6 +34,7 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <CookieBanner />
         </LanguageProvider>
       </body>
     </html>

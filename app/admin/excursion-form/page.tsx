@@ -31,6 +31,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { ImageUpload } from "@/components/image-upload"
+import { MultiImageUpload } from "@/components/multi-image-upload"
 import {
   getCategories,
   getIncludedServices,
@@ -108,6 +109,7 @@ const ExcursionFormPage = () => {
     duration: "",
     category: "",
     image_url: "",
+    gallery_images: [] as string[],
     featured: false,
     included_services: [] as string[],
     not_included_services: [] as string[],
@@ -377,7 +379,7 @@ const ExcursionFormPage = () => {
         price: Number(formData.price),
         max_people: formData.max_people ? Number(formData.max_people) : undefined,
         children_price: formData.children_price ? Number(formData.children_price) : undefined,
-        // Convertir timeSlots a formato que espera el backend
+        gallery_images: formData.gallery_images, // Añadir esta línea
         start_time: timeSlots.length > 0 ? timeSlots[0].start_time : undefined,
         end_time: timeSlots.length > 0 ? timeSlots[0].end_time : undefined,
         // Agregar información de horarios múltiples en special_notes si hay más de uno
@@ -423,6 +425,7 @@ const ExcursionFormPage = () => {
       duration: "",
       category: "",
       image_url: "",
+      gallery_images: [],
       featured: false,
       included_services: [],
       not_included_services: [],
@@ -992,6 +995,36 @@ const ExcursionFormPage = () => {
                   />
                 </div>
 
+                {/* Galería de Imágenes Secundarias */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                  <Label className="text-base font-semibold text-gray-900 mb-4 block flex items-center">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+                      Galería de Imágenes Secundarias
+                    </div>
+                  </Label>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Añade hasta 6 imágenes adicionales que se mostrarán en la galería de la excursión
+                  </p>
+                  <MultiImageUpload
+                    value={formData.gallery_images}
+                    onChange={(urls) => updateFormData("gallery_images", urls)}
+                    maxImages={6}
+                    label="Imágenes de la Galería"
+                    placeholder="Añadir imágenes a la galería"
+                  />
+                  <div className="mt-3 text-xs text-gray-500">{formData.gallery_images.length}/6 imágenes añadidas</div>
+                </div>
+
                 <div className="flex items-center space-x-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
                   <Switch
                     id="featured"
@@ -1397,6 +1430,9 @@ const ExcursionFormPage = () => {
                             <div>
                               <strong>Precio Niños:</strong>{" "}
                               {formData.children_price ? `€${formData.children_price}` : "No especificado"}
+                            </div>
+                            <div>
+                              <strong>Imágenes galería:</strong> {formData.gallery_images.length}
                             </div>
                           </div>
                         </div>

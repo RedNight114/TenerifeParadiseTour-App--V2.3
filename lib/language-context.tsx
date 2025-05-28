@@ -525,6 +525,25 @@ const translations = {
     // FAQ Buttons
     "faq.buttons.close": "Cerrar FAQ",
     "faq.buttons.print": "Imprimir FAQ",
+
+    // Cookies
+    "cookies.title": "Configuración de Cookies",
+    "cookies.description":
+      "Utilizamos cookies para mejorar tu experiencia de navegación, analizar el tráfico del sitio y personalizar el contenido. Puedes elegir qué tipos de cookies aceptar.",
+    "cookies.preferences_title": "Preferencias de Cookies",
+    "cookies.necessary": "Cookies Necesarias",
+    "cookies.necessary_desc": "Esenciales para el funcionamiento básico del sitio web",
+    "cookies.analytics": "Cookies de Análisis",
+    "cookies.analytics_desc": "Nos ayudan a entender cómo interactúas con nuestro sitio",
+    "cookies.functional": "Cookies Funcionales",
+    "cookies.functional_desc": "Mejoran la funcionalidad y personalización del sitio",
+    "cookies.accept_all": "Aceptar Todas",
+    "cookies.necessary_only": "Solo Necesarias",
+    "cookies.customize": "Personalizar",
+    "cookies.save_preferences": "Guardar Preferencias",
+    "cookies.more_info": "Para más información, consulta nuestra",
+    "cookies.privacy_policy": "Política de Privacidad",
+    "cookies.close": "Cerrar",
   },
   en: {
     // Navigation
@@ -1035,6 +1054,25 @@ const translations = {
     // FAQ Buttons
     "faq.buttons.close": "Close FAQ",
     "faq.buttons.print": "Print FAQ",
+
+    // Cookies
+    "cookies.title": "Cookie Settings",
+    "cookies.description":
+      "We use cookies to improve your browsing experience, analyze site traffic, and personalize content. You can choose which types of cookies to accept.",
+    "cookies.preferences_title": "Cookie Preferences",
+    "cookies.necessary": "Necessary Cookies",
+    "cookies.necessary_desc": "Essential for basic website functionality",
+    "cookies.analytics": "Analytics Cookies",
+    "cookies.analytics_desc": "Help us understand how you interact with our site",
+    "cookies.functional": "Functional Cookies",
+    "cookies.functional_desc": "Enhance site functionality and personalization",
+    "cookies.accept_all": "Accept All",
+    "cookies.necessary_only": "Necessary Only",
+    "cookies.customize": "Customize",
+    "cookies.save_preferences": "Save Preferences",
+    "cookies.more_info": "For more information, see our",
+    "cookies.privacy_policy": "Privacy Policy",
+    "cookies.close": "Close",
   },
   de: {
     // Navigation
@@ -1552,6 +1590,25 @@ const translations = {
     // FAQ Buttons
     "faq.buttons.close": "FAQ Schließen",
     "faq.buttons.print": "FAQ Drucken",
+
+    // Cookies
+    "cookies.title": "Cookie-Einstellungen",
+    "cookies.description":
+      "Wir verwenden Cookies, um Ihr Browsing-Erlebnis zu verbessern, den Website-Traffic zu analysieren und Inhalte zu personalisieren. Sie können wählen, welche Cookie-Arten Sie akzeptieren möchten.",
+    "cookies.preferences_title": "Cookie-Präferenzen",
+    "cookies.necessary": "Notwendige Cookies",
+    "cookies.necessary_desc": "Wesentlich für die grundlegende Website-Funktionalität",
+    "cookies.analytics": "Analyse-Cookies",
+    "cookies.analytics_desc": "Helfen uns zu verstehen, wie Sie mit unserer Website interagieren",
+    "cookies.functional": "Funktionale Cookies",
+    "cookies.functional_desc": "Verbessern Website-Funktionalität und Personalisierung",
+    "cookies.accept_all": "Alle Akzeptieren",
+    "cookies.necessary_only": "Nur Notwendige",
+    "cookies.customize": "Anpassen",
+    "cookies.save_preferences": "Einstellungen Speichern",
+    "cookies.more_info": "Weitere Informationen finden Sie in unserer",
+    "cookies.privacy_policy": "Datenschutzrichtlinie",
+    "cookies.close": "Schließen",
   },
 }
 

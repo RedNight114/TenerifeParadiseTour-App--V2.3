@@ -145,13 +145,19 @@ export function PrivacyPolicyModal({ isOpen, onClose }: PrivacyPolicyModalProps)
             <h4 className="font-semibold text-gray-900 mb-3">{t("privacy.contact_info.title")}</h4>
             <div className="space-y-2 text-sm text-gray-600">
               <p>
-                <strong>{t("privacy.contact_info.company")}:</strong> {t("privacy.contact_info.company_name")}
+                <strong>{t("privacy.contact_info.company")}:</strong> Tenerife Paradise Tour & Excursion
               </p>
               <p>
-                <strong>{t("privacy.contact_info.cif")}:</strong> {t("privacy.contact_info.cif_number")}
+                <strong>NIF:</strong> Y7844662C
               </p>
               <p>
-                <strong>{t("privacy.contact_info.address")}:</strong> {t("privacy.contact_info.address_text")}
+                <strong>{t("privacy.contact_info.address")}:</strong> Santa Cruz de Tenerife, Canarias España
+              </p>
+              <p>
+                <strong>Registro Mercantil:</strong> Santa Cruz de Tenerife
+              </p>
+              <p>
+                <strong>Licencia Turística:</strong> No es necesario
               </p>
               <p>
                 <strong>{t("privacy.contact_info.email")}:</strong> {t("privacy.contact_info.email_address")}

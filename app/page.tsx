@@ -10,6 +10,7 @@ import { supabase, type Excursion, type Review } from "@/lib/supabase"
 import { useLanguage } from "@/lib/language-context"
 import Link from "next/link"
 import { PhotoGallery } from "@/components/photo-gallery"
+import { AdminAccess } from "@/components/admin-access"
 
 export default function HomePage() {
   const [featuredExcursions, setFeaturedExcursions] = useState<Excursion[]>([])
@@ -199,6 +200,9 @@ export default function HomePage() {
 
       {/* Galería de Fotos */}
       <PhotoGallery />
+
+      {/* Admin Access - Solo visible para administradores */}
+      <AdminAccess />
     </div>
   )
 }

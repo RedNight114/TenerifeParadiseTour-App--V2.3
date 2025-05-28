@@ -156,16 +156,19 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
             <h4 className="font-semibold text-gray-900 mb-3">{t("terms.legal_info.title")}</h4>
             <div className="space-y-2 text-sm text-gray-600">
               <p>
-                <strong>Razón Social:</strong> TenerifeParadiseTours S.L.
+                <strong>Razón Social:</strong> Tenerife Paradise Tour & Excursion
               </p>
               <p>
-                <strong>CIF:</strong> B-12345678
+                <strong>NIF:</strong> Y7844662C
               </p>
               <p>
-                <strong>Licencia Turística:</strong> AT-123456
+                <strong>Dirección:</strong> Santa Cruz de Tenerife, Canarias España
               </p>
               <p>
-                <strong>Registro Mercantil:</strong> Santa Cruz de Tenerife, Tomo 1234, Folio 567
+                <strong>Registro Mercantil:</strong> Santa Cruz de Tenerife
+              </p>
+              <p>
+                <strong>Licencia Turística:</strong> No es necesario
               </p>
               <p>
                 <strong>Jurisdicción:</strong> Tribunales de Santa Cruz de Tenerife

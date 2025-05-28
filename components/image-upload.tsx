@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { Upload, X, Camera, Loader2, AlertCircle, RefreshCw, Settings } from "lucide-react"
+import { Upload, X, Loader2, AlertCircle, RefreshCw, Settings, Link, ImageIcon } from "lucide-react"
 import Image from "next/image"
 
 interface ImageUploadProps {
@@ -16,6 +16,7 @@ interface ImageUploadProps {
   label?: string
   placeholder?: string
   required?: boolean
+  showLabel?: boolean
 }
 
 interface CompressionOptions {
@@ -25,7 +26,14 @@ interface CompressionOptions {
   format: "jpeg" | "webp"
 }
 
-export function ImageUpload({ value, onChange, label, placeholder, required = false }: ImageUploadProps) {
+export function ImageUpload({
+  value,
+  onChange,
+  label = "Imagen",
+  placeholder = "URL de la imagen",
+  required = false,
+  showLabel = true,
+}: ImageUploadProps) {
   const [isUploading, setIsUploading] = useState(false)
   const [isCompressing, setIsCompressing] = useState(false)
   const [dragActive, setDragActive] = useState(false)
@@ -321,10 +329,11 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
 
   return (
     <div className="space-y-4">
-      {label && (
-        <Label className="text-sm font-medium text-gray-700">
-          <Camera className="h-4 w-4 inline mr-1" />
-          {label} {required && <span className="text-red-500">*</span>}
+      {showLabel && (
+        <Label className="text-sm font-medium text-gray-700 flex items-center">
+          <ImageIcon className="h-4 w-4 mr-2" />
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </Label>
       )}
 
@@ -340,6 +349,7 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
             setUploadProgress("")
           }}
         >
+          <Link className="h-4 w-4 mr-1" />
           URL externa
         </Button>
         <Button
@@ -352,7 +362,8 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
             setUploadProgress("")
           }}
         >
-          Subir archivo (con compresión automática)
+          <Upload className="h-4 w-4 mr-1" />
+          Subir archivo (compresión automática)
         </Button>
         {uploadMethod === "blob" && (
           <Button
@@ -471,31 +482,25 @@ export function ImageUpload({ value, onChange, label, placeholder, required = fa
         </Card>
       )}
 
-      {/* Vista previa de la imagen actual */}
+      {/* Vista previa de la imagen */}
       {value && (
-        <Card className="relative">
-          <CardContent className="p-4">
-            <div className="relative">
-              <Image
-                src={value || "/placeholder.svg"}
-                alt="Vista previa"
-                width={400}
-                height={200}
-                className="w-full h-48 object-cover rounded-lg"
-              />
-              <Button
-                onClick={removeImage}
-                variant="destructive"
-                size="sm"
-                className="absolute top-2 right-2"
-                disabled={isUploading || isCompressing}
-              >
+        <div className="relative group">
+          <div className="relative aspect-[16/9] w-full max-w-md bg-gray-100 rounded-lg overflow-hidden">
+            <Image
+              src={value || "/placeholder.svg"}
+              alt="Vista previa"
+              fill
+              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, 400px"
+            />
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
+              <Button onClick={removeImage} variant="destructive" size="sm" className="rounded-full">
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-gray-500 mt-2 break-all">{value}</p>
-          </CardContent>
-        </Card>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">Click en la imagen para eliminar</p>
+        </div>
       )}
 
       {uploadMethod === "url" ? (
