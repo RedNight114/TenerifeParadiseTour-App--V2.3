@@ -27,7 +27,7 @@ export default function HomePage() {
     // Preload critical resources
     const link = document.createElement("link")
     link.rel = "preload"
-    link.href = "/hero-tenerife.jpg"
+    link.href = "/hero-tenerife-v3.avif"
     link.as = "image"
     document.head.appendChild(link)
 
@@ -99,16 +99,34 @@ export default function HomePage() {
       es: "TenerifeParadiseTours - Excursiones Únicas en Tenerife | Tours y Actividades",
       en: "TenerifeParadiseTours - Unique Excursions in Tenerife | Tours & Activities",
       de: "TenerifeParadiseTours - Einzigartige Ausflüge auf Teneriffa | Touren & Aktivitäten",
+      fr: "TenerifeParadiseTours - Excursions Uniques à Tenerife | Tours & Activités",
+      it: "TenerifeParadiseTours - Escursioni Uniche a Tenerife | Tour e Attività",
+      pt: "TenerifeParadiseTours - Excursões Únicas em Tenerife | Tours e Atividades",
+      nl: "TenerifeParadiseTours - Unieke Excursies op Tenerife | Tours & Activiteiten",
+      ru: "TenerifeParadiseTours - Уникальные экскурсии на Тенерифе | Туры и мероприятия",
+      zh: "TenerifeParadiseTours - 特内里费岛独特游览 | 旅游和活动",
     },
     description: {
       es: "Descubre las mejores excursiones en Tenerife: avistamiento de ballenas, senderismo al Teide, tours por Anaga y Masca. Reserva fácil por WhatsApp. ¡Experiencias únicas te esperan!",
       en: "Discover the best excursions in Tenerife: whale watching, Teide hiking, Anaga and Masca tours. Easy WhatsApp booking. Unique experiences await you!",
       de: "Entdecken Sie die besten Ausflüge auf Teneriffa: Walbeobachtung, Teide-Wanderungen, Anaga- und Masca-Touren. Einfache WhatsApp-Buchung. Einzigartige Erlebnisse erwarten Sie!",
+      fr: "Découvrez les meilleures excursions à Tenerife: observation des baleines, randonnée au Teide, visites d'Anaga et Masca. Réservation facile par WhatsApp. Des expériences uniques vous attendent!",
+      it: "Scopri le migliori escursioni a Tenerife: avvistamento balene, escursioni sul Teide, tour di Anaga e Masca. Facile prenotazione WhatsApp. Esperienze uniche ti aspettano!",
+      pt: "Descubra as melhores excursões em Tenerife: observação de baleias, caminhadas no Teide, passeios por Anaga e Masca. Reserva fácil por WhatsApp. Experiências únicas esperam por si!",
+      nl: "Ontdek de beste excursies op Tenerife: walvissen spotten, Teide wandelen, Anaga en Masca tours. Eenvoudig boeken via WhatsApp. Unieke ervaringen wachten op u!",
+      ru: "Откройте для себя лучшие экскурсии на Тенерифе: наблюдение за китами, походы на Тейде, туры по Анаге и Маске. Простое бронирование через WhatsApp. Уникальные впечатления ждут вас!",
+      zh: "探索特内里费岛最佳游览：观鲸、泰德徒步、阿纳加和马斯卡之旅。通过WhatsApp轻松预订。独特体验等待您！",
     },
     keywords: {
       es: "excursiones Tenerife, tours Tenerife, avistamiento ballenas, Teide, Anaga, Masca, senderismo Tenerife, actividades Canarias, turismo Tenerife",
       en: "Tenerife excursions, Tenerife tours, whale watching, Teide, Anaga, Masca, Tenerife hiking, Canary Islands activities, Tenerife tourism",
       de: "Teneriffa Ausflüge, Teneriffa Touren, Walbeobachtung, Teide, Anaga, Masca, Teneriffa Wandern, Kanarische Inseln Aktivitäten, Teneriffa Tourismus",
+      fr: "excursions Tenerife, tours Tenerife, observation baleines, Teide, Anaga, Masca, randonnée Tenerife, activités Canaries, tourisme Tenerife",
+      it: "escursioni Tenerife, tour Tenerife, avvistamento balene, Teide, Anaga, Masca, escursionismo Tenerife, attività Canarie, turismo Tenerife",
+      pt: "excursões Tenerife, tours Tenerife, observação baleias, Teide, Anaga, Masca, caminhada Tenerife, atividades Canárias, turismo Tenerife",
+      nl: "Tenerife excursies, Tenerife tours, walvissen spotten, Teide, Anaga, Masca, Tenerife wandelen, Canarische Eilanden activiteiten, Tenerife toerisme",
+      ru: "экскурсии Тенерифе, туры Тенерифе, наблюдение за китами, Тейде, Анага, Маска, походы Тенерифе, мероприятия Канарские острова, туризм Тенерифе",
+      zh: "特内里费游览, 特内里费旅游, 观鲸, 泰德, 阿纳加, 马斯卡, 特内里费徒步, 加那利群岛活动, 特内里费旅游",
     },
   }
 
@@ -169,8 +187,8 @@ export default function HomePage() {
         {/* Background */}
         <div className="absolute inset-0">
           <Image
-            src="/hero-tenerife.jpg"
-            alt="Los Gigantes, Tenerife - Excursiones únicas en las Islas Canarias"
+            src="/hero-tenerife-v3.avif"
+            alt="Paisajes espectaculares de Tenerife - Excursiones únicas en las Islas Canarias"
             fill
             className="object-cover"
             priority={true}
@@ -272,7 +290,7 @@ export default function HomePage() {
 
       {/* CTA final */}
       <section className="py-24 bg-gradient-to-br from-brand-heading via-gray-800 to-gray-900 relative overflow-x-hidden">
-        <div className="absolute inset-0 bg-[url('/hero-tenerife.jpg')] opacity-10 bg-cover bg-center"></div>
+        <div className="absolute inset-0 bg-[url('/hero-tenerife-v3.avif')] opacity-10 bg-cover bg-center"></div>
 
         <div className="relative max-w-5xl mx-auto text-center px-4 sm:px-6 lg:px-8 w-full">
           <div className="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 mb-8">

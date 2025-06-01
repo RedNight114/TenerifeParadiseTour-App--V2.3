@@ -73,8 +73,8 @@ export function ExcursionGallery({ mainImage, galleryImages = [], altText }: Exc
 
         {/* Galería de imágenes adicionales */}
         {galleryImages.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {galleryImages.map((imageUrl, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.slice(0, 6).map((imageUrl, index) => (
               <Card key={index} className="overflow-hidden">
                 <CardContent className="p-0">
                   <div className="relative group">
@@ -91,6 +91,16 @@ export function ExcursionGallery({ mainImage, galleryImages = [], altText }: Exc
                     >
                       <Maximize2 className="h-6 w-6 text-white" />
                     </button>
+
+                    {/* Mostrar indicador "+X más" en la última imagen si hay más de 6 */}
+                    {index === 5 && galleryImages.length > 6 && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <div className="text-white text-center">
+                          <div className="text-2xl font-bold">+{galleryImages.length - 6}</div>
+                          <div className="text-sm">más fotos</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

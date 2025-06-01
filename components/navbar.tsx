@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Menu, X, ChevronDown, Phone, Globe } from "lucide-react"
+import { Menu, X, ChevronDown, Phone, Globe, Home, Map } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { useLanguage } from "@/lib/language-context"
@@ -16,6 +16,7 @@ export function Navbar() {
   const { language, setLanguage, t } = useLanguage()
   const [excursions, setExcursions] = useState([])
   const [loadingExcursions, setLoadingExcursions] = useState(true)
+  const [mobileLanguageOpen, setMobileLanguageOpen] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -30,6 +31,9 @@ export function Navbar() {
     { code: "es", name: "Español", flag: "🇪🇸" },
     { code: "en", name: "English", flag: "🇬🇧" },
     { code: "de", name: "Deutsch", flag: "🇩🇪" },
+    { code: "fr", name: "Français", flag: "🇫🇷" },
+    { code: "zh", name: "中文", flag: "🇨🇳" },
+    { code: "ru", name: "Русский", flag: "🇷🇺" },
   ]
 
   // Función para truncar nombres largos
@@ -150,7 +154,9 @@ export function Navbar() {
                 ) : excursions.length > 0 ? (
                   <>
                     <div className="px-4 py-3 bg-blue-600 text-white rounded-lg mb-2">
-                      <h3 className="text-sm font-semibold uppercase tracking-wide">Excursiones Destacadas</h3>
+                      <h3 className="text-sm font-semibold uppercase tracking-wide">
+                        {t("excursions.featured_title")}
+                      </h3>
                     </div>
                     {excursions.map((excursion, index) => (
                       <DropdownMenuItem
@@ -183,7 +189,7 @@ export function Navbar() {
                               )}
                             </div>
                             <p className="text-xs text-gray-500 group-hover:text-gray-600 transition-colors duration-200">
-                              Aventura inolvidable en Tenerife
+                              {t("excursions.unforgettable_adventure")}
                             </p>
                           </div>
                           <div className="flex flex-col items-end ml-4">
@@ -192,7 +198,7 @@ export function Navbar() {
                                 €{excursion.price}
                               </div>
                             )}
-                            <div className="text-xs text-gray-400">por persona</div>
+                            <div className="text-xs text-gray-400">{t("featured.per_person")}</div>
                           </div>
                         </Link>
                       </DropdownMenuItem>
@@ -280,77 +286,138 @@ export function Navbar() {
           </div>
 
           {/* Mobile menu button con animación */}
-          <div className="lg:hidden flex items-center">
+          <div className="lg:hidden flex items-center space-x-2">
+            {/* Selector de idioma móvil */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                className={`p-2 rounded-full transition-all duration-300 ${
+                  scrolled ? "text-gray-700 hover:bg-gray-100" : "text-white hover:bg-white/20"
+                }`}
+              >
+                <span className="text-lg">{languages.find((l) => l.code === language)?.flag}</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-white rounded-xl shadow-xl border-0 p-2 w-[280px]">
+                <div className="grid grid-cols-3 gap-1">
+                  {languages.map((lang) => (
+                    <DropdownMenuItem
+                      key={lang.code}
+                      onClick={() => setLanguage(lang.code as any)}
+                      className={`flex flex-col items-center justify-center p-2 rounded-lg transition-all duration-200 ${
+                        language === lang.code ? "bg-blue-50 text-blue-600" : "hover:bg-gray-50 text-gray-700"
+                      }`}
+                    >
+                      <span className="text-2xl mb-1">{lang.flag}</span>
+                      <span className="text-xs font-medium">{lang.name}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Botón de menú */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 transition-all duration-500 hover:scale-110 animate-fade-in ${
-                scrolled ? "text-brand-text hover:text-brand-heading" : "text-white hover:text-white/80"
+              className={`p-2 rounded-full transition-all duration-300 ${
+                scrolled
+                  ? isOpen
+                    ? "bg-blue-600 text-white"
+                    : "text-gray-700 hover:bg-gray-100"
+                  : isOpen
+                    ? "bg-white text-blue-600"
+                    : "text-white hover:bg-white/20"
               }`}
+              aria-label="Menu"
             >
-              <div className="relative w-6 h-6">
-                <Menu
-                  className={`absolute inset-0 h-6 w-6 transition-all duration-300 ${
-                    isOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
-                  }`}
-                />
-                <X
-                  className={`absolute inset-0 h-6 w-6 transition-all duration-300 ${
-                    isOpen ? "opacity-100 rotate-0" : "opacity-0 -rotate-90"
-                  }`}
-                />
-              </div>
+              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation SIMPLIFICADO */}
+        {/* Mobile Navigation PROFESIONAL */}
         {isOpen && (
-          <div className="lg:hidden bg-white shadow-lg rounded-b-lg border border-gray-200 absolute top-20 left-0 right-0 z-50">
-            <div className="p-4 space-y-3">
-              <Link
-                href="/"
-                className="block px-4 py-3 text-gray-700 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50"
-                onClick={() => setIsOpen(false)}
-              >
-                {t("nav.home")}
-              </Link>
-              <Link
-                href="/excursions"
-                className="block px-4 py-3 text-gray-700 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50"
-                onClick={() => setIsOpen(false)}
-              >
-                {t("nav.excursions")}
-              </Link>
-              <Link
-                href="/contact"
-                className="block px-4 py-3 text-gray-700 hover:text-blue-600 font-medium rounded-lg hover:bg-gray-50"
-                onClick={() => setIsOpen(false)}
-              >
-                {t("nav.contact")}
-              </Link>
+          <div className="lg:hidden bg-white shadow-xl rounded-b-2xl overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-top-5">
+            <div className="divide-y divide-gray-100">
+              {/* Enlaces principales */}
+              <div className="grid grid-cols-2 gap-px bg-gray-100 p-px">
+                <Link
+                  href="/"
+                  className="flex flex-col items-center justify-center p-4 bg-white hover:bg-blue-50 transition-colors duration-200"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center mb-2">
+                    <Home className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <span className="font-medium text-gray-800">{t("nav.home")}</span>
+                </Link>
 
-              <div className="border-t border-gray-100 pt-3 mt-3">
-                <div className="flex items-center space-x-2 text-gray-600 text-sm font-medium mb-2 px-4">
-                  <Globe className="h-4 w-4" />
-                  <span>Idioma:</span>
-                </div>
-                <div className="flex flex-wrap gap-2 px-4">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => setLanguage(lang.code as any)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium ${
-                        language === lang.code
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                      }`}
-                    >
-                      <span className="mr-1">{lang.flag}</span>
-                      {lang.name}
-                    </button>
-                  ))}
-                </div>
+                <Link
+                  href="/excursions"
+                  className="flex flex-col items-center justify-center p-4 bg-white hover:bg-blue-50 transition-colors duration-200"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center mb-2">
+                    <Map className="h-5 w-5 text-orange-600" />
+                  </div>
+                  <span className="font-medium text-gray-800">{t("nav.excursions")}</span>
+                </Link>
               </div>
+
+              {/* CTA */}
+              <div className="p-4">
+                <Link
+                  href="/contact"
+                  className="flex items-center justify-center p-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-all duration-200 shadow-md"
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Phone className="h-5 w-5 mr-2" />
+                  <span className="font-medium">{t("nav.contact")}</span>
+                </Link>
+              </div>
+
+              {/* Excursiones destacadas */}
+              {excursions.length > 0 && (
+                <div className="p-4">
+                  <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    {t("excursions.featured_title")}
+                  </h3>
+                  <div className="space-y-2">
+                    {excursions.slice(0, 3).map((excursion) => (
+                      <Link
+                        key={excursion.id}
+                        href={`/excursions/${excursion.id}`}
+                        className="flex items-center justify-between p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <div>
+                          <h4 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors duration-200">
+                            {truncateName(
+                              language === "es"
+                                ? excursion.name_es
+                                : language === "en"
+                                  ? excursion.name_en
+                                  : language === "de"
+                                    ? excursion.name_de
+                                    : excursion.name_es,
+                              18,
+                            )}
+                          </h4>
+                        </div>
+                        {excursion.price && <div className="text-blue-600 font-semibold">€{excursion.price}</div>}
+                      </Link>
+                    ))}
+                    <Link
+                      href="/excursions"
+                      className="flex items-center justify-center p-3 text-blue-600 hover:text-blue-700 transition-colors duration-200"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <span className="font-medium">{t("featured.view_all_short")}</span>
+                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}

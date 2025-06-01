@@ -10,70 +10,199 @@ interface TermsConditionsModalProps {
 }
 
 export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalProps) {
-  const { t } = useLanguage()
+  const { language } = useLanguage()
 
   if (!isOpen) return null
+
+  const content = {
+    es: {
+      title: "Términos y Condiciones",
+      subtitle: "Condiciones generales de contratación",
+      intro: {
+        title: "Información General",
+        content:
+          "Estos términos y condiciones regulan la contratación de servicios turísticos ofrecidos por Tenerife Paradise Tour & Excursion. Al realizar una reserva, usted acepta estos términos en su totalidad.",
+      },
+      sections: [
+        {
+          title: "Servicios y Reservas",
+          content: [
+            "• Ofrecemos excursiones y tours por la isla de Tenerife con guías especializados",
+            "• Las reservas se confirman mediante pago del 50% del total como depósito",
+            "• El resto del pago debe realizarse 24 horas antes del inicio del tour",
+            "• Todas las reservas están sujetas a disponibilidad y confirmación",
+          ],
+        },
+        {
+          title: "Política de Cancelación",
+          content: [
+            "• Cancelación gratuita hasta 48 horas antes del tour",
+            "• Cancelaciones entre 24-48 horas: reembolso del 50%",
+            "• Cancelaciones con menos de 24 horas: sin reembolso",
+            "• En caso de condiciones meteorológicas adversas, se ofrece reprogramación o reembolso completo",
+          ],
+        },
+        {
+          title: "Precios y Pagos",
+          content: [
+            "• Los precios incluyen transporte, guía y actividades especificadas",
+            "• No incluyen comidas ni bebidas salvo indicación contraria",
+            "• Aceptamos pagos en efectivo, tarjeta de crédito y transferencia bancaria",
+            "• Los precios pueden variar según temporada y disponibilidad",
+          ],
+        },
+        {
+          title: "Responsabilidades y Limitaciones",
+          content: [
+            "• Los participantes deben seguir las instrucciones del guía en todo momento",
+            "• No nos hacemos responsables de objetos personales perdidos o dañados",
+            "• Los menores de edad deben estar acompañados por un adulto responsable",
+            "• Recomendamos contratar seguro de viaje para mayor protección",
+          ],
+        },
+        {
+          title: "Protección de Datos",
+          content: [
+            "• Sus datos personales se utilizan únicamente para gestionar su reserva",
+            "• No compartimos información personal con terceros sin consentimiento",
+            "• Puede solicitar acceso, rectificación o eliminación de sus datos",
+            "• Cumplimos con la normativa RGPD de protección de datos",
+          ],
+        },
+        {
+          title: "Condiciones Generales",
+          content: [
+            "• Estos términos se rigen por la legislación española",
+            "• Cualquier disputa será resuelta por los tribunales de Santa Cruz de Tenerife",
+            "• Nos reservamos el derecho de modificar estos términos con previo aviso",
+            "• La participación en nuestros tours implica la aceptación de estos términos",
+          ],
+        },
+      ],
+      important_notice: {
+        title: "Aviso Importante",
+        content:
+          "Al confirmar su reserva, usted declara haber leído, entendido y aceptado estos términos y condiciones. Para cualquier consulta, puede contactarnos antes de realizar su reserva.",
+      },
+      legal_info: {
+        title: "Información Legal",
+      },
+      buttons: {
+        accept: "Acepto los Términos",
+        print: "Imprimir",
+      },
+    },
+    en: {
+      title: "Terms and Conditions",
+      subtitle: "General terms of service",
+      intro: {
+        title: "General Information",
+        content:
+          "These terms and conditions govern the contracting of tourist services offered by Tenerife Paradise Tour & Excursion. By making a reservation, you accept these terms in their entirety.",
+      },
+      sections: [
+        {
+          title: "Services and Reservations",
+          content: [
+            "• We offer excursions and tours around Tenerife island with specialized guides",
+            "• Reservations are confirmed by paying 50% of the total as a deposit",
+            "• The remaining payment must be made 24 hours before the tour starts",
+            "• All reservations are subject to availability and confirmation",
+          ],
+        },
+        {
+          title: "Cancellation Policy",
+          content: [
+            "• Free cancellation up to 48 hours before the tour",
+            "• Cancellations between 24-48 hours: 50% refund",
+            "• Cancellations with less than 24 hours: no refund",
+            "• In case of adverse weather conditions, we offer rescheduling or full refund",
+          ],
+        },
+        {
+          title: "Prices and Payments",
+          content: [
+            "• Prices include transport, guide and specified activities",
+            "• Does not include meals or drinks unless otherwise indicated",
+            "• We accept cash, credit card and bank transfer payments",
+            "• Prices may vary according to season and availability",
+          ],
+        },
+        {
+          title: "Responsibilities and Limitations",
+          content: [
+            "• Participants must follow the guide's instructions at all times",
+            "• We are not responsible for lost or damaged personal items",
+            "• Minors must be accompanied by a responsible adult",
+            "• We recommend purchasing travel insurance for greater protection",
+          ],
+        },
+        {
+          title: "Data Protection",
+          content: [
+            "• Your personal data is used only to manage your reservation",
+            "• We do not share personal information with third parties without consent",
+            "• You can request access, rectification or deletion of your data",
+            "• We comply with GDPR data protection regulations",
+          ],
+        },
+        {
+          title: "General Conditions",
+          content: [
+            "• These terms are governed by Spanish legislation",
+            "• Any dispute will be resolved by the courts of Santa Cruz de Tenerife",
+            "• We reserve the right to modify these terms with prior notice",
+            "• Participation in our tours implies acceptance of these terms",
+          ],
+        },
+      ],
+      important_notice: {
+        title: "Important Notice",
+        content:
+          "By confirming your reservation, you declare that you have read, understood and accepted these terms and conditions. For any questions, you can contact us before making your reservation.",
+      },
+      legal_info: {
+        title: "Legal Information",
+      },
+      buttons: {
+        accept: "Accept Terms",
+        print: "Print",
+      },
+    },
+  }
+
+  const t = content[language as keyof typeof content] || content.es
 
   const sections = [
     {
       icon: FileText,
-      title: t("terms.section1.title"),
-      content: [
-        t("terms.section1.content1"),
-        t("terms.section1.content2"),
-        t("terms.section1.content3"),
-        t("terms.section1.content4"),
-      ],
+      title: t.sections[0].title,
+      content: t.sections[0].content,
     },
     {
       icon: Calendar,
-      title: t("terms.section2.title"),
-      content: [
-        t("terms.section2.content1"),
-        t("terms.section2.content2"),
-        t("terms.section2.content3"),
-        t("terms.section2.content4"),
-      ],
+      title: t.sections[1].title,
+      content: t.sections[1].content,
     },
     {
       icon: CreditCard,
-      title: t("terms.section3.title"),
-      content: [
-        t("terms.section3.content1"),
-        t("terms.section3.content2"),
-        t("terms.section3.content3"),
-        t("terms.section3.content4"),
-      ],
+      title: t.sections[2].title,
+      content: t.sections[2].content,
     },
     {
       icon: AlertTriangle,
-      title: t("terms.section4.title"),
-      content: [
-        t("terms.section4.content1"),
-        t("terms.section4.content2"),
-        t("terms.section4.content3"),
-        t("terms.section4.content4"),
-      ],
+      title: t.sections[3].title,
+      content: t.sections[3].content,
     },
     {
       icon: Shield,
-      title: t("terms.section5.title"),
-      content: [
-        t("terms.section5.content1"),
-        t("terms.section5.content2"),
-        t("terms.section5.content3"),
-        t("terms.section5.content4"),
-      ],
+      title: t.sections[4].title,
+      content: t.sections[4].content,
     },
     {
       icon: Users,
-      title: t("terms.section6.title"),
-      content: [
-        t("terms.section6.content1"),
-        t("terms.section6.content2"),
-        t("terms.section6.content3"),
-        t("terms.section6.content4"),
-      ],
+      title: t.sections[5].title,
+      content: t.sections[5].content,
     },
   ]
 
@@ -92,8 +221,8 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
                 <FileText className="h-6 w-6" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">{t("terms.title")}</h2>
-                <p className="text-green-100">{t("terms.subtitle")}</p>
+                <h2 className="text-2xl font-bold">{t.title}</h2>
+                <p className="text-green-100">{t.subtitle}</p>
               </div>
             </div>
             <Button
@@ -111,8 +240,8 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
         <div className="p-6 max-h-[calc(90vh-140px)] overflow-y-auto">
           {/* Introduction */}
           <div className="mb-8 p-6 bg-green-50 rounded-xl border border-green-200">
-            <h3 className="text-lg font-semibold text-green-900 mb-3">{t("terms.intro.title")}</h3>
-            <p className="text-green-800 leading-relaxed">{t("terms.intro.content")}</p>
+            <h3 className="text-lg font-semibold text-green-900 mb-3">{t.intro.title}</h3>
+            <p className="text-green-800 leading-relaxed">{t.intro.content}</p>
           </div>
 
           {/* Sections */}
@@ -128,13 +257,13 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <ul className="space-y-2">
+                  <div className="space-y-2">
                     {section.content.map((item, itemIndex) => (
-                      <li key={itemIndex} className="text-gray-600 leading-relaxed">
+                      <p key={itemIndex} className="text-gray-600 leading-relaxed">
                         {item}
-                      </li>
+                      </p>
                     ))}
-                  </ul>
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -145,15 +274,15 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
             <div className="flex items-start space-x-3">
               <AlertTriangle className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-yellow-900 mb-2">{t("terms.important_notice.title")}</h4>
-                <p className="text-yellow-800 text-sm leading-relaxed">{t("terms.important_notice.content")}</p>
+                <h4 className="font-semibold text-yellow-900 mb-2">{t.important_notice.title}</h4>
+                <p className="text-yellow-800 text-sm leading-relaxed">{t.important_notice.content}</p>
               </div>
             </div>
           </div>
 
           {/* Legal info */}
           <div className="mt-8 p-6 bg-gray-50 rounded-xl">
-            <h4 className="font-semibold text-gray-900 mb-3">{t("terms.legal_info.title")}</h4>
+            <h4 className="font-semibold text-gray-900 mb-3">{t.legal_info.title}</h4>
             <div className="space-y-2 text-sm text-gray-600">
               <p>
                 <strong>Razón Social:</strong> Tenerife Paradise Tour & Excursion
@@ -179,10 +308,10 @@ export function TermsConditionsModal({ isOpen, onClose }: TermsConditionsModalPr
           {/* Action buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-8 pt-6 border-t border-gray-200">
             <Button onClick={onClose} className="flex-1 bg-green-600 hover:bg-green-700 text-white">
-              {t("terms.buttons.accept")}
+              {t.buttons.accept}
             </Button>
             <Button variant="outline" onClick={() => window.print()} className="flex-1">
-              {t("terms.buttons.print")}
+              {t.buttons.print}
             </Button>
           </div>
         </div>

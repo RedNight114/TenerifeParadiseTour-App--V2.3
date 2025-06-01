@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label"
 import { Calendar, MessageCircle, User } from "lucide-react"
 import type { Excursion } from "@/lib/supabase"
+import { useLanguage } from "@/lib/language-context"
 
 interface BookingModalProps {
   isOpen: boolean
@@ -28,6 +29,8 @@ interface BookingFormData {
 }
 
 export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) {
+  const { t, language } = useLanguage()
+
   const [formData, setFormData] = useState<BookingFormData>({
     name: "",
     email: "",
@@ -45,6 +48,30 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
     return tomorrow.toISOString().split("T")[0]
   }
 
+  // Función para obtener el nombre de la excursión en el idioma actual
+  const getExcursionName = () => {
+    switch (language) {
+      case "en":
+        return excursion.name_en || excursion.name_es
+      case "de":
+        return excursion.name_de || excursion.name_es
+      case "fr":
+        return excursion.name_fr || excursion.name_es
+      case "it":
+        return excursion.name_it || excursion.name_es
+      case "pt":
+        return excursion.name_pt || excursion.name_es
+      case "nl":
+        return excursion.name_nl || excursion.name_es
+      case "ru":
+        return excursion.name_ru || excursion.name_es
+      case "zh":
+        return excursion.name_zh || excursion.name_es
+      default:
+        return excursion.name_es
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
@@ -55,7 +82,7 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
     // Generar mensaje de WhatsApp
     const message = encodeURIComponent(
       `🌟 *NUEVA RESERVA - TenerifeParadise Tours*\n\n` +
-        `📍 *Excursión:* ${excursion.name_es}\n` +
+        `📍 *Excursión:* ${getExcursionName()}\n` +
         `💰 *Precio:* €${excursion.price} por persona\n` +
         `💵 *Total:* €${totalPrice} (${formData.numberOfPeople} personas)\n\n` +
         `👤 *DATOS DEL CLIENTE:*\n` +
@@ -100,10 +127,12 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Reservar Excursión</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">{t("booking.modal.title")}</DialogTitle>
           <div className="text-center text-gray-600">
-            <h3 className="font-semibold text-lg">{excursion.name_es}</h3>
-            <p className="text-sm">€{excursion.price} por persona</p>
+            <h3 className="font-semibold text-lg">{getExcursionName()}</h3>
+            <p className="text-sm">
+              €{excursion.price} {t("featured.per_person")}
+            </p>
           </div>
         </DialogHeader>
 
@@ -112,46 +141,46 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
           <div className="space-y-4">
             <h4 className="font-semibold text-gray-900 flex items-center">
               <User className="h-4 w-4 mr-2" />
-              Datos Personales
+              {t("booking.modal.personal_data")}
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="name">Nombre completo *</Label>
+                <Label htmlFor="name">{t("booking.modal.full_name")} *</Label>
                 <Input
                   id="name"
                   type="text"
                   required
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Tu nombre completo"
+                  placeholder={t("booking.modal.full_name_placeholder")}
                   className="mt-1"
                 />
               </div>
 
               <div>
-                <Label htmlFor="phone">Teléfono *</Label>
+                <Label htmlFor="phone">{t("booking.modal.phone")} *</Label>
                 <Input
                   id="phone"
                   type="tel"
                   required
                   value={formData.phone}
                   onChange={(e) => handleInputChange("phone", e.target.value)}
-                  placeholder="+34 600 000 000"
+                  placeholder={t("booking.modal.phone_placeholder")}
                   className="mt-1"
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="email">Email *</Label>
+              <Label htmlFor="email">{t("booking.modal.email")} *</Label>
               <Input
                 id="email"
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                placeholder="tu@email.com"
+                placeholder={t("booking.modal.email_placeholder")}
                 className="mt-1"
               />
             </div>
@@ -161,12 +190,12 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
           <div className="space-y-4">
             <h4 className="font-semibold text-gray-900 flex items-center">
               <Calendar className="h-4 w-4 mr-2" />
-              Detalles de la Reserva
+              {t("booking.modal.booking_details")}
             </h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="date">Fecha preferida *</Label>
+                <Label htmlFor="date">{t("booking.modal.preferred_date")} *</Label>
                 <Input
                   id="date"
                   type="date"
@@ -179,7 +208,7 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
               </div>
 
               <div>
-                <Label htmlFor="people">Número de personas *</Label>
+                <Label htmlFor="people">{t("booking.modal.number_of_people")} *</Label>
                 <Select
                   value={formData.numberOfPeople}
                   onValueChange={(value) => handleInputChange("numberOfPeople", value)}
@@ -190,7 +219,7 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
                   <SelectContent>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                       <SelectItem key={num} value={num.toString()}>
-                        {num} {num === 1 ? "persona" : "personas"}
+                        {num} {num === 1 ? t("booking.modal.person") : t("booking.modal.people")}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -199,13 +228,13 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
             </div>
 
             <div>
-              <Label htmlFor="requests">Solicitudes especiales</Label>
+              <Label htmlFor="requests">{t("booking.modal.special_requests")}</Label>
               <Textarea
                 id="requests"
                 rows={3}
                 value={formData.specialRequests}
                 onChange={(e) => handleInputChange("specialRequests", e.target.value)}
-                placeholder="Alergias, necesidades especiales, preguntas..."
+                placeholder={t("booking.modal.special_requests_placeholder")}
                 className="mt-1 resize-none"
               />
             </div>
@@ -213,18 +242,18 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
 
           {/* Resumen del precio */}
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h4 className="font-semibold text-blue-900 mb-2">Resumen del Precio</h4>
+            <h4 className="font-semibold text-blue-900 mb-2">{t("booking.modal.price_summary")}</h4>
             <div className="space-y-1 text-sm">
               <div className="flex justify-between">
-                <span>Precio por persona:</span>
+                <span>{t("booking.modal.price_per_person")}</span>
                 <span>€{excursion.price}</span>
               </div>
               <div className="flex justify-between">
-                <span>Número de personas:</span>
+                <span>{t("booking.modal.number_of_people_summary")}</span>
                 <span>{formData.numberOfPeople}</span>
               </div>
               <div className="flex justify-between font-semibold text-blue-900 border-t border-blue-200 pt-2">
-                <span>Total estimado:</span>
+                <span>{t("booking.modal.estimated_total")}</span>
                 <span>€{excursion.price * Number.parseInt(formData.numberOfPeople || "1")}</span>
               </div>
             </div>
@@ -233,7 +262,7 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
           {/* Botones */}
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1" disabled={isSubmitting}>
-              Cancelar
+              {t("booking.modal.cancel")}
             </Button>
             <Button
               type="submit"
@@ -243,20 +272,18 @@ export function BookingModal({ isOpen, onClose, excursion }: BookingModalProps) 
               {isSubmitting ? (
                 <div className="flex items-center">
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                  Enviando...
+                  {t("booking.modal.sending")}
                 </div>
               ) : (
                 <>
                   <MessageCircle className="h-4 w-4 mr-2" />
-                  Continuar en WhatsApp
+                  {t("booking.modal.continue_whatsapp")}
                 </>
               )}
             </Button>
           </div>
 
-          <div className="text-xs text-gray-500 text-center">
-            Al continuar, se abrirá WhatsApp con tus datos pre-rellenados para confirmar la reserva
-          </div>
+          <div className="text-xs text-gray-500 text-center">{t("booking.modal.whatsapp_info")}</div>
         </form>
       </DialogContent>
     </Dialog>

@@ -6,6 +6,7 @@ import { LanguageProvider } from "@/lib/language-context"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { CookieBanner } from "@/components/cookie-banner"
+import { LanguageSelectorModal } from "@/components/language-selector-modal"
 
 const inter = Inter({ subsets: ["latin"], display: "swap" })
 
@@ -49,10 +50,10 @@ export const metadata: Metadata = {
       "Descubre las mejores excursiones en Tenerife: avistamiento de ballenas, senderismo al Teide, tours por Anaga y Masca. Reserva fácil por WhatsApp.",
     images: [
       {
-        url: "/hero-tenerife.jpg",
+        url: "/hero-tenerife-v3.avif",
         width: 1200,
         height: 630,
-        alt: "TenerifeParadiseTours - Excursiones en Tenerife",
+        alt: "TenerifeParadiseTours - Paisajes espectaculares de Tenerife",
       },
     ],
   },
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
     title: "TenerifeParadiseTours - Excursiones Únicas en Tenerife",
     description:
       "Descubre las mejores excursiones en Tenerife: avistamiento de ballenas, senderismo al Teide, tours por Anaga y Masca.",
-    images: ["/hero-tenerife.jpg"],
+    images: ["/hero-tenerife-v3.avif"],
     creator: "@tenerifeparadise",
   },
   robots: {
@@ -115,6 +116,7 @@ export default function RootLayout({
           <main className="min-h-screen">{children}</main>
           <Footer />
           <CookieBanner />
+          <LanguageSelectorModal />
         </LanguageProvider>
       </body>
     </html>

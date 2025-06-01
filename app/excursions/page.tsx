@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { ExcursionCard } from "@/components/excursion-card"
-import { supabase, type Excursion } from "@/lib/supabase"
+import { supabase, type Excursion, getCategories, type Category } from "@/lib/supabase"
 import { useLanguage } from "@/lib/language-context"
 import { BookingModal } from "@/components/booking-modal"
 
@@ -24,6 +24,7 @@ export default function ExcursionsPage() {
 
   const [selectedExcursion, setSelectedExcursion] = useState<Excursion | null>(null)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
 
   const handleBookExcursion = (excursion: Excursion) => {
     setSelectedExcursion(excursion)
@@ -34,15 +35,61 @@ export default function ExcursionsPage() {
     window.location.href = `/excursions/${excursion.id}`
   }
 
-  const categories = [
-    { value: "all", label: t("excursions.all_categories"), count: 0, icon: "🌟" },
-    { value: "naturaleza", label: t("category.naturaleza"), count: 0, icon: "🌿" },
-    { value: "marina", label: t("category.marina"), count: 0, icon: "🌊" },
-    { value: "senderismo", label: t("category.senderismo"), count: 0, icon: "🥾" },
-    { value: "gastronomia", label: t("category.gastronomia"), count: 0, icon: "🍽️" },
-    { value: "paisajes", label: t("category.paisajes"), count: 0, icon: "🏔️" },
-    { value: "familia", label: t("category.familia"), count: 0, icon: "👨‍👩‍👧‍👦" },
-  ]
+  // Remover el array hardcodeado de categories y reemplazarlo con esta función
+  const getCategoriesWithCounts = () => {
+    const allCategory = {
+      id: 0,
+      name_es: "Todas las categorías",
+      name_en: "All categories",
+      name_de: "Alle Kategorien",
+      color: "#3B82F6",
+      active: true,
+      sort_order: 0,
+      created_at: "",
+      updated_at: "",
+    }
+
+    const categoriesWithCounts = [
+      {
+        ...allCategory,
+        value: "all",
+        label: t("excursions.all_categories"),
+        count: excursions.length,
+        icon: "🌟",
+      },
+      ...categories.map((category) => {
+        // Usar el nombre exacto de la categoría como está en la base de datos
+        const count = excursions.filter((exc) => exc.category === category.name_es).length
+        return {
+          ...category,
+          value: category.name_es, // Usar el nombre exacto, no en minúsculas
+          label: category[`name_${language}` as keyof Category] as string,
+          count,
+          icon: getCategoryIcon(category.name_es),
+        }
+      }),
+    ]
+
+    return categoriesWithCounts
+  }
+
+  const getCategoryIcon = (categoryName: string) => {
+    const iconMap: { [key: string]: string } = {
+      "Deportes Acuáticos": "🌊",
+      "Aventuras en Tierra": "🏔️",
+      Naturaleza: "🌿",
+      Marina: "🌊",
+      Senderismo: "🥾",
+      Gastronomía: "🍽️",
+      Paisajes: "🏔️",
+      Familia: "👨‍👩‍👧‍👦",
+      Aventura: "🎯",
+      Cultura: "🏛️",
+      Deportes: "⚽",
+      Relax: "🧘‍♀️",
+    }
+    return iconMap[categoryName] || "📍"
+  }
 
   useEffect(() => {
     const fetchExcursions = async () => {
@@ -63,8 +110,34 @@ export default function ExcursionsPage() {
   }, [])
 
   useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesData = await getCategories()
+        setCategories(categoriesData)
+      } catch (error) {
+        console.error("Error fetching categories:", error)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
+
+  useEffect(() => {
+    if (excursions.length > 0) {
+      console.log(
+        "Excursions categories:",
+        excursions.map((exc) => exc.category),
+      )
+      console.log(
+        "Available categories:",
+        categories.map((cat) => cat.name_es),
+      )
+    }
+  }, [excursions, categories])
 
   useEffect(() => {
     let filtered = excursions
@@ -124,7 +197,7 @@ export default function ExcursionsPage() {
     }
 
     setFilteredExcursions(filtered)
-  }, [excursions, searchQuery, categoryFilter, priceFilter, sortBy, language])
+  }, [excursions, searchQuery, categoryFilter, priceFilter, sortBy, language, categories])
 
   if (loading) {
     return (
@@ -176,56 +249,66 @@ export default function ExcursionsPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Filters Section */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 mb-8">
+        <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Filter className="h-6 w-6 mr-3 text-blue-600" />
-              <h2 className="text-xl font-bold text-gray-900">{t("excursions.filters")}</h2>
+              <Filter className="h-5 w-5 mr-2 text-blue-600" />
+              <h2 className="text-lg font-semibold text-gray-800">{t("excursions.filters")}</h2>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
-                className="p-2"
+                className="w-9 h-9 p-0"
               >
                 <Grid className="h-4 w-4" />
+                <span className="sr-only">Vista de cuadrícula</span>
               </Button>
               <Button
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className="p-2"
+                className="w-9 h-9 p-0"
               >
                 <List className="h-4 w-4" />
+                <span className="sr-only">Vista de lista</span>
               </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Search */}
-            <div className="lg:col-span-2 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 type="text"
                 placeholder={t("excursions.search_placeholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12 border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                className="pl-9 h-10 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 w-full"
               />
             </div>
 
             {/* Category Filter */}
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="h-12 border-gray-300">
-                <SelectValue placeholder="Categoría" />
+              <SelectTrigger className="h-10 rounded-xl border-gray-200">
+                <div className="flex items-center">
+                  <span className="text-amber-500 mr-2">🌟</span>
+                  <SelectValue placeholder={t("excursions.all_categories")} />
+                </div>
               </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
+              <SelectContent className="max-h-[300px]">
+                {getCategoriesWithCounts().map((category) => (
                   <SelectItem key={category.value} value={category.value}>
-                    <div className="flex items-center space-x-2">
-                      <span>{category.icon}</span>
-                      <span>{category.label}</span>
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center">
+                        <span className="mr-2">{category.icon}</span>
+                        <span>{category.label}</span>
+                      </div>
+                      <span className="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-full ml-2">
+                        {category.count}
+                      </span>
                     </div>
                   </SelectItem>
                 ))}
@@ -234,61 +317,113 @@ export default function ExcursionsPage() {
 
             {/* Price Filter */}
             <Select value={priceFilter} onValueChange={setPriceFilter}>
-              <SelectTrigger className="h-12 border-gray-300">
-                <SelectValue placeholder="Precio" />
+              <SelectTrigger className="h-10 rounded-xl border-gray-200">
+                <div className="flex items-center">
+                  <span className="text-green-500 mr-2">€</span>
+                  <SelectValue placeholder={t("excursions.all_prices")} />
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("excursions.all_prices")}</SelectItem>
-                <SelectItem value="low">{t("excursions.price_low")}</SelectItem>
-                <SelectItem value="medium">{t("excursions.price_medium")}</SelectItem>
-                <SelectItem value="high">{t("excursions.price_high")}</SelectItem>
+                <SelectItem value="low">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-1">€</span>
+                    <span>{t("excursions.price_low")}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="medium">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-1">€€</span>
+                    <span>{t("excursions.price_medium")}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="high">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-1">€€€</span>
+                    <span>{t("excursions.price_high")}</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
 
             {/* Sort */}
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="h-12 border-gray-300">
-                <SelectValue placeholder="Ordenar por" />
+              <SelectTrigger className="h-10 rounded-xl border-gray-200">
+                <div className="flex items-center">
+                  <span className="text-blue-500 mr-2">↓</span>
+                  <SelectValue placeholder={t("excursions.sort_featured")} />
+                </div>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="featured">{t("excursions.sort_featured")}</SelectItem>
-                <SelectItem value="price-low">{t("excursions.sort_price_low")}</SelectItem>
-                <SelectItem value="price-high">{t("excursions.sort_price_high")}</SelectItem>
-                <SelectItem value="name">{t("excursions.sort_name")}</SelectItem>
+                <SelectItem value="featured">
+                  <div className="flex items-center">
+                    <Star className="h-3.5 w-3.5 text-yellow-400 fill-current mr-2" />
+                    <span>{t("excursions.sort_featured")}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="price-low">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">↑</span>
+                    <span>{t("excursions.sort_price_low")}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="price-high">
+                  <div className="flex items-center">
+                    <span className="text-green-500 mr-2">↓</span>
+                    <span>{t("excursions.sort_price_high")}</span>
+                  </div>
+                </SelectItem>
+                <SelectItem value="name">
+                  <div className="flex items-center">
+                    <span className="text-blue-500 mr-2">A-Z</span>
+                    <span>{t("excursions.sort_name")}</span>
+                  </div>
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Active Filters */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            {searchQuery && (
-              <Badge variant="secondary" className="px-3 py-1">
-                {t("excursions.search_label")}: "{searchQuery}"
-                <button onClick={() => setSearchQuery("")} className="ml-2 text-gray-500 hover:text-gray-700">
-                  ×
-                </button>
-              </Badge>
-            )}
-            {categoryFilter !== "all" && (
-              <Badge variant="secondary" className="px-3 py-1">
-                {categories.find((c) => c.value === categoryFilter)?.label}
-                <button onClick={() => setCategoryFilter("all")} className="ml-2 text-gray-500 hover:text-gray-700">
-                  ×
-                </button>
-              </Badge>
-            )}
-            {priceFilter !== "all" && (
-              <Badge variant="secondary" className="px-3 py-1">
-                {priceFilter === "low" && "Menos de €50"}
-                {priceFilter === "medium" && "€50 - €80"}
-                {priceFilter === "high" && "Más de €80"}
-                <button onClick={() => setPriceFilter("all")} className="ml-2 text-gray-500 hover:text-gray-700">
-                  ×
-                </button>
-              </Badge>
-            )}
+          {(searchQuery || categoryFilter !== "all" || priceFilter !== "all") && (
+            <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-gray-100">
+              {searchQuery && (
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  <Search className="h-3 w-3 mr-1" />
+                  {searchQuery}
+                  <button onClick={() => setSearchQuery("")} className="ml-2 text-gray-500 hover:text-gray-700">
+                    ×
+                  </button>
+                </Badge>
+              )}
+              {categoryFilter !== "all" && (
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  {getCategoriesWithCounts().find((c) => c.value === categoryFilter)?.icon}{" "}
+                  {getCategoriesWithCounts().find((c) => c.value === categoryFilter)?.label}
+                  <button onClick={() => setCategoryFilter("all")} className="ml-2 text-gray-500 hover:text-gray-700">
+                    ×
+                  </button>
+                </Badge>
+              )}
+              {priceFilter !== "all" && (
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  {priceFilter === "low" && "€ Menos de €50"}
+                  {priceFilter === "medium" && "€€ €50 - €80"}
+                  {priceFilter === "high" && "€€€ Más de €80"}
+                  <button onClick={() => setPriceFilter("all")} className="ml-2 text-gray-500 hover:text-gray-700">
+                    ×
+                  </button>
+                </Badge>
+              )}
 
-            {(searchQuery || categoryFilter !== "all" || priceFilter !== "all") && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -297,12 +432,12 @@ export default function ExcursionsPage() {
                   setCategoryFilter("all")
                   setPriceFilter("all")
                 }}
-                className="text-blue-600 hover:text-blue-700"
+                className="text-blue-600 hover:text-blue-700 text-sm px-3 py-1.5 h-auto"
               >
                 {t("excursions.clear_filters")}
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Results Header */}

@@ -126,7 +126,7 @@ export const ExcursionCard = memo(function ExcursionCard({ excursion, onBook, on
           </div>
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
-            <span>Máx. {excursion.max_people} personas</span>
+            <span>{t("excursion.maxPeople", { count: excursion.max_people })}</span>
           </div>
         </div>
       </CardContent>

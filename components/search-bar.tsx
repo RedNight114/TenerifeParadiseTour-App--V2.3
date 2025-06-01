@@ -24,6 +24,7 @@ export function SearchBar({ onSelect }: SearchBarProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const { language } = useLanguage()
+  console.log("Current language in SearchBar:", language)
   const searchRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const abortControllerRef = useRef<AbortController | null>(null)
@@ -209,39 +210,108 @@ export function SearchBar({ onSelect }: SearchBarProps) {
   )
 
   // Textos memoizados para evitar recálculos
-  const texts = useMemo(
-    () => ({
-      placeholder:
-        language === "en"
-          ? "Search excursions... (e.g. Teide, whales, hiking)"
-          : language === "de"
-            ? "Ausflüge suchen... (z.B. Teide, Wale, Wandern)"
-            : "Buscar excursiones... (ej: Teide, ballenas, senderismo)",
+  const texts = useMemo(() => {
+    const translations = {
+      es: {
+        placeholder: "Buscar excursiones... (ej: Teide, ballenas, senderismo)",
+        popularLabel: "Excursiones populares",
+        searchButton: "Buscar",
+        searching: "Buscando...",
+        noResults: {
+          title: "No encontramos resultados",
+          subtitle: "Intenta buscar otras excursiones o explora todos los tours disponibles",
+          button: "Ver Todas las Excursiones",
+        },
+        duration: "Duración",
+        price: "Precio",
+        from: "Desde",
+        featured: "DESTACADO",
+        rating: "Valoración",
+      },
+      en: {
+        placeholder: "Search excursions... (e.g. Teide, whales, hiking)",
+        popularLabel: "Popular excursions",
+        searchButton: "Search",
+        searching: "Searching...",
+        noResults: {
+          title: "No results found",
+          subtitle: "Try searching for other excursions or browse all available tours",
+          button: "Browse All Excursions",
+        },
+        duration: "Duration",
+        price: "Price",
+        from: "From",
+        featured: "FEATURED",
+        rating: "Rating",
+      },
+      de: {
+        placeholder: "Ausflüge suchen... (z.B. Teide, Wale, Wandern)",
+        popularLabel: "Beliebte Ausflüge",
+        searchButton: "Suchen",
+        searching: "Suche läuft...",
+        noResults: {
+          title: "Keine Ergebnisse gefunden",
+          subtitle: "Versuchen Sie andere Ausflüge zu suchen oder durchsuchen Sie alle verfügbaren Touren",
+          button: "Alle Ausflüge durchsuchen",
+        },
+        duration: "Dauer",
+        price: "Preis",
+        from: "Ab",
+        featured: "EMPFOHLEN",
+        rating: "Bewertung",
+      },
+      fr: {
+        placeholder: "Rechercher des excursions... (ex: Teide, baleines, randonnée)",
+        popularLabel: "Excursions populaires",
+        searchButton: "Rechercher",
+        searching: "Recherche en cours...",
+        noResults: {
+          title: "Aucun résultat trouvé",
+          subtitle: "Essayez de rechercher d'autres excursions ou parcourez tous les tours disponibles",
+          button: "Voir Toutes les Excursions",
+        },
+        duration: "Durée",
+        price: "Prix",
+        from: "À partir de",
+        featured: "VEDETTE",
+        rating: "Note",
+      },
+      it: {
+        placeholder: "Cerca escursioni... (es: Teide, balene, trekking)",
+        popularLabel: "Escursioni popolari",
+        searchButton: "Cerca",
+        searching: "Ricerca in corso...",
+        noResults: {
+          title: "Nessun risultato trovato",
+          subtitle: "Prova a cercare altre escursioni o sfoglia tutti i tour disponibili",
+          button: "Vedi Tutte le Escursioni",
+        },
+        duration: "Durata",
+        price: "Prezzo",
+        from: "Da",
+        featured: "IN EVIDENZA",
+        rating: "Valutazione",
+      },
+      nl: {
+        placeholder: "Zoek excursies... (bijv. Teide, walvissen, wandelen)",
+        popularLabel: "Populaire excursies",
+        searchButton: "Zoeken",
+        searching: "Zoeken...",
+        noResults: {
+          title: "Geen resultaten gevonden",
+          subtitle: "Probeer andere excursies te zoeken of bekijk alle beschikbare tours",
+          button: "Bekijk Alle Excursies",
+        },
+        duration: "Duur",
+        price: "Prijs",
+        from: "Vanaf",
+        featured: "UITGELICHT",
+        rating: "Beoordeling",
+      },
+    }
 
-      popularLabel:
-        language === "en" ? "Popular excursions" : language === "de" ? "Beliebte Ausflüge" : "Excursiones populares",
-
-      noResults:
-        language === "en"
-          ? {
-              title: "No results found",
-              subtitle: "Try searching for other excursions or browse all available tours",
-              button: "Browse All Excursions",
-            }
-          : language === "de"
-            ? {
-                title: "Keine Ergebnisse gefunden",
-                subtitle: "Versuchen Sie andere Ausflüge zu suchen oder durchsuchen Sie alle verfügbaren Touren",
-                button: "Alle Ausflüge durchsuchen",
-              }
-            : {
-                title: "No encontramos resultados",
-                subtitle: "Intenta buscar otras excursiones o explora todos los tours disponibles",
-                button: "Ver Todas las Excursiones",
-              },
-    }),
-    [language],
-  )
+    return translations[language as keyof typeof translations] || translations.es
+  }, [language])
 
   return (
     <div ref={searchRef} className="relative w-full max-w-xl lg:max-w-3xl mx-auto px-4">
@@ -268,7 +338,7 @@ export function SearchBar({ onSelect }: SearchBarProps) {
             />
 
             {isLoading && (
-              <div className="px-4" aria-label="Buscando...">
+              <div className="px-4" aria-label={texts.searching}>
                 <div className="w-6 h-6 border-2 border-gray-200 border-t-blue-600 rounded-full animate-spin"></div>
               </div>
             )}
@@ -276,7 +346,7 @@ export function SearchBar({ onSelect }: SearchBarProps) {
             <button
               onClick={handleSearch}
               className="m-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              aria-label="Buscar excursiones"
+              aria-label={texts.searchButton}
             >
               <Search className="h-5 w-5" />
             </button>
@@ -323,7 +393,7 @@ export function SearchBar({ onSelect }: SearchBarProps) {
                         </h4>
                         {excursion.featured && (
                           <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">
-                            TOP
+                            {texts.featured}
                           </span>
                         )}
                       </div>
