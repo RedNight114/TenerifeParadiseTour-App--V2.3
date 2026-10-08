@@ -1,175 +1,96 @@
-# Tenerife Paradise Tours - Sistema de Gestión
+# Tenerife Paradise Tours
 
-Sistema completo de gestión de excursiones para Tenerife Paradise Tours con panel de administración, gestión de categorías, reservas y contenido multiidioma.
+Aplicación web para vender excursiones propias. El esquema soporta varias empresas en una sola plataforma con marca, miembros y permisos separados; no es un marketplace público.
 
-## 🚀 Características
+## Requisitos
 
-### ✨ **Funcionalidades Principales**
-- **Gestión de Categorías**: Sistema completo de administración de categorías con soporte multiidioma
-- **Panel de Excursiones**: Creación y gestión de excursiones con información detallada
-- **Sistema de Reservas**: Integración con WhatsApp para confirmación de reservas
-- **Multiidioma**: Soporte completo para Español, Inglés y Alemán
-- **Responsive Design**: Optimizado para todos los dispositivos
+- Node.js 20 o superior
+- pnpm 10 o superior
+- Proyecto Supabase (Auth + Postgres)
+- Vercel Blob opcional para las imágenes que se cargan desde el panel
 
-### 🛠 **Tecnologías Utilizadas**
-- **Frontend**: Next.js 14, React 18, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui
-- **Base de Datos**: Supabase (PostgreSQL)
-- **Storage**: Vercel Blob para imágenes
-- **Deployment**: Vercel
+## Instalación local
 
-## 📦 Instalación
+```powershell
+pnpm install --frozen-lockfile
+Copy-Item .env.local.example .env.local
+```
 
-### 1. **Clonar el repositorio**
-\`\`\`bash
-git clone <repository-url>
-cd tenerife-paradise-tours
-\`\`\`
+Completa `NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY` con valores del proyecto adecuado. La clave pública puede usarse en navegador porque todas las tablas están protegidas con RLS. Nunca pongas `SUPABASE_SECRET_KEY` o una clave `service_role` en `NEXT_PUBLIC_*`.
 
-### 2. **Instalar dependencias**
-\`\`\`bash
-npm install
-\`\`\`
+En Supabase, crea una copia de seguridad y ejecuta en orden las migraciones de `supabase/migrations/`:
 
-### 3. **Configurar variables de entorno**
-\`\`\`bash
-cp .env.local.example .env.local
-\`\`\`
+1. `20261001000100_initial_schema_and_security.sql` — esquema original, autenticación y políticas base.
+2. `20261001000200_multi_tenant_core.sql` — organización inicial, pertenencias, dominios, auditoría, claves de empresa y RLS multiempresa.
+3. `20261002000100_booking_workflow.sql` — estado inicial de las solicitudes de reserva.
+4. `20261002000200_booking_status_transitions_and_audit.sql` — transiciones permitidas y auditoría de estado sin datos personales.
 
-Edita `.env.local` con tus credenciales:
-\`\`\`env
-NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-BLOB_READ_WRITE_TOKEN=tu_token_de_vercel_blob
-\`\`\`
+En una instalación nueva, antes de ejecutar la segunda migración, crea/invita el primer usuario en Supabase Auth y registra su UUID en `app_admins` con SQL. La migración lo convertirá en propietario de `tenerife-paradise-tours` y después eliminará la tabla de administradores anterior. En una base ya usada, la migración conserva los registros y asigna el contenido existente a esa organización; no reemplaza la copia de seguridad.
 
-### 4. **Configurar base de datos**
-Ejecuta los scripts SQL proporcionados en tu proyecto Supabase:
-- `01-create-categories-table.sql`
-- `02-insert-default-categories.sql`
-- `03-create-predefined-services.sql`
-- `04-update-excursions-table.sql`
-- `05-setup-security-policies.sql`
+El entorno local reconoce `localhost` y `127.0.0.1` como dominios de la empresa inicial. Para producción, añade el dominio real, verificado y principal de la empresa a `organization_domains` antes de servir tráfico. Las filas de dominio se gestionan desde operación de plataforma; no se permite que un cliente reclame un dominio de otra empresa.
 
-### 5. **Ejecutar en desarrollo**
-\`\`\`bash
-npm run dev
-\`\`\`
+Para invitar usuarios nuevos se requieren `SUPABASE_SECRET_KEY` exclusivamente en el servidor, SMTP transaccional configurado en Supabase Auth y URLs de retorno permitidas para cada dominio. No configures la clave secreta en el navegador. Una cuenta que ya existe puede recibir una pertenencia pendiente desde el panel; se activa cuando inicia sesión en el dominio de esa empresa.
 
-## 📁 Estructura del Proyecto
+`BLOB_READ_WRITE_TOKEN` solo se necesita para cargar imágenes. Las rutas se guardan bajo el UUID de la empresa. Si no hay token, el resto de la aplicación sigue disponible pero no se pueden cargar archivos.
 
-\`\`\`
-├── app/                          # App Router de Next.js
-│   ├── admin/                    # Panel de administración
-│   │   ├── categories/           # Gestión de categorías
-│   │   └── excursion-form/       # Formulario de excursiones
-│   ├── booking/                  # Sistema de reservas
-│   ├── excursions/              # Páginas de excursiones
-│   └── globals.css              # Estilos globales
-├── components/                   # Componentes reutilizables
-│   ├── ui/                      # Componentes de shadcn/ui
-│   └── [otros-componentes]      # Componentes específicos
-├── lib/                         # Utilidades y configuración
-│   ├── supabase.ts             # Cliente y funciones de Supabase
-│   └── utils.ts                # Utilidades generales
-└── docs/                       # Documentación
-    └── excursion-creation-guide.md
-\`\`\`
+Para habilitar pagos locales de prueba, configura `STRIPE_SECRET_KEY` con una clave `sk_test_`, `STRIPE_WEBHOOK_SECRET` con el secreto del webhook de desarrollo y `NEXT_PUBLIC_APP_URL=http://localhost:3000`. El propietario conecta la cuenta Express de prueba desde `/admin/payments`. La integración rechaza claves live intencionadamente. El webhook debe ser de Connect y escuchar `account.updated`, `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed` y `checkout.session.expired`; apunta a `/api/stripe/webhook`. No compartas claves en el chat ni las subas al repositorio.
 
-## 🎯 Funcionalidades Implementadas
+Arranca el proyecto:
 
-### **Panel de Administración**
-- ✅ Gestión completa de categorías
-- ✅ Vista de tarjetas y lista
-- ✅ Filtros y búsqueda avanzada
-- ✅ Acciones masivas
-- ✅ Reordenación drag & drop
-- ✅ Exportación de datos
+```powershell
+pnpm dev
+```
 
-### **Sistema de Categorías**
-- ✅ Soporte multiidioma (ES/EN/DE)
-- ✅ Iconos y colores personalizables
-- ✅ Estados activo/inactivo
-- ✅ Ordenación personalizada
-- ✅ Descripciones opcionales
+Abre `http://localhost:3000`. El panel se encuentra en `/login`. No existe registro público de empresas: la creación y asociación de nuevos dominios requiere el procedimiento de plataforma.
 
-### **Gestión de Excursiones**
-- ✅ Formulario completo paso a paso
-- ✅ Servicios incluidos/no incluidos
-- ✅ Galería de imágenes
-- ✅ Precios para adultos y niños
-- ✅ FAQs y información detallada
+## Roles
 
-### **Sistema de Reservas**
-- ✅ Integración con WhatsApp
-- ✅ Formulario de reserva completo
-- ✅ Confirmación automática
-- ✅ Gestión de disponibilidad
+- `owner`: perfil de empresa, dominios de operación, equipo y toda la administración. Siempre debe quedar al menos un propietario activo.
+- `admin`: perfil de empresa y gestión del equipo, excepto conceder/retirar propiedad.
+- `catalog_manager`: excursiones, categorías, servicios y cargas de catálogo.
+- `booking_manager`: reservas y solicitudes de contacto.
+- `guide`: sin acceso al listado de reservas ni a datos personales hasta implementar asignación por salida y minimización de datos.
 
-## 🔧 Configuración Avanzada
+Los permisos se verifican en Supabase RLS y también en las operaciones del servidor. El rol enviado por la interfaz no concede acceso.
 
-### **Supabase RLS (Row Level Security)**
-Las políticas de seguridad están configuradas para:
-- Lectura pública de categorías y excursiones
-- Escritura solo para usuarios autenticados
-- Inserción pública para reservas y contactos
+## Comprobaciones de código
 
-### **Vercel Blob Storage**
-Configurado para subida de imágenes con:
-- Soporte para múltiples formatos
-- Optimización automática
-- URLs públicas seguras
+```powershell
+pnpm typecheck
+pnpm lint
+pnpm build
+pnpm audit --prod
+```
 
-## 📱 Responsive Design
+Con Docker activo, valida el esquema multiempresa en Supabase local:
 
-El sistema está completamente optimizado para:
-- **Móviles**: Layout adaptativo y controles táctiles
-- **Tablets**: Diseño intermedio optimizado
-- **Desktop**: Aprovechamiento completo del espacio
-- **Ultra-wide**: Soporte para pantallas grandes
+```powershell
+pnpm dlx supabase start
+pnpm dlx supabase db reset --local
+pnpm dlx supabase test db --local
+pnpm dlx supabase db advisors --local --type all
+```
 
-## 🌍 Multiidioma
+La prueba de backfill usa exclusivamente la fixture sintética descrita en [decisiones de arquitectura](docs/decisiones-arquitectura-fase-1.md#verificación-local-repetible). No restaures datos reales en una instancia compartida ni ejecutes `db reset` en un proyecto remoto.
 
-Soporte completo para:
-- **Español**: Idioma principal
-- **Inglés**: Traducción completa
-- **Alemán**: Mercado objetivo principal
+`legacy_migration_backfill_test.sql` solo aplica al ensayo de migración antigua y requiere restaurar la base local a la migración inicial junto con su fixture; no forma parte de la regresión diaria.
 
-## 🚀 Deployment
+Para cargar las cuatro excursiones sintéticas (minibús, experiencia privada, 4x4 y kayak) en la empresa local:
 
-### **Vercel (Recomendado)**
-\`\`\`bash
-npm run build
-vercel --prod
-\`\`\`
+```powershell
+pnpm dlx supabase db query --local --file supabase/fixtures/inventory_demo_local.sql
+```
 
-### **Variables de Entorno en Producción**
-Asegúrate de configurar todas las variables de entorno en tu plataforma de deployment.
+El fixture solo es para desarrollo local; no lo ejecutes con `--linked` ni contra datos reales. La reserva pública nueva usa la RPC transaccional de inventario; los formularios genéricos antiguos redirigen al catálogo para no crear solicitudes que eviten el control de capacidad.
 
-## 📖 Documentación Adicional
+## Arquitectura y decisiones
 
-- [Guía de Creación de Excursiones](docs/excursion-creation-guide.md)
-- [API Reference](docs/api-reference.md)
-- [Deployment Guide](docs/deployment.md)
+- [Decisiones de arquitectura de fase 1](docs/decisiones-arquitectura-fase-1.md)
+- [Diseño propuesto de disponibilidad y pagos del MVP](docs/disponibilidad-y-pagos-mvp.md)
+- [Plan de crecimiento y migración de servicios](docs/decisiones-arquitectura-fase-1.md#plan-de-crecimiento-y-migración)
+- [Guía de creación de excursiones](docs/excursion-creation-guide.md)
+- [Operación del panel, soporte y dominios](docs/operacion-panel-y-dominios.md)
+- [Alta, verificación y conexión de dominios en Vercel](docs/dominios-y-hosting.md)
+- [Roadmap del producto](../../outputs/roadmap-saas-venta-directa-excursiones.md)
 
-## 🤝 Contribución
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 📞 Soporte
-
-Para soporte técnico o consultas:
-- Email: soporte@tenerifeaparadisetours.com
-- WhatsApp: +34 617 303 929
-
----
-
-**Desarrollado con ❤️ para Tenerife Paradise Tours**
+La migración de base de datos y la comprobación de aislamiento entre dos proyectos Supabase reales son operaciones distintas de compilar la aplicación. Antes de producción, aplica la migración en un entorno de prueba con backup, prueba el acceso permitido/denegado con dos empresas y configura dominios y correo transaccional.

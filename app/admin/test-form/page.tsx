@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { ExcursionCard } from "@/components/excursion-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -319,13 +320,13 @@ export default function TestFormPage() {
           <h3 className="text-xl font-semibold">🔗 Enlaces Útiles</h3>
           <div className="flex flex-wrap justify-center gap-4">
             <Button asChild variant="outline">
-              <a href="/admin/excursion-form">📝 Crear Nueva Excursión</a>
+              <Link href="/admin/excursion-form">📝 Crear Nueva Excursión</Link>
             </Button>
             <Button asChild variant="outline">
-              <a href="/excursions">👀 Ver Página de Excursiones</a>
+              <Link href="/excursions">👀 Ver Página de Excursiones</Link>
             </Button>
             <Button asChild variant="outline">
-              <a href="/">🏠 Página Principal</a>
+              <Link href="/">🏠 Página Principal</Link>
             </Button>
           </div>
         </div>

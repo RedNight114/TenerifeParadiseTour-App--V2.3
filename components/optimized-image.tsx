@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
@@ -16,6 +16,7 @@ interface OptimizedImageProps {
   quality?: number
   placeholder?: "blur" | "empty"
   blurDataURL?: string
+  fallback?: ReactNode
 }
 
 export function OptimizedImage({
@@ -30,6 +31,7 @@ export function OptimizedImage({
   quality = 75,
   placeholder = "empty",
   blurDataURL,
+  fallback,
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true)
   const [hasError, setHasError] = useState(false)
@@ -45,8 +47,8 @@ export function OptimizedImage({
 
   if (hasError) {
     return (
-      <div className={cn("bg-gray-200 flex items-center justify-center", className)}>
-        <span className="text-gray-400 text-sm">Error al cargar imagen</span>
+      <div className={cn("flex items-center justify-center bg-slate-100", className)} role="img" aria-label={alt}>
+        {fallback ?? <span className="text-sm text-slate-500">Imagen no disponible</span>}
       </div>
     )
   }

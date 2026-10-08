@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
-type Language = "es" | "en" | "fr" | "de" | "ru" | "zh"
+export type Language = "es" | "en" | "fr" | "de" | "ru" | "zh"
 
 interface Translations {
   [key: string]: {
@@ -85,16 +85,16 @@ const translations: Translations = {
     zh: "热门探险",
   },
   "featured.subtitle": {
-    es: "Las experiencias más reservadas por nuestros viajeros.",
-    en: "The most booked experiences by our travelers.",
-    fr: "Les expériences les plus réservées par nos voyageurs.",
-    de: "Die von unseren Reisenden am häufigsten gebuchten Erlebnisse.",
-    ru: "Самые бронируемые впечатления наших путешественников.",
-    zh: "我们游客预订最多的体验。",
+    es: "Descubre las excursiones disponibles en Tenerife.",
+    en: "Explore the excursions available in Tenerife.",
+    fr: "Découvrez les excursions disponibles à Tenerife.",
+    de: "Entdecke die verfügbaren Ausflüge auf Teneriffa.",
+    ru: "Откройте для себя доступные экскурсии на Тенерифе.",
+    zh: "探索特内里费岛提供的游览项目。",
   },
   "featured.view_all": {
-    es: "Ver Todas las Excursiones",
-    en: "View All Excursions",
+    es: "Ver todas las excursiones",
+    en: "View all excursions",
     fr: "Voir Toutes les Excursions",
     de: "Alle Ausflüge Ansehen",
     ru: "Посмотреть Все Экскурсии",
@@ -1097,16 +1097,16 @@ const translations: Translations = {
     zh: "联系以定制",
   },
   "excursion.bookNow": {
-    es: "Reservar Ahora",
-    en: "Book Now",
+    es: "Reservar ahora",
+    en: "Book now",
     fr: "Réserver Maintenant",
     de: "Jetzt Buchen",
     ru: "Забронировать",
     zh: "立即预订",
   },
   "excursion.viewDetails": {
-    es: "Ver Detalles",
-    en: "View Details",
+    es: "Ver detalles",
+    en: "View details",
     fr: "Voir les Détails",
     de: "Details Ansehen",
     ru: "Подробнее",
@@ -1214,12 +1214,12 @@ const translations: Translations = {
     zh: "电话",
   },
   "contact_info.available": {
-    es: "Disponible 24/7",
-    en: "Available 24/7",
-    fr: "Disponible 24/7",
-    de: "Verfügbar 24/7",
-    ru: "Доступно 24/7",
-    zh: "24/7 可用",
+    es: "Contáctanos por teléfono",
+    en: "Call us",
+    fr: "Appelez-nous",
+    de: "Ruf uns an",
+    ru: "Позвоните нам",
+    zh: "致电联系我们",
   },
   "contact_info.whatsapp": {
     es: "WhatsApp",
@@ -1230,12 +1230,12 @@ const translations: Translations = {
     zh: "WhatsApp",
   },
   "contact_info.immediate_response": {
-    es: "Respuesta inmediata",
-    en: "Immediate response",
-    fr: "Réponse immédiate",
-    de: "Sofortige Antwort",
-    ru: "Немедленный ответ",
-    zh: "即时回复",
+    es: "Escríbenos por WhatsApp",
+    en: "Message us on WhatsApp",
+    fr: "Écrivez-nous sur WhatsApp",
+    de: "Schreib uns auf WhatsApp",
+    ru: "Напишите нам в WhatsApp",
+    zh: "通过 WhatsApp 联系我们",
   },
   "contact_info.email": {
     es: "Correo Electrónico",
@@ -1246,12 +1246,12 @@ const translations: Translations = {
     zh: "电子邮件",
   },
   "contact_info.response_time": {
-    es: "Respuesta en menos de 24h",
-    en: "Response in less than 24h",
-    fr: "Réponse en moins de 24h",
-    de: "Antwort in weniger als 24 Stunden",
-    ru: "Ответ менее чем за 24 часа",
-    zh: "24小时内回复",
+    es: "Envíanos un correo electrónico",
+    en: "Send us an email",
+    fr: "Envoyez-nous un e-mail",
+    de: "Schreib uns eine E-Mail",
+    ru: "Напишите нам по электронной почте",
+    zh: "给我们发送电子邮件",
   },
   "contact_info.location": {
     es: "Ubicación",
@@ -1834,20 +1834,20 @@ const translations: Translations = {
     zh: "预订您的特内里费冒险之旅",
   },
   "booking.subtitle": {
-    es: "Asegura tu plaza para las mejores experiencias en la isla.",
-    en: "Secure your spot for the best experiences on the island.",
-    fr: "Réservez votre place pour les meilleures expériences sur l'île.",
-    de: "Sichere Dir Deinen Platz für die besten Erlebnisse auf der Insel.",
-    ru: "Забронируйте свое место для лучших впечатлений на острове.",
-    zh: "确保您在岛上获得最佳体验的位置。",
+    es: "Cuéntanos qué excursión te interesa y cuándo te gustaría realizarla.",
+    en: "Tell us which excursion interests you and when you would like to take it.",
+    fr: "Indiquez-nous l'excursion qui vous intéresse et la date souhaitée.",
+    de: "Teile uns mit, welcher Ausflug dich interessiert und wann du ihn machen möchtest.",
+    ru: "Укажите, какая экскурсия вас интересует и когда вы хотели бы ее посетить.",
+    zh: "告诉我们您感兴趣的游览项目以及希望参加的日期。",
   },
   "booking.subtitle2": {
-    es: "Confirmación instantánea y cancelación flexible.",
-    en: "Instant confirmation and flexible cancellation.",
-    fr: "Confirmation instantanée et annulation flexible.",
-    de: "Sofortige Bestätigung und flexible Stornierung.",
-    ru: "Мгновенное подтверждение и гибкая отмена.",
-    zh: "即时确认和灵活取消。",
+    es: "Enviaremos tu solicitud a la empresa para revisar la disponibilidad y confirmar contigo.",
+    en: "We will send your request to the company to check availability and confirm with you.",
+    fr: "Nous transmettrons votre demande à l'entreprise pour vérifier les disponibilités et vous confirmer.",
+    de: "Wir leiten deine Anfrage an das Unternehmen weiter, damit die Verfügbarkeit geprüft und bestätigt werden kann.",
+    ru: "Мы передадим ваш запрос компании, чтобы проверить наличие мест и подтвердить вам.",
+    zh: "我们会将您的申请发送给企业，以便核实是否有空位并与您确认。",
   },
   "booking.trust_confirmation": {
     es: "Confirmación Inmediata",
@@ -2202,12 +2202,12 @@ const translations: Translations = {
     zh: "您的特内里费冒险之旅仅需几次点击即可开始。",
   },
   "booking.hero_badge": {
-    es: "Reserva Segura",
-    en: "Secure Booking",
-    fr: "Réservation Sécurisée",
-    de: "Sichere Buchung",
-    ru: "Безопасное Бронирование",
-    zh: "安全预订",
+    es: "Solicitud directa",
+    en: "Direct request",
+    fr: "Demande directe",
+    de: "Direkte Anfrage",
+    ru: "Прямой запрос",
+    zh: "直接申请",
   },
   "booking.form_title": {
     es: "Completa tus Datos de Reserva",
@@ -2370,12 +2370,12 @@ const translations: Translations = {
     zh: "正在发送预订...",
   },
   "booking.success_title": {
-    es: "¡Reserva Confirmada!",
-    en: "Booking Confirmed!",
-    fr: "Réservation Confirmée !",
-    de: "Buchung Bestätigt!",
-    ru: "Бронирование Подтверждено!",
-    zh: "预订已确认！",
+    es: "Solicitud de reserva recibida",
+    en: "Booking request received",
+    fr: "Demande de réservation reçue",
+    de: "Buchungsanfrage erhalten",
+    ru: "Запрос на бронирование получен",
+    zh: "已收到预订申请",
   },
   "booking.success_message": {
     es: "Hemos recibido tu solicitud de reserva. Nos pondremos en contacto contigo pronto para finalizar los detalles. ¡Gracias!",
@@ -2659,6 +2659,22 @@ const translations: Translations = {
     ru: "Продолжить через WhatsApp",
     zh: "通过WhatsApp继续",
   },
+  "booking.modal.request_saved": {
+    es: "Tu solicitud quedó registrada. Continúa por WhatsApp para consultar disponibilidad y completar la confirmación.",
+    en: "Your request has been recorded. Continue on WhatsApp to check availability and complete the confirmation.",
+    fr: "Votre demande a été enregistrée. Continuez sur WhatsApp pour vérifier la disponibilité et finaliser la confirmation.",
+    de: "Deine Anfrage wurde gespeichert. Setze auf WhatsApp fort, um die Verfügbarkeit zu prüfen und die Bestätigung abzuschließen.",
+    ru: "Ваш запрос сохранён. Продолжите в WhatsApp, чтобы проверить наличие мест и завершить подтверждение.",
+    zh: "您的申请已记录。请继续前往 WhatsApp 查询可用情况并完成确认。",
+  },
+  "booking.modal.save_error": {
+    es: "No se pudo registrar la solicitud. Revisa la conexión e inténtalo de nuevo.",
+    en: "We couldn't record your request. Check your connection and try again.",
+    fr: "Nous n'avons pas pu enregistrer votre demande. Vérifiez votre connexion et réessayez.",
+    de: "Deine Anfrage konnte nicht gespeichert werden. Prüfe die Verbindung und versuche es erneut.",
+    ru: "Не удалось сохранить запрос. Проверьте подключение и попробуйте ещё раз.",
+    zh: "无法记录您的申请。请检查网络连接后重试。",
+  },
   "booking.modal.sending": {
     es: "Enviando...",
     en: "Sending...",
@@ -2682,7 +2698,7 @@ const detectBrowserLanguage = (): Language => {
   if (typeof window === "undefined") return "es"
 
   const browserLanguages = navigator.languages || [navigator.language]
-  const supportedLanguages: Language[] = ["es", "en", "fr", "de", "ru", "zh"]
+  const supportedLanguages: Language[] = ["es", "en"]
 
   for (const browserLang of browserLanguages) {
     const langCode = browserLang.split("-")[0].toLowerCase() as Language
@@ -2708,9 +2724,15 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<Language>("es")
 
   useEffect(() => {
+    const previewLocale = new URLSearchParams(window.location.search).get("qa-site-locale")
+    if (previewLocale === "es" || previewLocale === "en") {
+      setLanguage(previewLocale)
+      return
+    }
+
     const storedLanguage = localStorage.getItem("language") as Language | null
 
-    if (storedLanguage) {
+    if (storedLanguage === "es" || storedLanguage === "en") {
       setLanguage(storedLanguage)
     } else {
       const detectedLanguage = detectBrowserLanguage()
@@ -2719,7 +2741,13 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("language", language)
+    const previewLocale = new URLSearchParams(window.location.search).get("qa-site-locale")
+    if (previewLocale === "es" || previewLocale === "en") {
+      document.documentElement.lang = previewLocale
+      return
+    }
+    localStorage.setItem("language", language === "en" ? "en" : "es")
+    document.cookie = `NEXT_LOCALE=${language === "en" ? "en" : "es"}; path=/; max-age=31536000; samesite=lax`
     document.documentElement.lang = language // Update lang attribute of HTML tag
   }, [language])
 
@@ -2732,19 +2760,22 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       translation = langTranslations[language]
     } else {
       const keys = key.split(".")
-      let current: any = translations
+      let current: unknown = translations
       let found = true
       for (const k of keys) {
         if (current && typeof current === "object" && k in current) {
-          current = current[k]
+          current = (current as Record<string, unknown>)[k]
         } else {
           current = null
           found = false
           break
         }
       }
-      if (found && current && typeof current === "object" && typeof current[language] !== "undefined") {
-        translation = current[language]
+      if (found && current && typeof current === "object") {
+        const localized = current as Record<string, unknown>
+        if (typeof localized[language] === "string") {
+          translation = localized[language] as string
+        }
       } else if (found && typeof current === "string") {
         translation = current
       } else {

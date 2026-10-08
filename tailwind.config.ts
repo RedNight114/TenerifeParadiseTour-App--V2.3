@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss"
+import tailwindAnimate from "tailwindcss-animate"
 
 const config: Config = {
   darkMode: ["class"],
@@ -53,10 +54,10 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         brand: {
-          primary: "#2563eb",
-          "primary-hover": "#1d4ed8",
-          secondary: "#f1f5f9",
-          accent: "#10b981",
+          primary: "var(--brand-primary)",
+          "primary-hover": "var(--brand-primary-hover)",
+          secondary: "var(--brand-secondary)",
+          accent: "var(--brand-secondary)",
           text: "#334155",
           heading: "#1e293b",
           "button-text": "#ffffff",
@@ -84,11 +85,11 @@ const config: Config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "fade-in": "fade-in 0.5s ease-out",
+        "fade-in": "fade-in 0.46s cubic-bezier(0.23, 1, 0.32, 1) both",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindAnimate],
 } satisfies Config
 
 export default config

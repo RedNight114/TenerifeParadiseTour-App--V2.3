@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
@@ -13,6 +12,7 @@ interface MultiImageUploadProps {
   onChange: (urls: string[]) => void
   label?: string
   maxImages?: number
+  placeholder?: string
 }
 
 export function MultiImageUpload({
@@ -20,9 +20,8 @@ export function MultiImageUpload({
   onChange,
   label = "Galería de Imágenes",
   maxImages = 6,
+  placeholder = "Subir una imagen para la galería",
 }: MultiImageUploadProps) {
-  const [isUploading, setIsUploading] = useState(false)
-
   const addImage = (url: string) => {
     if (value.length < maxImages) {
       onChange([...value, url])
@@ -31,12 +30,6 @@ export function MultiImageUpload({
 
   const removeImage = (index: number) => {
     const newImages = value.filter((_, i) => i !== index)
-    onChange(newImages)
-  }
-
-  const updateImage = (index: number, url: string) => {
-    const newImages = [...value]
-    newImages[index] = url
     onChange(newImages)
   }
 
@@ -123,7 +116,7 @@ export function MultiImageUpload({
                 value=""
                 onChange={addImage}
                 label=""
-                placeholder="Subir nueva imagen para la galería"
+                placeholder={placeholder}
                 showLabel={false}
               />
 
@@ -172,7 +165,7 @@ export function MultiImageUpload({
               value=""
               onChange={addImage}
               label=""
-              placeholder="Subir primera imagen de la galería"
+              placeholder={placeholder}
               showLabel={false}
             />
           </CardContent>

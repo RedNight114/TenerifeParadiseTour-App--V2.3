@@ -1,42 +1,20 @@
 import { NextResponse } from "next/server"
+import { createServerSupabaseClient } from "@/lib/supabase-server"
+
+export const dynamic = "force-dynamic"
 
 export async function GET() {
-  const baseUrl = "https://tenerifeparadisetours.com"
-
-  const robotsTxt = `# Robots.txt for TenerifeParadiseTours
-User-agent: *
-Allow: /
-
-# Disallow admin areas
-Disallow: /admin/
-Disallow: /api/
-Disallow: /_next/
-Disallow: /private/
-
-# Allow important crawlers
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Slurp
-Allow: /
-Crawl-delay: 2
-
-# Sitemap location
-Sitemap: ${baseUrl}/sitemap.xml
-
-# Host
-Host: ${baseUrl}
-`
-
-  return new NextResponse(robotsTxt, {
-    headers: {
-      "Content-Type": "text/plain",
-      "Cache-Control": "public, max-age=86400",
-    },
-  })
+  let sitemap = ""
+  try {
+    const client = await createServerSupabaseClient()
+    const { data: host } = await client.rpc("current_public_organization_domain")
+    if (host) {
+      const protocol = host === "localhost" || host === "127.0.0.1" ? "http" : "https"
+      sitemap = `Sitemap: ${protocol}://${host}/sitemap.xml\n`
+    }
+  } catch {
+    // A not-yet-provisioned tenant can still receive a valid minimal robots file.
+  }
+  const body = `User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /platform/\nDisallow: /api/\nDisallow: /auth/\n${sitemap}`
+  return new NextResponse(body, { headers: { "Content-Type": "text/plain; charset=utf-8", "Cache-Control": "public, max-age=3600" } })
 }

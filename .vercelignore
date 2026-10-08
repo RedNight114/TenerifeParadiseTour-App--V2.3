@@ -1,0 +1,13 @@
+.env*
+.agents/
+output/
+.git/
+.next/
+.next-dev/
+.playwright-cli/
+node_modules/
+build/
+out/
+.env*
+.agents/
+output/

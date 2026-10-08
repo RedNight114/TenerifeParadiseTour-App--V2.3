@@ -16,15 +16,18 @@ interface BreadcrumbsProps {
 }
 
 export function Breadcrumbs({ items, className = "" }: BreadcrumbsProps) {
-  const { language, t } = useLanguage()
+  const { language } = useLanguage()
 
-  const homeLabel = {
+  const homeLabel: Record<string, string> = {
     es: "Inicio",
     en: "Home",
     de: "Startseite",
+    fr: "Accueil",
+    ru: "Главная",
+    zh: "首页",
   }
 
-  const allItems = [{ name: homeLabel[language], url: "/" }, ...items]
+  const allItems: BreadcrumbItem[] = [{ name: homeLabel[language] || homeLabel.es, url: "/" }, ...items]
 
   // Schema.org structured data
   const breadcrumbSchema = {

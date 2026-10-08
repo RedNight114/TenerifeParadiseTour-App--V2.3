@@ -7,20 +7,24 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { ExcursionCard } from "@/components/excursion-card"
-import { supabase, type Excursion, getCategories, type Category } from "@/lib/supabase"
+import { supabase, addExcursionPricingModes, type Excursion, getCategories, type Category } from "@/lib/supabase"
 import { useLanguage } from "@/lib/language-context"
+import { usePublicSitePage } from "@/lib/public-site-content"
+import { getText } from "@/lib/site-content"
 import { BookingModal } from "@/components/booking-modal"
 
 export default function ExcursionsPage() {
   const [excursions, setExcursions] = useState<Excursion[]>([])
   const [filteredExcursions, setFilteredExcursions] = useState<Excursion[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [priceFilter, setPriceFilter] = useState("all")
   const [sortBy, setSortBy] = useState("featured")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const { language, t } = useLanguage()
+  const { content: catalogContent } = usePublicSitePage("excursions")
 
   const [selectedExcursion, setSelectedExcursion] = useState<Excursion | null>(null)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
@@ -58,12 +62,11 @@ export default function ExcursionsPage() {
         icon: "🌟",
       },
       ...categories.map((category) => {
-        // Usar el nombre exacto de la categoría como está en la base de datos
-        const count = excursions.filter((exc) => exc.category === category.name_es).length
+        const count = excursions.filter((exc) => exc.category === category.name_es || exc.category === String(category.id)).length
         return {
           ...category,
-          value: category.name_es, // Usar el nombre exacto, no en minúsculas
-          label: category[`name_${language}` as keyof Category] as string,
+          value: String(category.id),
+          label: (category[`name_${language}` as keyof Category] as string) || category.name_es,
           count,
           icon: getCategoryIcon(category.name_es),
         }
@@ -97,10 +100,13 @@ export default function ExcursionsPage() {
         const { data, error } = await supabase.from("excursions").select("*").order("featured", { ascending: false })
 
         if (error) throw error
-        setExcursions(data || [])
-        setFilteredExcursions(data || [])
+        const enriched = await addExcursionPricingModes((data || []) as Excursion[])
+        setLoadError(false)
+        setExcursions(enriched)
+        setFilteredExcursions(enriched)
       } catch (error) {
         console.error("Error fetching excursions:", error)
+        setLoadError(true)
       } finally {
         setLoading(false)
       }
@@ -127,39 +133,28 @@ export default function ExcursionsPage() {
   }, [])
 
   useEffect(() => {
-    if (excursions.length > 0) {
-      console.log(
-        "Excursions categories:",
-        excursions.map((exc) => exc.category),
-      )
-      console.log(
-        "Available categories:",
-        categories.map((cat) => cat.name_es),
-      )
-    }
-  }, [excursions, categories])
-
-  useEffect(() => {
-    let filtered = excursions
+    let filtered = [...excursions]
 
     // Search filter
     if (searchQuery) {
       filtered = filtered.filter(
         (excursion) =>
-          excursion[`name_${language}` as keyof Excursion]
+          ((excursion[`name_${language}` as keyof Excursion] as string | undefined) || excursion.name_es)
             ?.toString()
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          excursion[`description_${language}` as keyof Excursion]
+          (((excursion[`description_${language}` as keyof Excursion] as string | undefined) || excursion.description_es) || "")
             ?.toString()
             .toLowerCase()
-            .includes(searchQuery.toLowerCase()),
+            .includes(searchQuery.toLowerCase()) || excursion.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          Boolean(categories.find((category) => excursion.category === String(category.id) || excursion.category === category.name_es)?.name_es.toLowerCase().includes(searchQuery.toLowerCase())),
       )
     }
 
     // Category filter
     if (categoryFilter !== "all") {
-      filtered = filtered.filter((excursion) => excursion.category === categoryFilter)
+      const selectedCategory = categories.find((category) => String(category.id) === categoryFilter)
+      filtered = filtered.filter((excursion) => excursion.category === categoryFilter || (selectedCategory && excursion.category === selectedCategory.name_es))
     }
 
     // Price filter
@@ -201,66 +196,66 @@ export default function ExcursionsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex min-h-[55vh] items-center justify-center bg-[#f7f8f6]">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div>
-          <div className="text-xl text-gray-700 font-semibold">{t("common.loading_experiences")}</div>
+          <div className="mx-auto mb-5 h-10 w-10 animate-spin rounded-full border-[3px] border-teal-100 border-t-teal-800"></div>
+          <div className="text-base font-medium text-slate-700">{t("common.loading_experiences")}</div>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f7f8f6]">
       {/* Hero Header */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="absolute inset-0 bg-[url('/hero-tenerife.jpg')] bg-cover bg-center opacity-20"></div>
+      <div className="relative overflow-hidden bg-[#123a42] text-white">
+        <div className="absolute inset-0 bg-[url('/hero-tenerife-v3.avif')] bg-cover bg-[center_55%] opacity-35"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#102f37]/95 via-[#123a42]/85 to-[#123a42]/45"></div>
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-              Descubre Tenerife
-              <span className="block text-yellow-300">Como Nunca Antes</span>
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          <div className="max-w-3xl">
+            <p data-site-edit-page="excursions" data-site-edit-path="eyebrow" data-site-edit-label="Catálogo · etiqueta" className="mb-4 text-xs font-semibold uppercase tracking-[0.17em] text-amber-300">{getText(catalogContent, "eyebrow", "Tenerife · Islas Canarias")}</p>
+            <h1 className="mb-5 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl md:text-6xl">
+              <span data-site-edit-page="excursions" data-site-edit-path="title" data-site-edit-label="Catálogo · título">{getText(catalogContent, "title", "Descubre Tenerife")}</span>
+              <span data-site-edit-page="excursions" data-site-edit-path="titleAccent" data-site-edit-label="Catálogo · título destacado" className="mt-1 block text-amber-300">{getText(catalogContent, "titleAccent", "a tu manera")}</span>
             </h1>
-            <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
-              Vive experiencias únicas en la isla más espectacular de Canarias. Desde aventuras en la naturaleza hasta
-              tours gastronómicos, tenemos la excursión perfecta para ti.
+            <p data-site-edit-page="excursions" data-site-edit-path="description" data-site-edit-label="Catálogo · descripción" data-site-edit-kind="multiline" className="mb-8 max-w-2xl text-base leading-7 text-white/85 sm:text-lg sm:leading-8">
+              {getText(catalogContent, "description", "Vive experiencias únicas en la isla más espectacular de Canarias. Descubre las excursiones que organiza nuestro equipo.")}
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-xl mx-auto">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-300">{excursions.length}+</div>
-                <div className="text-sm text-blue-200">Experiencias Únicas</div>
+            <div className="grid max-w-2xl grid-cols-1 gap-3 border-t border-white/20 pt-5 sm:grid-cols-3 sm:gap-6">
+              <div>
+                <div className="text-2xl font-semibold text-white">{excursions.length}</div>
+                <div className="text-sm text-white/70">{getText(catalogContent, "availableLabel", "Experiencias disponibles")}</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-300">4.9★</div>
-                <div className="text-sm text-blue-200">Valoración Media</div>
+              <div>
+                <div className="text-2xl font-semibold text-white">{getText(catalogContent, "paceValue", "A tu ritmo")}</div>
+                <div className="text-sm text-white/70">{getText(catalogContent, "paceLabel", "Elige fecha y grupo")}</div>
               </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-300">100%</div>
-                <div className="text-sm text-blue-200">Satisfacción Garantizada</div>
+              <div>
+                <div className="text-2xl font-semibold text-white">{getText(catalogContent, "directValue", "Directo")}</div>
+                <div className="text-sm text-white/70">{getText(catalogContent, "directLabel", "Trato con el equipo local")}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
         {/* Filters Section */}
-        <div className="bg-white rounded-3xl shadow-md border border-gray-100 p-6 mb-8">
+        <div className="mb-7 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
-              <Filter className="h-5 w-5 mr-2 text-blue-600" />
-              <h2 className="text-lg font-semibold text-gray-800">{t("excursions.filters")}</h2>
+              <Filter className="mr-2 h-5 w-5 text-teal-800" />
+              <h2 className="text-base font-semibold text-slate-900">{t("excursions.filters")}</h2>
             </div>
             <div className="flex items-center space-x-1">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
-                className="w-9 h-9 p-0"
+                className="h-11 w-11 p-0"
               >
                 <Grid className="h-4 w-4" />
                 <span className="sr-only">Vista de cuadrícula</span>
@@ -269,7 +264,7 @@ export default function ExcursionsPage() {
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className="w-9 h-9 p-0"
+                className="h-11 w-11 p-0"
               >
                 <List className="h-4 w-4" />
                 <span className="sr-only">Vista de lista</span>
@@ -284,6 +279,7 @@ export default function ExcursionsPage() {
               <Input
                 type="text"
                 placeholder={t("excursions.search_placeholder")}
+                aria-label={language === "en" ? "Search excursions" : "Buscar excursiones"}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-9 h-10 rounded-xl border-gray-200 focus:border-blue-500 focus:ring-blue-500 w-full"
@@ -463,12 +459,16 @@ export default function ExcursionsPage() {
         </div>
 
         {/* Results Grid/List */}
-        {filteredExcursions.length > 0 ? (
-          <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
+        {loadError ? (
+          <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center"><h3 className="text-xl font-semibold text-slate-900">{language === "en" ? "We couldn't load the excursions" : "No hemos podido cargar las excursiones"}</h3><p className="mt-2 text-sm text-slate-600">{language === "en" ? "Check your connection and try again." : "Comprueba la conexión e inténtalo de nuevo."}</p><Button type="button" onClick={() => window.location.reload()} className="mt-5 min-h-11 bg-brand-primary text-white">{language === "en" ? "Try again" : "Reintentar"}</Button></div>
+        ) : filteredExcursions.length > 0 ? (
+          <div className={viewMode === "grid" ? "grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6" : "space-y-4"}>
             {filteredExcursions.map((excursion, index) => (
-              <div key={excursion.id} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div key={excursion.id} className="animate-fade-in motion-reduce:animate-none" style={{ animationDelay: `${Math.min(index, 3) * 45}ms` }}>
                 <ExcursionCard
                   excursion={excursion}
+                  layout={viewMode}
+                  categoryLabel={(categories.find((category) => excursion.category === String(category.id) || excursion.category === category.name_es)?.[`name_${language}` as keyof Category] as string) || categories.find((category) => excursion.category === String(category.id) || excursion.category === category.name_es)?.name_es || excursion.category}
                   onBook={() => handleBookExcursion(excursion)}
                   onViewDetails={() => handleViewExcursionDetails(excursion)}
                 />
@@ -497,10 +497,10 @@ export default function ExcursionsPage() {
 
         {/* Call to Action */}
         {filteredExcursions.length > 0 && (
-          <div className="mt-16 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-center text-white">
+          <div className="mt-16 rounded-2xl bg-gradient-to-r from-[#123a42] to-[#17665f] p-8 text-center text-white sm:p-10">
             <h3 className="text-2xl font-bold mb-4">{t("excursions.custom_experience")}</h3>
-            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">{t("excursions.custom_text")}</p>
-            <Button asChild className="bg-white text-blue-600 hover:bg-gray-100 font-semibold">
+            <p className="mb-6 mx-auto max-w-2xl text-white/85">{t("excursions.custom_text")}</p>
+            <Button asChild className="bg-white font-semibold text-teal-900 hover:bg-teal-50">
               <a href="/contact">{t("excursions.contact_custom")}</a>
             </Button>
           </div>

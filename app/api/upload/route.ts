@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { cookies } from "next/headers"
+import { createServerSupabaseClient } from "@/lib/supabase-server"
 
 // Function to sanitize filename
 function sanitizeFilename(filename: string): string {
@@ -11,23 +13,45 @@ function sanitizeFilename(filename: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient()
+    const { data: authData } = await supabase.auth.getUser()
+    if (!authData.user) return NextResponse.json({ error: "Authentication required" }, { status: 401 })
+
+    // Admin workspaces can run on a Vercel preview hostname that is not mapped
+    // to a public organization domain. Use the selected workspace when present;
+    // the membership check below remains the authorization boundary.
+    const cookieStore = await cookies()
+    const selectedOrganizationId = cookieStore.get("qa_active_organization")?.value
+    const { data: publicOrganizationId } = await supabase.rpc("current_public_organization_id")
+    const organizationId = selectedOrganizationId || publicOrganizationId
+    if (!organizationId) return NextResponse.json({ error: "Organization is not configured for this domain" }, { status: 403 })
+
+    const { data: membership } = await supabase
+      .from("organization_memberships")
+      .select("role")
+      .eq("organization_id", organizationId)
+      .eq("user_id", authData.user.id)
+      .eq("status", "active")
+      .maybeSingle()
+    if (!membership || !["owner", "admin", "catalog_manager"].includes(membership.role)) {
+      return NextResponse.json({ error: "Catalog administrator access required" }, { status: 403 })
+    }
+
     const { searchParams } = new URL(request.url)
     const filename = searchParams.get("filename")
-
-    console.log("=== UPLOAD API DEBUG ===")
-    console.log("Original filename:", filename)
 
     if (!filename) {
       return NextResponse.json({ error: "Filename is required" }, { status: 400 })
     }
 
+    const extension = filename.split(".").pop()?.toLowerCase()
+    const allowedExtensions = new Set(["jpg", "jpeg", "png", "webp", "avif"])
+    if (!extension || !allowedExtensions.has(extension)) {
+      return NextResponse.json({ error: "Only JPG, PNG, WebP, and AVIF images are allowed" }, { status: 415 })
+    }
+
     // Check if blob token exists
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
-      console.log("=== BLOB TOKEN MISSING ===")
-      console.log(
-        "Available env vars:",
-        Object.keys(process.env).filter((key) => key.includes("BLOB")),
-      )
       return NextResponse.json(
         {
           error: "BLOB_READ_WRITE_TOKEN not configured",
@@ -37,13 +61,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("Token exists, length:", process.env.BLOB_READ_WRITE_TOKEN.length)
-
     // Get file data
     const arrayBuffer = await request.arrayBuffer()
     const fileBuffer = Buffer.from(arrayBuffer)
-
-    console.log("File buffer size:", fileBuffer.length)
 
     if (fileBuffer.length === 0) {
       return NextResponse.json({ error: "No file data received" }, { status: 400 })
@@ -64,49 +84,26 @@ export async function POST(request: NextRequest) {
     // Sanitize filename and create unique name
     const sanitizedFilename = sanitizeFilename(filename)
     const timestamp = Date.now()
-    const uniqueFilename = `excursions/${timestamp}_${sanitizedFilename}`
-
-    console.log("Sanitized filename:", uniqueFilename)
+    const uniqueFilename = `organizations/${organizationId}/excursions/${timestamp}_${sanitizedFilename}`
 
     // Try to import and use Vercel Blob
     try {
       const { put } = await import("@vercel/blob")
-      console.log("Vercel Blob imported successfully")
-
-      console.log("Attempting upload...")
-
       // Upload with explicit options and size limit
       const blob = await put(uniqueFilename, fileBuffer, {
         access: "public",
         addRandomSuffix: false,
-        // Explicitly set maximum size
-        maximumSizeInBytes: 5 * 1024 * 1024, // 5MB
+        contentType: request.headers.get("content-type")?.split(";")[0] || "application/octet-stream",
       })
 
-      console.log("Upload successful:", blob.url)
       return NextResponse.json({ url: blob.url })
-    } catch (blobError: any) {
-      console.error("=== BLOB ERROR DETAILS ===")
-      console.error("Error name:", blobError?.name)
-      console.error("Error message:", blobError?.message)
-      console.error("Error stack:", blobError?.stack)
-      console.error("Error cause:", blobError?.cause)
-
-      // Try to get more details from the error
-      if (blobError?.response) {
-        console.error("Error response status:", blobError.response.status)
-        console.error("Error response statusText:", blobError.response.statusText)
-
-        try {
-          const errorText = await blobError.response.text()
-          console.error("Error response body:", errorText)
-        } catch (e) {
-          console.error("Could not read error response body")
-        }
-      }
+    } catch (blobError: unknown) {
+      const blobMessage = blobError instanceof Error ? blobError.message : String(blobError)
+      const blobName = blobError instanceof Error ? blobError.name : "Unknown"
+      console.error("Blob upload failed:", blobMessage)
 
       // Handle specific error cases
-      if (blobError?.message?.includes("401") || blobError?.message?.includes("Unauthorized")) {
+      if (blobMessage.includes("401") || blobMessage.includes("Unauthorized")) {
         return NextResponse.json(
           {
             error: "Authentication failed",
@@ -117,7 +114,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      if (blobError?.message?.includes("403") || blobError?.message?.includes("Forbidden")) {
+      if (blobMessage.includes("403") || blobMessage.includes("Forbidden")) {
         return NextResponse.json(
           {
             error: "Permission denied",
@@ -129,9 +126,9 @@ export async function POST(request: NextRequest) {
       }
 
       if (
-        blobError?.message?.includes("413") ||
-        blobError?.message?.includes("too large") ||
-        blobError?.message?.includes("Request En")
+        blobMessage.includes("413") ||
+        blobMessage.includes("too large") ||
+        blobMessage.includes("Request En")
       ) {
         return NextResponse.json(
           {
@@ -143,7 +140,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      if (blobError?.name === "SyntaxError" && blobError?.message?.includes("Request En")) {
+      if (blobError instanceof SyntaxError && blobMessage.includes("Request En")) {
         return NextResponse.json(
           {
             error: "Vercel Blob size limit exceeded",
@@ -154,7 +151,7 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      if (blobError?.name === "SyntaxError") {
+      if (blobError instanceof SyntaxError) {
         return NextResponse.json(
           {
             error: "Blob service error",
@@ -168,23 +165,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: "Blob upload failed",
-          details: blobError?.message || String(blobError),
-          errorType: blobError?.name || "Unknown",
+          errorType: blobName,
           suggestion: "Try with a smaller file or use the URL upload method",
         },
         { status: 500 },
       )
     }
-  } catch (error: any) {
-    console.error("=== GENERAL ERROR ===")
-    console.error("Error:", error)
-    console.error("Error stack:", error?.stack)
+  } catch (error: unknown) {
+    const errorName = error instanceof Error ? error.name : "Unknown"
+    console.error("Upload failed:", error)
 
     return NextResponse.json(
       {
         error: "Upload failed",
-        details: error?.message || String(error),
-        errorType: error?.name || "Unknown",
+        errorType: errorName,
       },
       { status: 500 },
     )

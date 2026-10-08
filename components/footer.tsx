@@ -1,231 +1,111 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { MapPin, Phone, Mail, Facebook, Instagram } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { PrivacyPolicyModal } from "@/components/privacy-policy-modal"
-import { TermsConditionsModal } from "@/components/terms-conditions-modal"
-import { FAQModal } from "@/components/faq-modal"
+import { usePathname } from "next/navigation"
+import { ArrowRight, Building2, MapPin, Phone, Mail } from "lucide-react"
+import { useState } from "react"
 import { useLanguage } from "@/lib/language-context"
+import type { OrganizationBrand } from "@/lib/organization-context"
+import { usePublicSitePage } from "@/lib/public-site-content"
+import { getObject, getText } from "@/lib/site-content"
+import { TermsConditionsModal } from "@/components/terms-conditions-modal"
+import { PrivacyPolicyModal } from "@/components/privacy-policy-modal"
 
-const TikTokIcon = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-)
+export function Footer({ organization }: { organization: OrganizationBrand | null }) {
+  const pathname = usePathname()
+  const { t, language } = useLanguage()
+  const { content: aboutContent } = usePublicSitePage("about")
+  const { content: homeContent } = usePublicSitePage("home")
+  const { content: globalContent } = usePublicSitePage("global")
+  const footerCopy = getObject(globalContent, "footer")
+  const navCopy = getObject(globalContent, "nav")
+  const [termsOpen, setTermsOpen] = useState(false)
+  const [privacyOpen, setPrivacyOpen] = useState(false)
+  const hasContact = Boolean(organization?.phone || organization?.support_email || organization?.address?.city)
 
-export function Footer() {
-  const { t } = useLanguage()
-  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false)
-  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false)
-  const [isFAQModalOpen, setIsFAQModalOpen] = useState(false)
-  const [email, setEmail] = useState("")
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Aquí iría la lógica para suscribir al newsletter
-    console.log("Suscribiendo email:", email)
-    setEmail("")
-    alert(t("footer.subscribe_success"))
-  }
+  if (pathname.startsWith("/admin") || pathname.startsWith("/platform") || pathname === "/login" || pathname === "/account" || pathname.startsWith("/account/")) return null
 
   return (
     <>
-      <footer className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Company Info */}
-            <div>
-              <div className="flex items-center mb-4">
-                <Image src="/logo.png" alt="TenerifeParadiseTours Logo" width={48} height={48} className="mr-3" />
-                <div>
-                  <h3 className="text-gray-900">{t("footer.title")}</h3>
-                  <p className="text-xs text-gray-600">{t("footer.subtitle")}</p>
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm mb-4">{t("footer.description")}</p>
-              <div className="flex space-x-4">
-                <a
-                  href="https://www.facebook.com/share/16HZZK6eA1/?mibextid=wwXIfr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  aria-label="Facebook"
-                >
-                  <Facebook className="h-5 w-5" />
-                </a>
-                <a
-                  href="https://www.instagram.com/tenerifeparadisetoursexcursion?igsh=MWs4em9zMHQ2OWps"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@tenerifeparadisetours?_t=ZN-8wjOzUGK0DG&_r=1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                  aria-label="TikTok"
-                >
-                  <TikTokIcon className="h-5 w-5" />
-                </a>
+      <footer className="relative overflow-hidden border-t border-teal-900 bg-[#10383c] text-white">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-40 -top-48 h-[28rem] w-[28rem] rounded-full border border-white/[0.06]" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full border border-white/[0.06]" />
+        <div className="relative mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14 lg:px-10">
+          <div className="grid gap-8 rounded-3xl border border-white/10 bg-white/[0.045] p-5 sm:p-7 lg:grid-cols-[1fr_auto] lg:items-center lg:p-8">
+            <div className="flex items-center gap-4">
+              <Image src={organization?.logo_url || "/logo.png"} alt={`${organization?.name || "Excursiones"} logo`} width={56} height={56} unoptimized className="h-12 w-12 shrink-0 rounded-full bg-white/95 object-contain p-1.5 sm:h-14 sm:w-14" />
+              <div className="min-w-0">
+                <p className="text-lg font-semibold tracking-tight text-white sm:text-xl">{organization?.name || "Experiencias locales"}</p>
+                <p data-site-edit-page="global" data-site-edit-path="footer.tagline" data-site-edit-label="Pie · lema" className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">{getText(footerCopy, "tagline", language === "en" ? "Local experiences" : "Experiencias locales")}</p>
+                <p data-site-edit-page="global" data-site-edit-path="footer.summary" data-site-edit-label="Pie · presentación" data-site-edit-kind="multiline" className="mt-3 max-w-xl text-sm leading-6 text-white/70">{getText(footerCopy, "summary", getText(aboutContent, "intro", language === "en" ? "Meet the local team behind each experience." : "Conoce al equipo local que prepara cada experiencia."))}</p>
               </div>
             </div>
-
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-gray-900 mb-4">{t("footer.quick_links")}</h3>
-              <ul className="space-y-2">
-                <li>
-                  <Link href="/" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    {t("nav.home")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/excursions" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    {t("nav.excursions")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    {t("nav.about")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/contact" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    {t("nav.contact")}
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/booking" className="text-gray-600 hover:text-gray-900 transition-colors">
-                    {t("nav.booking")}
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Contact Info */}
-            <div>
-              <h3 className="text-gray-900 mb-4">{t("footer.contact_info")}</h3>
-              <ul className="space-y-3">
-                <li className="flex items-center">
-                  <Phone className="h-4 w-4 mr-2 text-gray-600" />
-                  <span>+34 617 30 39 29</span>
-                </li>
-                <li className="flex items-start">
-                  <Mail className="h-4 w-4 mr-2 text-gray-600 mt-1" />
-                  <div>
-                    <span className="block text-sm text-blue-400">{t("footer.email")}</span>
-                    <a
-                      href="mailto:tenerifeparadisetoursandexcursions@hotmail.com"
-                      className="text-gray-600 hover:text-gray-900"
-                    >
-                      Tenerifeparadisetours
-                      <br />
-                      andexcursions@hotmail.com
-                    </a>
-                  </div>
-                </li>
-                <li className="flex items-center">
-                  <MapPin className="h-4 w-4 mr-2 text-gray-600" />
-                  <span>Santa Cruz de Tenerife, España</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Newsletter */}
-            <div>
-              <h3 className="text-gray-900 mb-4">{t("footer.newsletter")}</h3>
-              <p className="text-gray-600 text-sm mb-4">{t("footer.newsletter_text")}</p>
-              <form onSubmit={handleSubscribe} className="space-y-2">
-                <Input
-                  type="email"
-                  placeholder={t("footer.email_placeholder")}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="bg-white border-gray-300 text-gray-900 placeholder-gray-500"
-                />
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-                  {t("footer.subscribe")}
-                </Button>
-              </form>
+            <div className="flex flex-col items-start gap-3 lg:max-w-sm lg:items-end lg:text-right">
+              <h2 data-site-edit-page="global" data-site-edit-path="footer.discoverTitle" data-site-edit-label="Pie · título de excursiones" className="text-base font-semibold text-white">{getText(footerCopy, "discoverTitle", getText(navCopy, "excursions", t("nav.excursions")))}</h2>
+              <p data-site-edit-page="global" data-site-edit-path="footer.discoverText" data-site-edit-label="Pie · texto de excursiones" data-site-edit-kind="multiline" className="text-sm leading-6 text-white/70">{getText(footerCopy, "discoverText", getText(getObject(homeContent, "featured"), "subtitle", language === "en" ? "Explore our experiences and book directly with us." : "Descubre nuestras experiencias y reserva directamente con nosotros."))}</p>
+              <Link href="/excursions" className="group inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-white px-4 text-sm font-semibold text-[#10383c] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-teal-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#10383c] motion-reduce:transform-none motion-reduce:transition-none">
+                {getText(footerCopy, "discoverCta", t("featured.view_all_short"))}<ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none motion-reduce:transition-none" />
+              </Link>
             </div>
           </div>
 
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-4">
-              <p className="text-gray-600 text-sm">© 2024 TenerifeParadise Tours & Excursions. {t("footer.rights")}</p>
-              <div className="flex items-center text-xs text-gray-500">
-                <span>{t("footer.designed_by")}</span>
-                <a
-                  href="https://quickagence.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 hover:opacity-80 transition-opacity duration-200"
-                >
-                  <Image
-                    src="/quickagence-logo.png"
-                    alt="QuickAgence"
-                    width={120}
-                    height={30}
-                    className="h-5 w-auto object-contain"
-                  />
-                </a>
-              </div>
+          <div className={`grid gap-9 border-b border-white/10 py-10 sm:grid-cols-2 ${hasContact ? "lg:grid-cols-[1fr_1fr_1.3fr]" : "lg:grid-cols-2"} lg:gap-12 lg:py-12`}>
+            <nav aria-label={language === "en" ? "Explore" : "Explora"}>
+              <h3 data-site-edit-page="global" data-site-edit-path="footer.quickLinksTitle" data-site-edit-label="Pie · título de enlaces" className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">{getText(footerCopy, "quickLinksTitle", t("footer.quick_links"))}</h3>
+              <ul className="grid grid-cols-2 gap-x-5 gap-y-1">
+                <li><FooterLink href="/">{getText(navCopy, "home", t("nav.home"))}</FooterLink></li>
+                <li><FooterLink href="/excursions">{getText(navCopy, "excursions", t("nav.excursions"))}</FooterLink></li>
+                <li><FooterLink href="/about">{getText(navCopy, "about", t("nav.about"))}</FooterLink></li>
+                <li><FooterLink href="/contact">{getText(navCopy, "contact", t("nav.contact"))}</FooterLink></li>
+                <li><FooterLink href="/booking">{getText(navCopy, "booking", t("nav.booking"))}</FooterLink></li>
+              </ul>
+            </nav>
+
+            <div>
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">{language === "en" ? "Customer support" : "Atención al cliente"}</h3>
+              <ul className="grid grid-cols-2 gap-x-5 gap-y-1 sm:grid-cols-1">
+                <li><FooterLink href="/account">{getText(navCopy, "account", language === "en" ? "My bookings" : "Mis reservas")}</FooterLink></li>
+                <li><FooterLink href="/faq">{t("footer.faq")}</FooterLink></li>
+              </ul>
             </div>
-            <div className="flex space-x-4 mt-4 md:mt-0">
-              <button
-                onClick={() => setIsPrivacyModalOpen(true)}
-                className="text-gray-600 hover:text-gray-900 text-sm transition-colors cursor-pointer"
-              >
-                {t("footer.privacy")}
-              </button>
-              <button
-                onClick={() => setIsTermsModalOpen(true)}
-                className="text-gray-600 hover:text-gray-900 text-sm transition-colors cursor-pointer"
-              >
-                {t("footer.terms")}
-              </button>
-              <button
-                onClick={() => setIsFAQModalOpen(true)}
-                className="text-gray-600 hover:text-gray-900 text-sm transition-colors cursor-pointer"
-              >
-                {t("footer.faq")}
-              </button>
+
+            {hasContact && <address className="not-italic">
+              <h3 data-site-edit-page="global" data-site-edit-path="footer.contactTitle" data-site-edit-label="Pie · título de contacto" className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">{getText(footerCopy, "contactTitle", t("footer.contact_info"))}</h3>
+              <ul className="space-y-3">
+                {organization?.phone && <li><a href={`tel:${organization.phone}`} className="inline-flex min-h-10 items-center gap-2.5 rounded-md text-sm text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"><Phone aria-hidden="true" className="h-4 w-4 shrink-0 text-teal-200" />{organization.phone}</a></li>}
+                {organization?.support_email && <li><a href={`mailto:${organization.support_email}`} className="inline-flex min-h-10 items-center gap-2.5 break-all rounded-md text-sm text-white/80 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300"><Mail aria-hidden="true" className="h-4 w-4 shrink-0 text-teal-200" />{organization.support_email}</a></li>}
+                {organization?.address?.city && <li className="flex min-h-10 items-center gap-2.5 text-sm text-white/80"><MapPin aria-hidden="true" className="h-4 w-4 shrink-0 text-teal-200" />{[organization.address.city, organization.address.country].filter(Boolean).join(", ")}</li>}
+              </ul>
+            </address>}
+          </div>
+
+          <div className="flex flex-col gap-5 pt-6 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+            <div className="flex flex-col items-center gap-2 text-xs text-white/60 sm:flex-row sm:gap-4">
+              <p>© {new Date().getFullYear()} {organization?.name || t("footer.title")}. {getText(footerCopy, "rights", t("footer.rights"))}</p>
+              <a href="https://quickagence.com" target="_blank" rel="noopener noreferrer" aria-label="Visitar QuickAgency Go" className="inline-flex min-h-9 items-center gap-2 rounded-md text-white/70 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300">
+                <span>{t("footer.designed_by")}</span>
+                <Image src="/quickagency-go-badge.svg" alt="" aria-hidden="true" width={20} height={20} className="h-5 w-5 rounded object-contain" />
+                <span className="font-semibold">QuickAgency Go</span>
+              </a>
+            </div>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:justify-end">
+              <Link href="/login" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-3.5 text-xs font-semibold text-white/75 shadow-sm shadow-black/10 transition-[background-color,border-color,color] duration-200 hover:border-teal-200/40 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-[#10383c] motion-reduce:transition-none">
+                <Building2 aria-hidden="true" className="h-4 w-4 text-teal-200" />
+                {language === "en" ? "Business portal" : "Panel de empresas"}
+              </Link>
+              <button type="button" onClick={() => setPrivacyOpen(true)} className="inline-flex min-h-10 items-center rounded-md text-xs text-white/65 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300">{t("footer.privacy")}</button>
+              <button type="button" onClick={() => setTermsOpen(true)} className="inline-flex min-h-10 items-center rounded-md text-xs text-white/65 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300">{t("footer.terms")}</button>
             </div>
           </div>
         </div>
       </footer>
-
-      {/* Privacy Policy Modal */}
-      <PrivacyPolicyModal isOpen={isPrivacyModalOpen} onClose={() => setIsPrivacyModalOpen(false)} />
-
-      {/* Terms and Conditions Modal */}
-      <TermsConditionsModal isOpen={isTermsModalOpen} onClose={() => setIsTermsModalOpen(false)} />
-
-      {/* FAQ Modal */}
-      <FAQModal isOpen={isFAQModalOpen} onClose={() => setIsFAQModalOpen(false)} />
+      <TermsConditionsModal isOpen={termsOpen} onClose={() => setTermsOpen(false)} />
+      <PrivacyPolicyModal isOpen={privacyOpen} onClose={() => setPrivacyOpen(false)} />
     </>
   )
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return <Link href={href} className="inline-flex min-h-10 items-center rounded-md pr-2 text-sm text-white/70 transition-colors duration-150 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 motion-reduce:transition-none">{children}</Link>
 }

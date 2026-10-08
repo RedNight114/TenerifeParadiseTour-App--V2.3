@@ -5,18 +5,24 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { X, Cookie, Settings } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useSitePreview } from "@/lib/site-preview-context"
 
 export function CookieBanner() {
+  const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
   const { t } = useLanguage()
+  const preview = useSitePreview()
 
   useEffect(() => {
+    if (preview.active || pathname.startsWith("/admin") || pathname.startsWith("/platform") || pathname === "/login") return
     const cookieConsent = localStorage.getItem("cookieConsent")
     if (!cookieConsent) {
       setIsVisible(true)
     }
-  }, [])
+  }, [pathname, preview.active])
 
   const acceptAllCookies = () => {
     localStorage.setItem("cookieConsent", "accepted")
@@ -64,28 +70,27 @@ export function CookieBanner() {
     setIsVisible(false)
   }
 
-  if (!isVisible) return null
+  if (preview.active || pathname.startsWith("/admin") || pathname === "/login" || !isVisible) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4">
-      <Card className="max-w-4xl mx-auto bg-gradient-to-br from-white via-blue-50/30 to-white shadow-2xl border border-blue-100/50 backdrop-blur-md overflow-hidden rounded-2xl">
-        <div className="p-8 relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 rounded-2xl"></div>
+    <div className="fixed inset-x-0 bottom-0 z-50 p-3 sm:p-5">
+      <Card className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_60px_-18px_rgba(15,23,42,0.35)]">
+        <div className="p-4 sm:p-6">
           <div className="relative z-10">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                <Cookie className="h-6 w-6 text-white" />
+            <div className="flex items-start gap-3 sm:gap-4">
+              <div className="flex-shrink-0 rounded-xl bg-teal-50 p-2.5 text-teal-800">
+                <Cookie className="h-5 w-5" />
               </div>
 
               <div className="flex-1 min-w-0">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">
+                <h3 className="mb-2 text-lg font-semibold tracking-tight text-slate-900">
                   {t("cookies.title")}
                 </h3>
 
-                <p className="text-gray-700 text-base mb-6 leading-relaxed">{t("cookies.description")}</p>
+                <p className="mb-4 text-sm leading-6 text-slate-600">{t("cookies.description")}</p>
 
                 {showDetails && (
-                  <div className="space-y-4 mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                  <div className="mb-4 space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
                     <h4 className="font-medium text-gray-900">{t("cookies.preferences_title")}</h4>
 
                     <div className="space-y-3">
@@ -101,7 +106,7 @@ export function CookieBanner() {
                           type="checkbox"
                           checked={true}
                           disabled={true}
-                          className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                          className="h-4 w-4 rounded border-slate-300 accent-teal-700"
                         />
                       </div>
 
@@ -116,7 +121,7 @@ export function CookieBanner() {
                           id="analytics"
                           type="checkbox"
                           defaultChecked={false}
-                          className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                          className="h-4 w-4 rounded border-slate-300 accent-teal-700"
                         />
                       </div>
 
@@ -131,17 +136,17 @@ export function CookieBanner() {
                           id="functional"
                           type="checkbox"
                           defaultChecked={true}
-                          className="h-4 w-4 text-blue-600 rounded border-gray-300"
+                          className="h-4 w-4 rounded border-slate-300 accent-teal-700"
                         />
                       </div>
                     </div>
                   </div>
                 )}
 
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                   <Button
                     onClick={acceptAllCookies}
-                    className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+                    className="bg-teal-800 px-4 text-white hover:bg-teal-900 sm:px-5"
                   >
                     {t("cookies.accept_all")}
                   </Button>
@@ -149,7 +154,7 @@ export function CookieBanner() {
                   <Button
                     onClick={acceptNecessaryOnly}
                     variant="outline"
-                    className="border-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 px-8 py-3 rounded-xl font-semibold transition-all duration-300"
+                    className="border-slate-300 px-4 text-slate-700 hover:bg-slate-50 sm:px-5"
                   >
                     {t("cookies.necessary_only")}
                   </Button>
@@ -157,7 +162,7 @@ export function CookieBanner() {
                   <Button
                     onClick={() => setShowDetails(!showDetails)}
                     variant="ghost"
-                    className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-8 py-3 rounded-xl font-semibold transition-all duration-300"
+                    className="px-4 text-teal-800 hover:bg-teal-50 sm:px-5"
                   >
                     <Settings className="h-4 w-4 mr-2" />
                     {t("cookies.customize")}
@@ -166,22 +171,22 @@ export function CookieBanner() {
                   {showDetails && (
                     <Button
                       onClick={savePreferences}
-                      className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-semibold"
+                      className="bg-teal-800 px-4 text-white hover:bg-teal-900 sm:px-5"
                     >
                       {t("cookies.save_preferences")}
                     </Button>
                   )}
                 </div>
 
-                <p className="text-xs text-gray-500 mt-3">
+                <p className="mt-3 text-xs text-slate-500">
                   {t("cookies.more_info")}{" "}
-                  <button className="text-blue-600 hover:underline">{t("cookies.privacy_policy")}</button>
+                  <Link href="/privacy" className="text-teal-800 underline-offset-4 hover:underline">{t("cookies.privacy_policy")}</Link>
                 </p>
               </div>
 
               <button
                 onClick={() => setIsVisible(false)}
-                className="flex-shrink-0 p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
+                className="-mr-1 -mt-1 flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
                 aria-label={t("cookies.close")}
               >
                 <X className="h-5 w-5" />

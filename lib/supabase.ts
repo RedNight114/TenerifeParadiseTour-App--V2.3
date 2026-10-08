@@ -1,35 +1,25 @@
-import { createClient } from "@supabase/supabase-js"
+import { createBrowserClient } from "@supabase/ssr"
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-export const supabase = createClient(supabaseUrl, supabaseKey)
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error("NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY must be configured.")
+}
 
-// Create admin client only if service role key is available
-export const supabaseAdmin = (() => {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!serviceRoleKey) {
-    console.warn("SUPABASE_SERVICE_ROLE_KEY not found. Admin operations may not work.")
-    return null
-  }
-
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, serviceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-})()
+const tenantHost = typeof window === "undefined" ? "" : window.location.hostname.toLowerCase()
+export const supabase = createBrowserClient(supabaseUrl, supabaseKey, {
+  global: { headers: tenantHost ? { "x-tenant-host": tenantHost } : {} },
+})
 
 const CACHE_DURATION = 5 * 60 * 1000 // 5 minutos
-const cache = new Map<string, { data: any; timestamp: number }>()
+const cache = new Map<string, { data: unknown; timestamp: number }>()
 
 // Función helper para cache:
 function getCachedData<T>(key: string): T | null {
   const cached = cache.get(key)
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.data
+    return cached.data as T
   }
   cache.delete(key)
   return null
@@ -41,22 +31,28 @@ function setCachedData<T>(key: string, data: T): void {
 
 export interface Excursion {
   id: number
+  organization_id?: string
   name_es: string
   name_en: string
   name_de: string
   short_description_es: string
   short_description_en: string
   short_description_de: string
-  description_es: string
-  description_en: string
-  description_de: string
+  description_es?: string
+  description_en?: string
+  description_de?: string
   price: number
+  pricing_mode?: "per_participant" | "per_group" | "per_resource"
   duration: string
   category: string
   image_url: string
   featured: boolean
-  created_at: string
+  is_published?: boolean
+  recommended_sale_mode?: "person" | "group" | "vehicle" | "combination"
+  created_at?: string
   updated_at?: string
+  price_max?: number
+  rating?: number
 
   // Nuevos campos opcionales
   included_services?: string[]
@@ -80,6 +76,7 @@ export interface Excursion {
 
 export interface Category {
   id: number
+  organization_id?: string
   name_es: string
   name_en: string
   name_de: string
@@ -112,21 +109,9 @@ export interface PredefinedService {
   icon?: string
 }
 
-export interface Booking {
-  id: number
-  excursion_id: number
-  customer_name: string
-  email: string
-  phone: string
-  preferred_date: string
-  number_of_people: number
-  special_requests?: string
-  language: string
-  created_at: string
-}
-
 export interface Contact {
   id: number
+  organization_id?: string
   name: string
   email: string
   phone?: string
@@ -252,7 +237,7 @@ export async function getExcursions(): Promise<Excursion[]> {
     return []
   }
 
-  const result = data || []
+  const result = await addExcursionPricingModes((data || []) as Excursion[])
   setCachedData(cacheKey, result)
   return result
 }
@@ -275,7 +260,7 @@ export async function getFeaturedExcursions(): Promise<Excursion[]> {
     return []
   }
 
-  const result = data || []
+  const result = await addExcursionPricingModes((data || []) as Excursion[])
   setCachedData(cacheKey, result)
   return result
 }
@@ -288,7 +273,8 @@ export async function getExcursionById(id: number): Promise<Excursion | null> {
     return null
   }
 
-  return data
+  const [excursion] = await addExcursionPricingModes([data as Excursion])
+  return excursion
 }
 
 export async function getExcursionsByCategory(category: string): Promise<Excursion[]> {
@@ -303,7 +289,36 @@ export async function getExcursionsByCategory(category: string): Promise<Excursi
     return []
   }
 
-  return data || []
+  return addExcursionPricingModes((data || []) as Excursion[])
+}
+
+export async function addExcursionPricingModes(excursions: Excursion[]): Promise<Excursion[]> {
+  if (excursions.length === 0) return excursions
+  const { data, error } = await supabase
+    .from("product_options")
+    .select("excursion_id, pricing_mode, created_at")
+    .eq("active", true)
+    .in("excursion_id", excursions.map((excursion) => excursion.id))
+    .order("created_at", { ascending: true })
+  if (error || !data) return excursions
+  const modes = new Map<number, Excursion["pricing_mode"]>()
+  for (const option of data as Array<{ excursion_id: number; pricing_mode: Excursion["pricing_mode"] }>) {
+    if (!modes.has(option.excursion_id)) modes.set(option.excursion_id, option.pricing_mode)
+  }
+  return excursions.map((excursion) => ({ ...excursion, pricing_mode: modes.get(excursion.id) }))
+}
+
+export function getExcursionPriceLabel(mode: Excursion["pricing_mode"], language: string, fallback: string) {
+  if (!mode || mode === "per_participant") return fallback
+  const labels: Record<string, Record<"per_group" | "per_resource", string>> = {
+    es: { per_group: "por grupo", per_resource: "por unidad" },
+    en: { per_group: "per group", per_resource: "per unit" },
+    de: { per_group: "pro Gruppe", per_resource: "pro Einheit" },
+    fr: { per_group: "par groupe", per_resource: "par unité" },
+    ru: { per_group: "за группу", per_resource: "за единицу" },
+    zh: { per_group: "按团", per_resource: "按件" },
+  }
+  return labels[language]?.[mode] ?? labels.es[mode]
 }
 
 // Funciones para servicios predefinidos
@@ -331,40 +346,6 @@ export async function getNotIncludedServices(): Promise<PredefinedService[]> {
 
   if (error) {
     console.error("Error fetching not included services:", error)
-    return []
-  }
-
-  return data || []
-}
-
-// Funciones para reservas
-export async function createBooking(booking: Omit<Booking, "id" | "created_at">): Promise<boolean> {
-  const { error } = await supabase.from("bookings").insert([booking])
-
-  if (error) {
-    console.error("Error creating booking:", error)
-    return false
-  }
-
-  return true
-}
-
-export async function getBookings(): Promise<Booking[]> {
-  const { data, error } = await supabase
-    .from("bookings")
-    .select(`
-      *,
-      excursions (
-        name_es,
-        name_en,
-        name_de,
-        price
-      )
-    `)
-    .order("created_at", { ascending: false })
-
-  if (error) {
-    console.error("Error fetching bookings:", error)
     return []
   }
 

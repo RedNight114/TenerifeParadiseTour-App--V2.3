@@ -494,7 +494,7 @@ export function ImageUpload({
               sizes="(max-width: 768px) 100vw, 400px"
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center opacity-0 group-hover:opacity-100">
-              <Button onClick={removeImage} variant="destructive" size="sm" className="rounded-full">
+              <Button type="button" onClick={removeImage} variant="destructive" size="sm" className="rounded-full">
                 <X className="h-4 w-4" />
               </Button>
             </div>

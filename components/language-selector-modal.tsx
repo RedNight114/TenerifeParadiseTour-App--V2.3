@@ -5,37 +5,41 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Globe, Check } from "lucide-react"
 import { useLanguage } from "@/lib/language-context"
+import { usePathname } from "next/navigation"
+import type { Language } from "@/lib/language-context"
+import { useSitePreview } from "@/lib/site-preview-context"
 
-const languages = [
+const languages: { code: Language; name: string; flag: string; nativeName: string }[] = [
   { code: "es", name: "Español", flag: "🇪🇸", nativeName: "Español" },
   { code: "en", name: "English", flag: "🇬🇧", nativeName: "English" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪", nativeName: "Deutsch" },
-  { code: "fr", name: "Français", flag: "🇫🇷", nativeName: "Français" },
-  { code: "zh", name: "中文", flag: "🇨🇳", nativeName: "中文" },
-  { code: "ru", name: "Русский", flag: "🇷🇺", nativeName: "Русский" },
 ]
 
 export function LanguageSelectorModal() {
+  const pathname = usePathname()
   const [isVisible, setIsVisible] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("")
-  const { language, setLanguage } = useLanguage() // language from context is the current app language
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>("es")
+  const { setLanguage } = useLanguage()
+  const preview = useSitePreview()
 
   useEffect(() => {
+    if (preview.active || pathname.startsWith("/admin") || pathname.startsWith("/platform") || pathname === "/login") return
     const hasSelectedLanguage = localStorage.getItem("language")
     const hasSeenLanguageModal = localStorage.getItem("hasSeenLanguageModal")
 
     if (!hasSelectedLanguage && !hasSeenLanguageModal) {
       const browserLanguage = detectBrowserLanguage()
-      setSelectedLanguage(browserLanguage) // Set modal's selection to browser language
+      setSelectedLanguage(browserLanguage)
       setIsVisible(true)
     } else if (hasSelectedLanguage) {
-      setSelectedLanguage(hasSelectedLanguage) // Pre-select with stored language if modal re-opens
+      if (languages.some((item) => item.code === hasSelectedLanguage)) {
+        setSelectedLanguage(hasSelectedLanguage as Language)
+      }
     } else {
       setSelectedLanguage(detectBrowserLanguage()) // Fallback if no stored language
     }
-  }, [])
+  }, [pathname, preview.active])
 
-  const detectBrowserLanguage = (): string => {
+  const detectBrowserLanguage = (): Language => {
     if (typeof window === "undefined") return "es"
     const browserLanguages = navigator.languages || [navigator.language]
     for (const browserLang of browserLanguages) {
@@ -48,55 +52,57 @@ export function LanguageSelectorModal() {
     return "es" // Default to Spanish if no browser match
   }
 
-  const handleLanguageSelect = (langCode: string) => {
+  const handleLanguageSelect = (langCode: Language) => {
     setSelectedLanguage(langCode)
   }
 
+  if (preview.active) return null
+
   const handleConfirm = () => {
-    setLanguage(selectedLanguage as any) // Set app language
+    setLanguage(selectedLanguage)
     localStorage.setItem("hasSeenLanguageModal", "true")
     setIsVisible(false)
   }
 
   const handleSkip = () => {
     // Use the already detected (and potentially user-selected in modal) language
-    setLanguage(selectedLanguage as any)
+    setLanguage(selectedLanguage)
     localStorage.setItem("hasSeenLanguageModal", "true")
     setIsVisible(false)
   }
 
-  if (!isVisible) return null
+  if (pathname.startsWith("/admin") || pathname.startsWith("/platform") || pathname === "/login" || !isVisible) return null
 
   const currentSelectedLangData = languages.find((lang) => lang.code === selectedLanguage)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <Card className="w-full max-w-md mx-4 bg-white shadow-2xl border-0 overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-center">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
+      <Card className="mx-4 w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+        <div className="bg-teal-800 p-6 text-center">
           <div className="flex justify-center mb-3">
             <div className="p-3 bg-white/20 rounded-full">
               <Globe className="h-8 w-8 text-white" />
             </div>
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">¡Bienvenido a TenerifeParadise!</h2>
-          <p className="text-blue-100 text-sm">Selecciona tu idioma preferido para una mejor experiencia</p>
+          <h2 className="text-xl font-bold text-white mb-2">{selectedLanguage === "en" ? "Welcome" : "Bienvenido/a"}</h2>
+          <p className="text-sm text-teal-50">{selectedLanguage === "en" ? "Choose your preferred language for a better experience" : "Selecciona tu idioma preferido para una mejor experiencia"}</p>
         </div>
 
         <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="flex items-center justify-between rounded-xl border border-teal-200 bg-teal-50 p-3">
             <div className="flex items-center gap-3">
               <span className="text-2xl">{currentSelectedLangData?.flag}</span>
               <div>
                 <p className="font-medium text-gray-900">{currentSelectedLangData?.nativeName}</p>
-                <p className="text-sm text-blue-600">Detectado automáticamente</p>
+                <p className="text-sm text-teal-800">{selectedLanguage === "en" ? "Detected automatically" : "Detectado automáticamente"}</p>
               </div>
             </div>
-            <Check className="h-5 w-5 text-blue-600" />
+            <Check className="h-5 w-5 text-teal-800" />
           </div>
         </div>
 
         <div className="p-6">
-          <p className="text-sm text-gray-600 mb-4">O elige otro idioma:</p>
+          <p className="mb-4 text-sm text-gray-600">{selectedLanguage === "en" ? "Or choose another language:" : "O elige otro idioma:"}</p>
           <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
             {languages
               .filter((lang) => lang.code !== selectedLanguage) // Show other languages
@@ -104,8 +110,8 @@ export function LanguageSelectorModal() {
                 <button
                   key={lang.code}
                   onClick={() => handleLanguageSelect(lang.code)}
-                  className={`flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-colors text-left w-full
-                            ${selectedLanguage === lang.code ? "bg-blue-100 ring-2 ring-blue-500" : ""}`}
+                  className={`flex min-h-11 w-full items-center gap-2 rounded-lg p-2 text-left transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700
+                            ${selectedLanguage === lang.code ? "bg-teal-50 ring-2 ring-teal-700" : ""}`}
                 >
                   <span className="text-lg">{lang.flag}</span>
                   <span className="text-sm font-medium text-gray-700 truncate">{lang.nativeName}</span>
@@ -116,13 +122,13 @@ export function LanguageSelectorModal() {
 
         <div className="p-6 bg-gray-50 flex gap-3">
           <Button onClick={handleSkip} variant="outline" className="flex-1">
-            Continuar ({currentSelectedLangData?.nativeName})
+            {selectedLanguage === "en" ? "Continue" : "Continuar"} ({currentSelectedLangData?.nativeName})
           </Button>
           <Button
             onClick={handleConfirm}
-            className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800"
+            className="flex-1 bg-teal-800 text-white hover:bg-teal-900"
           >
-            Confirmar
+            {selectedLanguage === "en" ? "Confirm" : "Confirmar"}
           </Button>
         </div>
       </Card>

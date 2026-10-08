@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback, useMemo } from "react"
+import Image from "next/image"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -24,8 +25,9 @@ import {
   Star,
   Save,
   Loader2,
+  Eye,
 } from "lucide-react"
-import { updateExcursion, type ExcursionFormData } from "@/lib/excursion-actions"
+import { saveExcursionDraft, updateExcursion, type ExcursionFormData } from "@/lib/excursion-actions"
 import {
   getExcursionById,
   getCategories,
@@ -33,11 +35,14 @@ import {
   getNotIncludedServices,
   type Category,
   type PredefinedService,
+  type Excursion,
 } from "@/lib/supabase"
 import { useRouter, useParams } from "next/navigation"
 import { toast } from "sonner"
 import { ImageUpload } from "@/components/image-upload"
 import { MultiImageUpload } from "@/components/multi-image-upload"
+import { ExcursionTranslationButton } from "@/components/admin/excursion-translation-button"
+import { ExcursionDetailPreview } from "@/components/admin/excursion-detail-preview"
 
 const DIFFICULTY_LEVELS = [
   { value: "facil", label: "Fácil" },
@@ -75,6 +80,7 @@ const EditExcursionPage = () => {
 
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [wasPublished, setWasPublished] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
   const [categories, setCategories] = useState<Category[]>([])
   const [includedServices, setIncludedServices] = useState<PredefinedService[]>([])
@@ -87,15 +93,9 @@ const EditExcursionPage = () => {
     end_time: "",
     label: "",
   })
-  const [newFAQ, setNewFAQ] = useState({
-    question_es: "",
-    question_en: "",
-    question_de: "",
-    answer_es: "",
-    answer_en: "",
-    answer_de: "",
-  })
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [contentLocale, setContentLocale] = useState<"es" | "en">("es")
 
   const [formData, setFormData] = useState({
     name_es: "",
@@ -152,6 +152,8 @@ const EditExcursionPage = () => {
           router.push("/admin/manage-excursions")
           return
         }
+
+        setWasPublished(Boolean(excursionData.is_published))
 
         // Populate form with existing data
         setFormData({
@@ -219,8 +221,8 @@ const EditExcursionPage = () => {
     }
   }, [excursionId, router])
 
-  const updateFormData = useCallback((field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+  const updateFormData = useCallback((field: string, value: unknown) => {
+    setFormData((prev) => ({ ...prev, [field]: value }) as typeof prev)
     setFieldErrors((prev) => ({ ...prev, [field]: "" }))
   }, [])
 
@@ -275,30 +277,6 @@ const EditExcursionPage = () => {
     }))
   }, [])
 
-  const addFAQ = useCallback(() => {
-    if (newFAQ.question_es && newFAQ.answer_es) {
-      setFormData((prev) => ({
-        ...prev,
-        faqs: [...prev.faqs, newFAQ],
-      }))
-      setNewFAQ({
-        question_es: "",
-        question_en: "",
-        question_de: "",
-        answer_es: "",
-        answer_en: "",
-        answer_de: "",
-      })
-    }
-  }, [newFAQ])
-
-  const removeFAQ = useCallback((index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      faqs: prev.faqs.filter((_, i) => i !== index),
-    }))
-  }, [])
-
   const toggleMonth = useCallback((month: string) => {
     setFormData((prev) => {
       const months = prev.available_months.includes(month)
@@ -326,7 +304,7 @@ const EditExcursionPage = () => {
     })
   }, [])
 
-  const validateField = useCallback((field: string, value: any): string => {
+  const validateField = useCallback((field: string, value: unknown): string => {
     switch (field) {
       case "name_es":
       case "name_en":
@@ -341,9 +319,9 @@ const EditExcursionPage = () => {
 
   const stepValidation = useMemo(() => {
     const validation: Record<number, boolean> = {}
-    validation[1] = !!(formData.name_es && formData.name_en && formData.name_de)
-    validation[2] = !!(formData.short_description_es && formData.short_description_en && formData.short_description_de)
-    validation[3] = !!(formData.description_es && formData.description_en && formData.description_de)
+    validation[1] = !!(formData.name_es && formData.name_en)
+    validation[2] = !!(formData.short_description_es && formData.short_description_en)
+    validation[3] = !!(formData.description_es && formData.description_en)
     validation[4] = !!(formData.price && formData.duration && formData.category && formData.image_url)
     validation[5] = true
     validation[6] = true
@@ -357,7 +335,7 @@ const EditExcursionPage = () => {
 
       switch (step) {
         case 1:
-          ;["name_es", "name_en", "name_de"].forEach((field) => {
+          ;["name_es", "name_en"].forEach((field) => {
             const error = validateField(field, formData[field as keyof typeof formData])
             if (error) {
               newFieldErrors[field] = error
@@ -397,27 +375,25 @@ const EditExcursionPage = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1))
   }, [])
 
-  const handleUpdateExcursion = useCallback(async () => {
+  const handleUpdateExcursion = useCallback(async (saveAsDraft = false) => {
+    if (saveAsDraft && wasPublished && !window.confirm("Al guardar como borrador, esta excursión dejará de aparecer en la web hasta que vuelva a publicarse. ¿Quieres continuar?")) return
     setIsSubmitting(true)
 
     try {
       const requiredFields = [
         "name_es",
         "name_en",
-        "name_de",
         "short_description_es",
         "short_description_en",
-        "short_description_de",
         "description_es",
         "description_en",
-        "description_de",
         "price",
         "duration",
         "category",
         "image_url",
       ]
 
-      const missingFields = requiredFields.filter((field) => !formData[field as keyof typeof formData])
+      const missingFields = saveAsDraft ? [] : requiredFields.filter((field) => !formData[field as keyof typeof formData])
 
       if (missingFields.length > 0) {
         toast.error(`Faltan campos obligatorios: ${missingFields.join(", ")}`)
@@ -427,6 +403,9 @@ const EditExcursionPage = () => {
 
       const excursionData: Partial<ExcursionFormData> = {
         ...formData,
+        name_de: formData.name_de || formData.name_en || formData.name_es,
+        short_description_de: formData.short_description_de || formData.short_description_en || formData.short_description_es,
+        description_de: formData.description_de || formData.description_en || formData.description_es,
         price: Number(formData.price),
         max_people: formData.max_people ? Number(formData.max_people) : undefined,
         children_price: formData.children_price ? Number(formData.children_price) : undefined,
@@ -438,10 +417,12 @@ const EditExcursionPage = () => {
             : formData.special_notes,
       }
 
-      const result = await updateExcursion(excursionId, excursionData)
+      const result = saveAsDraft
+        ? await saveExcursionDraft(excursionId, excursionData)
+        : await updateExcursion(excursionId, excursionData)
 
       if (result.success) {
-        toast.success("¡Excursión actualizada exitosamente!")
+        toast.success(saveAsDraft ? "Borrador guardado. La excursión queda sin publicar." : "¡Excursión actualizada exitosamente!")
         router.push("/admin/manage-excursions")
       } else {
         toast.error(`Error: ${result.error}`)
@@ -452,19 +433,30 @@ const EditExcursionPage = () => {
     } finally {
       setIsSubmitting(false)
     }
-  }, [formData, timeSlots, excursionId, router])
+  }, [formData, timeSlots, excursionId, router, wasPublished])
 
   const steps = useMemo(
     () => [
-      { number: 1, title: "Nombres", icon: FileText },
-      { number: 2, title: "Descripciones Cortas", icon: Info },
-      { number: 3, title: "Descripciones Completas", icon: FileText },
-      { number: 4, title: "Información Básica", icon: Settings },
-      { number: 5, title: "Detalles Adicionales", icon: Plus },
-      { number: 6, title: "Guardar Cambios", icon: Save },
+      { number: 1, title: "Nombre", icon: FileText },
+      { number: 2, title: "Resumen", icon: Info },
+      { number: 3, title: "Descripción", icon: FileText },
+      { number: 4, title: "Datos de venta", icon: Settings },
+      { number: 5, title: "Detalles", icon: Plus },
+      { number: 6, title: "Resumen final", icon: Save },
     ],
     [],
   )
+  const previewExcursion = useMemo<Excursion>(() => ({
+    id: excursionId, name_es: formData.name_es || "Nombre de la excursión", name_en: formData.name_en || formData.name_es || "Excursion name", name_de: formData.name_de || "",
+    short_description_es: formData.short_description_es, short_description_en: formData.short_description_en, short_description_de: formData.short_description_de,
+    description_es: formData.description_es, description_en: formData.description_en, description_de: formData.description_de,
+    price: Number(formData.price) || 0, pricing_mode: "per_participant", duration: formData.duration, category: formData.category, image_url: formData.image_url, gallery_images: formData.gallery_images,
+    featured: formData.featured, included_services: formData.included_services, not_included_services: formData.not_included_services, difficulty_level: formData.difficulty_level,
+    start_time: timeSlots[0]?.start_time, end_time: timeSlots[0]?.end_time, meeting_point: formData.meeting_point, what_to_bring: formData.what_to_bring,
+    cancellation_policy: formData.cancellation_policy, age_restrictions: formData.age_restrictions, available_months: formData.available_months, special_notes: formData.special_notes,
+    requirements: formData.requirements, faqs: formData.faqs, max_people: formData.max_people ? Number(formData.max_people) : undefined,
+    children_price: formData.children_price ? Number(formData.children_price) : undefined, children_age_range: formData.children_age_range,
+  }), [excursionId, formData, timeSlots])
 
   if (loading) {
     return (
@@ -480,74 +472,61 @@ const EditExcursionPage = () => {
   }
 
   return (
-    <div className="container py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="mb-12">
-        <div className="flex items-center gap-4 mb-4">
-          <Button
-            variant="outline"
-            onClick={() => router.push("/admin/manage-excursions")}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Volver
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+          <div>
+            <button type="button" onClick={() => router.push("/admin/manage-excursions")} className="mb-2 inline-flex min-h-9 items-center gap-1 rounded-md text-sm font-medium text-slate-600 hover:text-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700">
+              <ArrowLeft className="h-4 w-4" /> Volver a excursiones
+            </button>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">Editar excursión</h1>
+            <p className="mt-1 text-sm text-slate-600">Actualiza el contenido y los datos de venta sin perder la configuración existente.</p>
+          </div>
+          <Button type="button" variant="outline" onClick={() => router.push("/admin/manage-excursions")} className="min-h-11 self-start sm:self-auto">
+            <Eye className="mr-2 h-4 w-4" /> Ver catálogo
           </Button>
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Editar Excursión</h1>
-        <p className="text-lg text-gray-600 max-w-2xl">
-          Modifica los datos de la excursión. Todos los campos marcados con * son obligatorios.
-        </p>
-      </div>
+      </header>
 
-      <div className="mb-12">
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-6">Progreso de Edición</h2>
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => {
-              const Icon = step.icon
-              const isActive = currentStep === step.number
-              const isCompleted = currentStep > step.number
-              const isValid = stepValidation[step.number]
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-w-0">
+            <section className="mb-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5" aria-label="Progreso de edición">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-800">Paso {currentStep} de {steps.length}</p><h2 className="mt-1 text-base font-semibold text-slate-950">{steps[currentStep - 1].title}</h2></div>
+                <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600">Cambios pendientes de guardar</span>
+              </div>
+              <div className="mb-4 h-1.5 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-label="Progreso del formulario" aria-valuemin={1} aria-valuemax={steps.length} aria-valuenow={currentStep}>
+                <div className="h-full rounded-full bg-teal-700 transition-[width] duration-200 motion-reduce:transition-none" style={{ width: `${(currentStep / steps.length) * 100}%` }} />
+              </div>
+              <nav className="grid grid-cols-3 gap-2 md:grid-cols-6" aria-label="Pasos del formulario">
+                {steps.map((step) => {
+                  const Icon = step.icon
+                  const isActive = currentStep === step.number
+                  const isCompleted = currentStep > step.number && Boolean(stepValidation[step.number])
+                  const canNavigate = step.number <= currentStep
+                  return <button key={step.number} type="button" onClick={() => canNavigate && setCurrentStep(step.number)} disabled={!canNavigate} aria-current={isActive ? "step" : undefined} className={`flex min-h-12 items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-center text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 ${isActive ? "border-teal-700 bg-teal-50 text-teal-950" : isCompleted ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100" : "border-slate-200 bg-white text-slate-500 disabled:cursor-not-allowed"}`}><Icon className="h-4 w-4 shrink-0" aria-hidden="true" /><span className="truncate">{step.title}</span></button>
+                })}
+              </nav>
+              <p className="mt-4 text-sm leading-6 text-slate-600">
+                {currentStep === 1 && "Revisa el nombre en español y en inglés."}
+                {currentStep === 2 && "Actualiza el resumen que aparece en el catálogo."}
+                {currentStep === 3 && "Edita la descripción completa de la experiencia."}
+                {currentStep === 4 && "Ajusta precio, categoría, duración e imágenes principales."}
+                {currentStep === 5 && "Administra los detalles que ayudan al cliente antes de reservar."}
+                {currentStep === 6 && "Comprueba los cambios antes de guardarlos."}
+              </p>
+              {!stepValidation[currentStep] && <p role="status" className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">Completa los campos obligatorios de este paso para continuar.</p>}
+            </section>
 
-              return (
-                <div key={step.number} className="flex items-center">
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
-                      isCompleted
-                        ? "bg-green-500 border-green-500 text-white"
-                        : isActive
-                          ? isValid
-                            ? "bg-blue-500 border-blue-500 text-white"
-                            : "bg-red-500 border-red-500 text-white"
-                          : "bg-gray-200 border-gray-300 text-gray-500"
-                    }`}
-                  >
-                    {isCompleted ? <CheckCircle className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
-                  </div>
-                  <span
-                    className={`ml-2 text-sm font-medium ${
-                      isActive ? "text-blue-600" : isCompleted ? "text-green-600" : "text-gray-500"
-                    }`}
-                  >
-                    {step.title}
-                  </span>
-                  {index < steps.length - 1 && (
-                    <div className={`w-12 h-0.5 mx-4 ${isCompleted ? "bg-green-500" : "bg-gray-300"}`} />
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      <Card className="mb-12 shadow-lg border-0 bg-white">
-        <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b px-8 py-6">
-          <CardTitle className="flex items-center text-xl font-semibold text-gray-900">
-            {React.createElement(steps[currentStep - 1].icon, { className: "h-6 w-6 mr-3 text-blue-600" })}
-            Paso {currentStep}: {steps[currentStep - 1].title}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="px-8 py-8 space-y-8">
+        <Card className="mb-5 border border-slate-200 shadow-sm">
+          <CardHeader className="border-b border-slate-100 px-4 py-4 sm:px-6">
+            <CardTitle className="flex items-center text-lg font-semibold text-slate-950">
+              {React.createElement(steps[currentStep - 1].icon, { className: "mr-2 h-5 w-5 text-teal-800" })}
+              {steps[currentStep - 1].title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6 px-4 py-5 sm:px-6 sm:py-6">
           {/* Paso 1: Nombres */}
           {currentStep === 1 && (
             <div className="space-y-6">
@@ -564,6 +543,7 @@ const EditExcursionPage = () => {
                     className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                   {fieldErrors.name_es && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_es}</p>}
+                  <ExcursionTranslationButton source="es" target="en" sourceText={formData.name_es} targetText={formData.name_en} onTranslated={(text) => updateFormData("name_en", text)} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="name_en" className="text-sm font-semibold text-gray-700 flex items-center">
@@ -577,8 +557,9 @@ const EditExcursionPage = () => {
                     className="mt-2 h-12 text-base border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                   />
                   {fieldErrors.name_en && <p className="text-red-500 text-sm mt-1">{fieldErrors.name_en}</p>}
+                  <ExcursionTranslationButton source="en" target="es" sourceText={formData.name_en} targetText={formData.name_es} onTranslated={(text) => updateFormData("name_es", text)} />
                 </div>
-                <div className="space-y-2">
+                <div className="hidden">
                   <Label htmlFor="name_de" className="text-sm font-semibold text-gray-700 flex items-center">
                     Nombre en Alemán <span className="text-red-500 ml-1">*</span>
                   </Label>
@@ -597,98 +578,21 @@ const EditExcursionPage = () => {
 
           {/* Paso 2: Descripciones Cortas */}
           {currentStep === 2 && (
-            <div className="space-y-6">
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="short_description_es" className="text-sm font-semibold text-gray-700">
-                    Descripción Corta en Español <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="short_description_es"
-                    value={formData.short_description_es}
-                    onChange={(e) => updateFormData("short_description_es", e.target.value)}
-                    placeholder="Descripción breve de la excursión (máximo 150 caracteres)"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{formData.short_description_es.length}/150 caracteres</p>
-                </div>
-                <div>
-                  <Label htmlFor="short_description_en" className="text-sm font-semibold text-gray-700">
-                    Descripción Corta en Inglés <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="short_description_en"
-                    value={formData.short_description_en}
-                    onChange={(e) => updateFormData("short_description_en", e.target.value)}
-                    placeholder="Brief description of the excursion (maximum 150 characters)"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{formData.short_description_en.length}/150 caracteres</p>
-                </div>
-                <div>
-                  <Label htmlFor="short_description_de" className="text-sm font-semibold text-gray-700">
-                    Descripción Corta en Alemán <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="short_description_de"
-                    value={formData.short_description_de}
-                    onChange={(e) => updateFormData("short_description_de", e.target.value)}
-                    placeholder="Kurze Beschreibung der Exkursion (maximal 150 Zeichen)"
-                    className="mt-2 text-base"
-                    rows={3}
-                  />
-                  <p className="text-xs text-gray-500 mt-1">{formData.short_description_de.length}/150 caracteres</p>
-                </div>
-              </div>
+            <div className="space-y-5">
+              <LocaleTabs locale={contentLocale} onChange={setContentLocale} spanishComplete={!!formData.short_description_es} englishComplete={!!formData.short_description_en} />
+              <ExcursionTranslationButton source={contentLocale} target={contentLocale === "es" ? "en" : "es"} sourceText={contentLocale === "es" ? formData.short_description_es : formData.short_description_en} targetText={contentLocale === "es" ? formData.short_description_en : formData.short_description_es} onTranslated={(text) => { updateFormData(contentLocale === "es" ? "short_description_en" : "short_description_es", text); setContentLocale(contentLocale === "es" ? "en" : "es") }} />
+              {contentLocale === "es" ? <div><Label htmlFor="short_description_es" className="text-sm font-semibold text-slate-800">Descripción corta en español <span className="text-red-600">*</span></Label><Textarea id="short_description_es" value={formData.short_description_es} onChange={(e) => updateFormData("short_description_es", e.target.value)} placeholder="Resume la experiencia y lo que la hace especial (máximo 150 caracteres)" maxLength={150} className="mt-2 min-h-28 text-base" rows={3} /><p className="mt-1 text-xs text-slate-500">{formData.short_description_es.length}/150 caracteres</p></div> : <div><Label htmlFor="short_description_en" className="text-sm font-semibold text-slate-800">Short description in English <span className="text-red-600">*</span></Label><Textarea id="short_description_en" value={formData.short_description_en} onChange={(e) => updateFormData("short_description_en", e.target.value)} placeholder="Summarise the experience and what makes it special (maximum 150 characters)" maxLength={150} className="mt-2 min-h-28 text-base" rows={3} /><p className="mt-1 text-xs text-slate-500">{formData.short_description_en.length}/150 caracteres</p></div>}
+              <p className="text-xs text-slate-500">Cada idioma se guarda por separado. El indicador muestra si ya tiene contenido.</p>
             </div>
           )}
 
           {/* Paso 3: Descripciones Completas */}
           {currentStep === 3 && (
-            <div className="space-y-6">
-              <div className="space-y-6">
-                <div>
-                  <Label htmlFor="description_es" className="text-sm font-semibold text-gray-700">
-                    Descripción Completa en Español <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description_es"
-                    value={formData.description_es}
-                    onChange={(e) => updateFormData("description_es", e.target.value)}
-                    placeholder="Descripción detallada de la excursión, itinerario, qué incluye, etc."
-                    className="mt-2 text-base"
-                    rows={6}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description_en" className="text-sm font-semibold text-gray-700">
-                    Descripción Completa en Inglés <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description_en"
-                    value={formData.description_en}
-                    onChange={(e) => updateFormData("description_en", e.target.value)}
-                    placeholder="Detailed description of the excursion, itinerary, what's included, etc."
-                    className="mt-2 text-base"
-                    rows={6}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="description_de" className="text-sm font-semibold text-gray-700">
-                    Descripción Completa en Alemán <span className="text-red-500">*</span>
-                  </Label>
-                  <Textarea
-                    id="description_de"
-                    value={formData.description_de}
-                    onChange={(e) => updateFormData("description_de", e.target.value)}
-                    placeholder="Detaillierte Beschreibung der Exkursion, Reiseverlauf, was enthalten ist, etc."
-                    className="mt-2 text-base"
-                    rows={6}
-                  />
-                </div>
-              </div>
+            <div className="space-y-5">
+              <LocaleTabs locale={contentLocale} onChange={setContentLocale} spanishComplete={!!formData.description_es} englishComplete={!!formData.description_en} />
+              <ExcursionTranslationButton source={contentLocale} target={contentLocale === "es" ? "en" : "es"} sourceText={contentLocale === "es" ? formData.description_es : formData.description_en} targetText={contentLocale === "es" ? formData.description_en : formData.description_es} onTranslated={(text) => { updateFormData(contentLocale === "es" ? "description_en" : "description_es", text); setContentLocale(contentLocale === "es" ? "en" : "es") }} />
+              {contentLocale === "es" ? <div><Label htmlFor="description_es" className="text-sm font-semibold text-slate-800">Descripción completa en español <span className="text-red-600">*</span></Label><Textarea id="description_es" value={formData.description_es} onChange={(e) => updateFormData("description_es", e.target.value)} placeholder="Describe el recorrido, qué incluye y qué debe esperar el cliente." className="mt-2 min-h-56 text-base leading-6" rows={8} /></div> : <div><Label htmlFor="description_en" className="text-sm font-semibold text-slate-800">Full description in English <span className="text-red-600">*</span></Label><Textarea id="description_en" value={formData.description_en} onChange={(e) => updateFormData("description_en", e.target.value)} placeholder="Describe the itinerary, what is included and what the customer can expect." className="mt-2 min-h-56 text-base leading-6" rows={8} /></div>}
+              <p className="text-xs text-slate-500">El selector cambia el idioma que editas; el otro contenido permanece intacto.</p>
             </div>
           )}
 
@@ -1282,72 +1186,45 @@ const EditExcursionPage = () => {
                 </div>
               </div>
 
-              <Button
-                onClick={handleUpdateExcursion}
-                disabled={isSubmitting}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
-                size="lg"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                    Guardando Cambios...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-5 w-5 mr-2" />
-                    Guardar Cambios
-                  </>
-                )}
-              </Button>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Navigation Buttons */}
-      <div className="flex justify-between items-center pt-8 border-t bg-gray-50 px-8 py-6 -mx-8 -mb-8 rounded-b-xl">
-        <Button
-          onClick={prevStep}
-          disabled={currentStep === 1}
-          variant="outline"
-          size="lg"
-          className="flex items-center px-6 py-3 text-base font-medium"
-        >
-          <ArrowLeft className="h-5 w-5 mr-2" />
-          Anterior
-        </Button>
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={prevStep}
+            disabled={currentStep === 1}
+            variant="outline"
+            size="lg"
+            className="min-h-11 px-3 text-xs font-medium sm:px-6 sm:text-base"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+            Anterior
+          </Button>
+          <Button type="button" variant="outline" onClick={() => handleUpdateExcursion(true)} disabled={isSubmitting} className="min-h-11 px-3 text-xs font-medium text-teal-900 sm:px-4 sm:text-sm">
+            Guardar como borrador
+          </Button>
+        </div>
 
-        <div className="flex items-center space-x-4">
-          {/* Step indicator */}
-          <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-600">
-            <span>
-              Paso {currentStep} de {steps.length}
-            </span>
-            <div className="w-16 bg-gray-200 rounded-full h-1">
-              <div
-                className="bg-blue-500 h-1 rounded-full transition-all duration-300"
-                style={{ width: `${(currentStep / steps.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
+        <div>
           {currentStep < 6 ? (
             <Button
               onClick={nextStep}
               disabled={!stepValidation[currentStep]}
               size="lg"
-              className="flex items-center px-6 py-3 text-base font-medium bg-blue-600 hover:bg-blue-700"
+              className="min-h-11 px-4 text-sm font-medium sm:px-6 sm:text-base bg-teal-800 text-white hover:bg-teal-900"
             >
-              Siguiente
-              <ArrowRight className="h-5 w-5 ml-2" />
+              {stepValidation[currentStep] ? "Continuar" : "Completa los campos"}
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
           ) : (
             <Button
-              onClick={handleUpdateExcursion}
+              onClick={() => handleUpdateExcursion(false)}
               disabled={isSubmitting}
               size="lg"
-              className="flex items-center px-6 py-3 text-base font-medium bg-green-600 hover:bg-green-700"
+              className="min-h-11 bg-teal-800 px-4 text-sm font-medium text-white hover:bg-teal-900 sm:px-6 sm:text-base"
             >
               {isSubmitting ? (
                 <>
@@ -1364,8 +1241,35 @@ const EditExcursionPage = () => {
           )}
         </div>
       </div>
+          </div>
+          <aside className="h-fit lg:sticky lg:top-6" aria-label="Vista previa de la excursión">
+            <div className="mb-3"><ExcursionDetailPreview excursion={previewExcursion} /></div>
+            <Button type="button" variant="outline" onClick={() => setPreviewOpen((value) => !value)} aria-expanded={previewOpen} className="mb-3 flex min-h-11 w-full justify-between bg-white lg:hidden">
+              <span className="inline-flex items-center gap-2"><Eye className="h-4 w-4" />Vista previa</span><span>{previewOpen ? "Ocultar" : "Mostrar"}</span>
+            </Button>
+            <Card className={`${previewOpen ? "block" : "hidden"} overflow-hidden border-slate-200 shadow-sm lg:block`}>
+              <div className="relative aspect-[16/10] bg-slate-100">
+                {formData.image_url ? <Image src={formData.image_url} alt={`Vista previa: ${formData.name_es || "excursión"}`} fill unoptimized sizes="(max-width: 1024px) 100vw, 320px" className="object-cover" /> : <div className="grid h-full place-items-center text-center text-slate-400"><div><Eye className="mx-auto mb-2 h-7 w-7" /><span className="text-sm">Añade una imagen principal</span></div></div>}
+                {formData.featured && <span className="absolute left-3 top-3 rounded-full bg-amber-300 px-3 py-1 text-xs font-semibold text-slate-950">Destacada</span>}
+              </div>
+              <CardContent className="space-y-3 p-4">
+                <div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-medium uppercase tracking-wide text-teal-800">{formData.category || "Categoría"}</p><h2 className="mt-1 line-clamp-2 text-lg font-semibold text-slate-950">{formData.name_es || "Nombre de la excursión"}</h2></div><span className="shrink-0 text-right text-lg font-semibold tabular-nums text-teal-900">{formData.price ? `${Number(formData.price).toLocaleString("es-ES")} €` : "— €"}<span className="block text-[10px] font-medium text-slate-500">precio base</span></span></div>
+                <p className="line-clamp-3 min-h-[3.75rem] text-sm leading-5 text-slate-600">{formData.short_description_es || "El resumen aparecerá aquí mientras completas el formulario."}</p>
+                <div className="flex flex-wrap gap-x-4 gap-y-2 border-t border-slate-100 pt-3 text-xs text-slate-600"><span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5 text-teal-700" />{formData.duration || "Duración pendiente"}</span><span>{formData.gallery_images.length} fotos adicionales</span></div>
+              </CardContent>
+            </Card>
+            <p className="mt-3 hidden text-xs leading-5 text-slate-500 lg:block">Vista orientativa del catálogo. Los cambios no se aplicarán hasta guardar la excursión.</p>
+          </aside>
+        </div>
+      </div>
     </div>
   )
 }
 
 export default EditExcursionPage
+
+function LocaleTabs({ locale, onChange, spanishComplete, englishComplete }: { locale: "es" | "en"; onChange: (locale: "es" | "en") => void; spanishComplete: boolean; englishComplete: boolean }) {
+  return <div className="flex flex-wrap gap-2" role="group" aria-label="Idioma del contenido">
+    {([{ code: "es", label: "Español", complete: spanishComplete }, { code: "en", label: "English", complete: englishComplete }] as const).map((item) => <button key={item.code} type="button" onClick={() => onChange(item.code)} aria-pressed={locale === item.code} className={`inline-flex min-h-11 items-center gap-2 rounded-lg border px-4 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-700 ${locale === item.code ? "border-teal-700 bg-teal-50 text-teal-950" : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"}`}><span>{item.label}</span><span className={`rounded-full px-2 py-0.5 text-[11px] ${item.complete ? "bg-emerald-100 text-emerald-800" : "bg-slate-100 text-slate-600"}`}>{item.complete ? "Completo" : "Pendiente"}</span></button>)}
+  </div>
+}
